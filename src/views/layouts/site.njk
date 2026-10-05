@@ -2,6 +2,8 @@
 <html lang="ar" dir="rtl" class="no-js">
 <head>
 <meta charset="utf-8">
+{# الوضع الليلي: يُضبط قبل أول رسم (اختيار الزائر المحفوظ، وإلا إعداد النظام) — التفاصيل في theme.js #}
+<script>(function(d){var t;try{t=localStorage.getItem('isgha_theme')}catch(e){}if(t!=='dark'&&t!=='light')t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t)})(document.documentElement)</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <script>(function(d){d.className=d.className.replace('no-js','js');setTimeout(function(){if(!window.ISGHA_READY)d.classList.add('no-js')},3500)})(document.documentElement)</script>
 <title>{{ meta.title }}</title>
@@ -46,6 +48,7 @@
 <link rel="stylesheet" href="{{ asset('/css/site.css') }}">
 {# مؤقت أثناء إعادة تصميم الأقسام — تُدمج في site.css قبل النشر #}
 {% for f in ['sx-heroes', 'sx-content', 'sx-cards', 'sx-convert'] %}<link rel="stylesheet" href="{{ asset('/css/' + f + '.css') }}">{% endfor %}
+<link rel="stylesheet" href="{{ asset('/css/theme-dark.css') }}">
 {% if preloadImage %}<link rel="preload" as="image" href="{{ preloadImage }}" {% if imgSet(preloadImage) %}imagesrcset="{{ imgSet(preloadImage) }}" imagesizes="100vw" {% endif %}fetchpriority="high">{% endif %}
 {% if jsonld %}<script type="application/ld+json">{{ jsonld | json }}</script>{% endif %}
 <script>window.ISGHA={{ clientCfg | json }};</script>
@@ -63,6 +66,7 @@
 {% if layout == 'landing' %}{% include "partials/footer-landing.njk" %}{% else %}{% include "partials/footer.njk" %}{% endif %}
 {% include "partials/floats.njk" %}
 <script src="{{ asset('/js/site.js') }}" defer></script>
+<script src="{{ asset('/js/theme.js') }}" defer></script>
 {% for f in ['sx-heroes', 'sx-content', 'sx-cards', 'sx-convert'] %}<script src="{{ asset('/js/' + f + '.js') }}" defer></script>{% endfor %}
 {% if not isPreview and page and page.settings and page.settings.body_code %}{{ page.settings.body_code | safe }}{% endif %}
 {% if S.body_end_code and not isPreview %}{{ S.body_end_code | safe }}{% endif %}

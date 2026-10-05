@@ -1,12 +1,15 @@
 {% import "partials/macros.njk" as m %}
 {% if D.posts.length %}
-<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+{% set n = D.posts.length %}
+<section class="sec sx-posts {{ m.bgclass(d) }}" data-sxc="posts" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
   <div class="wrap">
-    {{ m.sechead(d) }}
-    <div class="posts">
+    <div class="pst-top">
+      {{ m.sechead(d, 'pst-head') }}
+      {% if d.all_label %}<a class="pst-all rv" href="{{ d.all_url or '/insights' }}"><span>{{ d.all_label }}</span>{{ icon('arrow-left') }}</a>{% endif %}
+    </div>
+    <div class="pst-grid n{{ n if n < 4 else 'x' }}" data-sx-rail>
       {% for p in D.posts %}{% include "partials/post-card.njk" %}{% endfor %}
     </div>
-    <p style="text-align:center;margin-top:32px"><a class="btn btn-line" href="/insights">كل المقالات {{ icon('arrow-left') }}</a></p>
   </div>
 </section>
 {% endif %}

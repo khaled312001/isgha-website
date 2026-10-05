@@ -15,7 +15,7 @@
     var vertical = rr.height > rr.width;
     var p;
     if (reduce) p = 1;
-    else if (vertical) p = clamp((vh * 0.72 - rr.top) / Math.max(rr.height, 1));
+    else if (vertical) p = clamp((vh * 0.8 - rr.top) / Math.max(rr.height, 1));
     else p = clamp((vh * 0.9 - rr.top) / (vh * 0.45));
     tl.style.setProperty('--p', p.toFixed(4));
     $$('.cx-tl-step', tl).forEach(function (st) {

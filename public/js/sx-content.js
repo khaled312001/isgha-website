@@ -1,4 +1,4 @@
-/* sx-content — حركات أقسام المحتوى (الخدمات، التبويبات، العدّادات) */
+/* sx-content — حركات أقسام المحتوى: تبويبات التخصصات، عدّادات الأرقام */
 (function () {
   'use strict';
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
@@ -13,21 +13,7 @@
     if (e.propertyName === 'opacity' && t.classList && t.classList.contains('rv') && t.classList.contains('in') && t.closest('[data-sx]')) t.classList.add('sx-done');
   });
 
-  /* ── ١. الخدمات: ارتفاع القائمة المخفية في البطاقة الكبيرة ── */
-  var cards = $$('[data-sxs-card].photo');
-  function measure() {
-    cards.forEach(function (c) {
-      var r = c.querySelector('.sxs-reveal');
-      if (r) c.style.setProperty('--rh', r.offsetHeight + 'px');
-    });
-  }
-  if (cards.length) {
-    measure();
-    window.addEventListener('resize', measure);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
-  }
-
-  /* ── ٢. التبويبات: مؤشر متحرك + أسهم لوحة المفاتيح ── */
+  /* ── التبويبات: مؤشر متحرك + أسهم لوحة المفاتيح ── */
   $$('[data-sx-tabs]').forEach(function (root) {
     var list = root.querySelector('[role=tablist]');
     var tabs = $$('[role=tab]', root);
@@ -83,7 +69,7 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
   });
 
-  /* ── ٣. العدّادات: تعدّ عند الظهور بالأرقام العربية ── */
+  /* ── العدّادات: تعدّ عند الظهور بالأرقام العربية ── */
   var counters = $$('[data-count]');
   function parse(el) {
     var raw = el.getAttribute('data-count') || el.textContent;

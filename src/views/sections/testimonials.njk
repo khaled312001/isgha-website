@@ -21,7 +21,7 @@
           {% set stars = (t.rating or 5) | int %}
           <figure class="tst-slide" role="group" aria-label="{{ loop.index }} / {{ list.length }}">
             <span class="tst-q" aria-hidden="true">{{ icon('quote') }}</span>
-            <span class="tst-stars" role="img" aria-label="{{ d.rating_label }}: {{ stars }}/5">{% for k in range(0, 5) %}<span class="{{ 'on' if k < stars else '' }}">{{ icon('star') }}</span>{% endfor %}</span>
+            <span class="tst-stars" role="img" aria-label="{{ d.rating_label }}: {{ stars }}/5">{% for k in range(0, 5) %}<span class="{{ 'on' if k < stars else '' }}" aria-hidden="true">★</span>{% endfor %}</span>
             <blockquote><p>{{ t.quote }}</p></blockquote>
             <figcaption class="tst-who">
               <span class="tst-av" aria-hidden="true">{{ (t.name or '') | replace('.', '') | trim | first }}</span>

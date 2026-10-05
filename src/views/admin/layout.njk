@@ -8,56 +8,105 @@
 <title>{{ title }} — لوحة تحكم إصغاء</title>
 <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/fonts/ThmanyahText-400.woff2" as="font" type="font/woff2" crossorigin>
+{#- حالة طي القائمة تُطبَّق قبل أول رسم لتفادي القفزة (يُطوى تلقائيًا بين 901 و1100 بكسل ما لم يختر المستخدم) -#}
+<script>(function(d){var p=null;try{p=localStorage.getItem('isgha.adm.side')}catch(e){}var m=window.matchMedia;if(p==='collapsed'||(p!=='expanded'&&m&&m('(min-width:901px) and (max-width:1100px)').matches))d.className+=' side-collapsed'})(document.documentElement)</script>
 <link rel="stylesheet" href="{{ asset('/css/admin.css') }}">
+<link rel="stylesheet" href="{{ asset('/css/admin-shell.css') }}">
 {% block head %}{% endblock %}
 </head>
-<body class="adm {{ bodyClass }}">
+<body class="adm shell {{ bodyClass }}">
 <a class="skip" href="#adm-main">تخطَّ إلى المحتوى</a>
-<aside class="side" id="side" aria-label="القائمة الرئيسية">
-  <div class="side-top">
-    <a class="side-logo" href="/admin" aria-label="لوحة التحكم"><img src="/img/logo-white.svg" alt="إصغاء" width="132" height="40"></a>
-    <button class="icon-btn side-close" type="button" data-side-close aria-label="إغلاق القائمة">{{ icon('x') }}</button>
+
+{#- ═══ الشريط العلوي (على طريقة ووردبريس) ═══ -#}
+<header class="abar">
+  <div class="abar-start">
+    <button class="abar-btn abar-toggle" type="button" data-shell-toggle aria-controls="side" aria-expanded="true" aria-label="طي القائمة الجانبية">{{ icon('menu') }}</button>
+    <a class="abar-brand" href="/admin" title="{{ S.site_name or 'إصغاء' }}"><img src="/img/mark.svg" alt="" width="18" height="20"><b>إصغاء</b><span class="abar-tag">لوحة التحكم</span></a>
+    <span class="abar-sep" aria-hidden="true"></span>
+    <a class="abar-btn" href="/" target="_blank" rel="noopener" aria-label="زيارة الموقع (نافذة جديدة)">{{ icon('external-link') }}<span class="abar-txt">زيارة الموقع</span></a>
+    {% if quickNew and quickNew.length %}
+    <div class="abar-dd" data-dd>
+      <button class="abar-btn abar-new" type="button" aria-expanded="false" aria-controls="dd-new" aria-label="إنشاء جديد" data-dd-btn>{{ icon('plus') }}<span class="abar-txt">جديد</span>{{ icon('chevron-down', 'abar-caret') }}</button>
+      <div class="abar-pop" id="dd-new" data-dd-pop>
+        <p class="abar-pop-title">إنشاء جديد</p>
+        {% for n in quickNew %}{% if n.sep %}<hr class="abar-hr">{% endif %}<a class="abar-item" href="{{ n.url }}">{{ icon(n.icon) }}<span>{{ n.label }}</span></a>{% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    {% if can and can('leads') %}
+    {% set nl = badges.leads or 0 %}
+    <a class="abar-btn abar-leads {{ 'has-new' if nl }}" href="/admin/leads?status=new" aria-label="{{ 'طلبات جديدة: ' + (nl | ar) if nl else 'لا توجد طلبات جديدة' }}" data-abar-tip="{{ 'طلبات جديدة بانتظار التواصل' if nl else 'لا توجد طلبات جديدة' }}">{{ icon('inbox') }}{% if nl %}<b class="abar-count">{{ nl | ar }}</b>{% endif %}</a>
+    {% endif %}
   </div>
-  <nav class="side-nav">
+  {% if me %}
+  <div class="abar-end">
+    <div class="abar-dd" data-dd>
+      <button class="abar-btn abar-user" type="button" aria-expanded="false" aria-controls="dd-user" aria-label="حسابي: {{ me.name }}" data-dd-btn><span class="abar-av">{{ me.name | first }}</span><span class="abar-txt">{{ me.name }}</span>{{ icon('chevron-down', 'abar-caret') }}</button>
+      <div class="abar-pop abar-pop-end" id="dd-user" data-dd-pop>
+        <div class="abar-me">
+          <span class="abar-av lg">{{ me.name | first }}</span>
+          <div><b>{{ me.name }}</b><small class="ltr">{{ me.email }}</small></div>
+          <span class="abar-role">{{ roleLabel(me.role) }}</span>
+        </div>
+        <a class="abar-item" href="/admin/users/me">{{ icon('user') }}<span>الملف الشخصي</span></a>
+        <a class="abar-item" href="/admin/users/me#password">{{ icon('key') }}<span>تغيير كلمة المرور</span></a>
+        <hr class="abar-hr">
+        <form method="post" action="/admin/logout"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="abar-item danger" type="submit">{{ icon('logout') }}<span>تسجيل الخروج</span></button></form>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</header>
+
+{#- ═══ القائمة الجانبية ═══ -#}
+<aside class="side" id="side" aria-label="القائمة الرئيسية">
+  <div class="side-head">
+    <a class="side-logo" href="/admin" aria-label="لوحة التحكم"><img src="/img/logo-white.svg" alt="إصغاء" width="118" height="36"></a>
+    <button class="side-x" type="button" data-shell-close aria-label="إغلاق القائمة">{{ icon('x') }}</button>
+  </div>
+  <nav class="side-nav" aria-label="أقسام لوحة التحكم">
     {% for g in nav %}
     <div class="side-group">
-      {% if g.title %}<p class="side-title">{{ g.title }}</p>{% endif %}
+      {% if g.title %}<p class="side-title"><span>{{ g.title }}</span></p>{% endif %}
+      <ul class="side-list">
       {% for it in g.items %}
+        <li>
         {% if it.children %}
-        {% set open = it.children | some('key', active) %}
-        <details class="side-sub" {% if open %}open{% endif %}>
-          <summary class="side-link {% if open %}on{% endif %}">{{ icon(it.icon) }}<span>{{ it.label }}</span>{{ icon('chevron-down', 'chev') }}</summary>
-          {% for c in it.children %}<a class="side-link child {% if c.key == active %}on{% endif %}" href="{{ c.url }}">{{ icon(c.icon) }}<span>{{ c.label }}</span></a>{% endfor %}
-        </details>
+          {% set open = it.children | some('key', active) %}
+          {% set sid = 'side-sub-' + (it.key | replace(':', '-')) %}
+          <div class="side-sub {{ 'is-open' if open }}" data-side-sub>
+            <button class="side-link side-sub-btn {{ 'on' if open }}" type="button" aria-expanded="{{ 'true' if open else 'false' }}" aria-controls="{{ sid }}" data-tip="{{ it.label }}"><span class="side-ic">{{ icon(it.icon) }}</span><span class="side-label">{{ it.label }}</span>{{ icon('chevron-down', 'side-chev') }}</button>
+            <div class="side-sub-wrap" id="{{ sid }}">
+              <ul class="side-sub-list">
+                {% for c in it.children %}<li><a class="side-link child {{ 'on' if c.key == active }}" href="{{ c.url }}" {% if c.key == active %}aria-current="page"{% endif %}><span class="side-label">{{ c.label }}</span></a></li>{% endfor %}
+              </ul>
+            </div>
+          </div>
         {% else %}
-        <a class="side-link {% if it.key == active %}on{% endif %}" href="{{ it.url }}" {% if it.key == active %}aria-current="page"{% endif %}>{{ icon(it.icon) }}<span>{{ it.label }}</span>{% if it.badge and badges[it.badge] %}<b class="side-badge">{{ badges[it.badge] }}</b>{% endif %}</a>
+          {% set bn = badges[it.badge] if it.badge and badges else 0 %}
+          <a class="side-link {{ 'on' if it.key == active }}" href="{{ it.url }}" {% if it.key == active %}aria-current="page"{% endif %} data-tip="{{ it.label }}{{ ' (' + (bn | ar) + ' جديد)' if bn }}"><span class="side-ic">{{ icon(it.icon) }}</span><span class="side-label">{{ it.label }}</span>{% if bn %}<b class="side-badge" aria-label="{{ bn | ar }} جديد">{{ bn | ar }}</b>{% endif %}</a>
         {% endif %}
+        </li>
       {% endfor %}
+      </ul>
     </div>
     {% endfor %}
   </nav>
-  <div class="side-user">
-    <span class="avatar">{{ me.name | first }}</span>
-    <div><b>{{ me.name }}</b><small>{{ roleLabel(me.role) }}</small></div>
-    <a class="icon-btn" href="/admin/users/me" title="حسابي" aria-label="حسابي">{{ icon('settings') }}</a>
-    <form method="post" action="/admin/logout"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="icon-btn" type="submit" title="تسجيل الخروج" aria-label="تسجيل الخروج">{{ icon('logout') }}</button></form>
+  <div class="side-foot">
+    <button class="side-link side-fold" type="button" data-shell-fold aria-controls="side" aria-expanded="true" data-tip="توسيع القائمة"><span class="side-ic">{{ icon('chevron-right') }}</span><span class="side-label">طي القائمة</span></button>
   </div>
 </aside>
-<div class="side-scrim" data-side-close></div>
+<div class="side-scrim" data-shell-close aria-hidden="true"></div>
 
 <div class="main">
-  <header class="topbar">
-    <button class="icon-btn menu-btn" type="button" data-side-open aria-label="فتح القائمة">{{ icon('menu') }}</button>
-    <div class="top-title">
-      {% if crumbs %}<ol class="top-crumbs">{% for c in crumbs %}<li>{% if c.url %}<a href="{{ c.url }}">{{ c.label }}</a>{% else %}{{ c.label }}{% endif %}</li>{% endfor %}</ol>{% endif %}
-      <h1>{{ title }}</h1>
+  <main id="adm-main" class="content" tabindex="-1">
+    <div class="phead">
+      <div class="phead-title">
+        {% if crumbs %}<ol class="phead-crumbs">{% for c in crumbs %}<li>{% if c.url %}<a href="{{ c.url }}">{{ c.label }}</a>{% else %}<span>{{ c.label }}</span>{% endif %}</li>{% endfor %}</ol>{% endif %}
+        <h1>{{ title }}</h1>
+      </div>
+      <div class="phead-actions">{% block actions %}{% endblock %}</div>
     </div>
-    <div class="top-actions">
-      {% block actions %}{% endblock %}
-      <a class="btn btn-line btn-sm hide-sm" href="/" target="_blank" rel="noopener">{{ icon('external-link') }} عرض الموقع</a>
-    </div>
-  </header>
-  <main id="adm-main" class="content">
     {% if flash %}<div class="alert alert-{{ flash.type }}" role="status">{{ icon('check-circle' if flash.type == 'success' else 'triangle-alert') }}<span>{{ flash.text }}</span></div>{% endif %}
     {% block content %}{% endblock %}
   </main>
@@ -66,6 +115,7 @@
 <div class="toasts" id="toasts" aria-live="polite"></div>
 {% block foot %}{% endblock %}
 <script src="{{ asset('/js/admin.js') }}"></script>
+<script src="{{ asset('/js/admin-shell.js') }}"></script>
 {% block scripts %}{% endblock %}
 </body>
 </html>

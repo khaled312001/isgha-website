@@ -2,6 +2,7 @@
   <div class="nav-in">
     <a class="nav-logo" href="/" aria-label="{{ S.site_name }}"><img src="{{ S.logo_compact or '/img/logo-compact-white.svg' }}" alt="{{ S.brand_short }}" width="160" height="45"></a>
     <div class="nav-actions">
+      <button class="theme-btn" type="button" data-theme-toggle aria-pressed="false" aria-label="الوضع الليلي" data-tip="الوضع الليلي">{{ icon('moon', 'th-moon') }}{{ icon('sun', 'th-sun') }}</button>
       <a class="btn btn-white nav-cta nav-cta-call" href="{{ (page.settings.phone or S.phone) | tel }}">{{ icon('phone') }} <span>{{ page.settings.call_label or S.txt_call_now }}</span></a>
     </div>
   </div>

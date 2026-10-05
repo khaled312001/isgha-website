@@ -115,6 +115,11 @@
       }
     }, true);
     doc.addEventListener('submit', function (e) { e.preventDefault(); }, true);
+    // بعد الضغط داخل المعاينة يبقى التركيز فيها: نمرّر اختصارات المنشئ (Ctrl+S / Esc) بدل حفظ صفحة المتصفح
+    doc.addEventListener('keydown', function (e) {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); saveDraft(); }
+      else if (e.key === 'Escape' && current !== null && !document.querySelector('dialog[open]')) { renderList(); window.focus(); }
+    });
     var st = doc.createElement('style');
     st.textContent = 'main > *:not(.sid){cursor:pointer} main > *:not(.sid):hover{outline:2px dashed rgba(14,110,98,.55);outline-offset:-2px} .preview-flag{display:none}';
     doc.head.appendChild(st);

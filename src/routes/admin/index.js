@@ -42,7 +42,7 @@ function buildNav(user) {
       can(user, 'content') && r('services'),
       can(user, 'content') && r('packages'),
       can(user, 'content') && { label: 'محتوى آخر', icon: 'layers', key: 'more', children: ['areas', 'beneficiaries', 'faqs', 'testimonials', 'team'].map(r) },
-      can(user, 'posts') && { label: 'المقالات', url: '/admin/r/posts', icon: 'newspaper', key: 'r:posts', children: [r('posts'), r('post_categories')] },
+      can(user, 'posts') && { label: 'المقالات', url: '/admin/r/posts', icon: 'newspaper', key: 'r:posts', children: [{ ...r('posts'), label: 'كل المقالات' }, r('post_categories')] },
       can(user, 'media') && { label: 'صور الموقع', url: '/admin/media/slots', icon: 'image', key: 'slots' },
       can(user, 'media') && { label: 'مكتبة الوسائط', url: '/admin/media', icon: 'folder', key: 'media' },
     ] },
@@ -56,6 +56,19 @@ function buildNav(user) {
   return groups.map((g) => ({ ...g, items: g.items.filter(Boolean) })).filter((g) => g.items.length);
 }
 
+// قائمة «+ جديد» في الشريط العلوي (مثل شريط ووردبريس) — حسب صلاحيات المستخدم
+// ‎?new=1 يفتح نافذة «صفحة جديدة» تلقائيًا في قائمة الصفحات (admin-shell.js)
+function buildQuickNew(user) {
+  return [
+    can(user, 'landing') && { label: 'صفحة هبوط', url: '/admin/pages?kind=landing&new=1', icon: 'mouse-pointer', grp: 1 },
+    can(user, 'pages') && { label: 'صفحة في الموقع', url: '/admin/pages?new=1', icon: 'layout-template', grp: 1 },
+    can(user, 'posts') && { label: 'مقال', url: '/admin/r/posts/new', icon: 'newspaper', grp: 1 },
+    can(user, 'content') && { label: 'خدمة', url: '/admin/r/services/new', icon: 'briefcase', grp: 1 },
+    can(user, 'media') && { label: 'رفع وسائط', url: '/admin/media', icon: 'upload', grp: 2 },
+    can(user, 'users') && { label: 'مستخدم', url: '/admin/users/new', icon: 'user-cog', grp: 2 },
+  ].filter(Boolean).map((it, i, all) => ({ ...it, sep: i > 0 && all[i - 1].grp !== it.grp }));
+}
+
 router.use(async (req, res, next) => {
   try {
     res.locals.flash = req.session.flash || null;
@@ -65,6 +78,7 @@ router.use(async (req, res, next) => {
     res.locals.roleLabel = roleLabel;
     if (req.user) {
       res.locals.nav = buildNav(req.user);
+      res.locals.quickNew = buildQuickNew(req.user);
       if (can(req.user, 'leads')) {
         const [{ n }] = await db('leads').where({ status: 'new' }).count({ n: '*' });
         res.locals.badges = { leads: Number(n) };

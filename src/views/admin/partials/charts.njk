@@ -1,0 +1,122 @@
+{#- مكوّنات الرسوم البيانية في لوحة التحكم (تحتاج admin-charts.css و admin-charts.js)
+    الاستيراد: {% import "admin/partials/charts.njk" as ch with context %}
+    الألوان رموز تُحلّ في CSS/JS: teal · gold · c1…c5 · prev · other · st-<الحالة> -#}
+
+{% macro delta(d) -%}
+{%- if d -%}
+<em class="ch-delta {{ d.cls }}" title="{{ d.vs }}"><span class="ch-arrow" aria-hidden="true">{{ '↑' if d.cls == 'up' else ('↓' if d.cls == 'down' else '←') }}</span><span class="sr-only">{{ 'ارتفاع' if d.cls == 'up' else ('انخفاض' if d.cls == 'down' else 'ثبات') }}</span>{{ d.text }}<span class="ch-vs"> {{ d.vs }}</span></em>
+{%- endif -%}
+{%- endmacro %}
+
+{% macro kpi(k) %}
+<div class="kpi ch-kpi">
+  <span class="kpi-ic {{ k.tone }}">{{ icon(k.icon) }}</span>
+  <small>{{ k.label }}</small>
+  <b>{% if k.href %}<a href="{{ k.href }}">{{ k.value }}</a>{% else %}{{ k.value }}{% endif %}</b>
+  {{ delta(k.delta) }}
+  {% if k.sub %}<em class="ch-sub">{{ k.sub }}</em>{% endif %}
+  {% if k.spark and k.spark.length > 1 %}<svg class="ch-spark" data-spark="{{ k.spark | join(',') }}" data-color="{{ k.sparkColor or 'teal' }}" aria-hidden="true" focusable="false"></svg>{% endif %}
+</div>
+{% endmacro %}
+
+{% macro legend(items) %}
+<ul class="ch-legend">{% for s in items %}<li><i class="ch-key {{ s.shape or 'line' }}{{ ' dash' if s.dashed }}" data-c="{{ s.color }}"></i><span>{{ s.label }}</span>{% if s.value %}<b>{{ s.value }}</b>{% endif %}</li>{% endfor %}</ul>
+{% endmacro %}
+
+{#- رسم Chart.js: البيانات JSON داخل الحاوية، وملخص نصي لقارئ الشاشة -#}
+{% macro chart(id, cfg, label, h=240, summary='') %}
+<figure class="ch-fig">
+  <div class="ch-box" id="{{ id }}" data-chart style="--h:{{ h }}px" role="img" aria-label="{{ label }}" tabindex="0">
+    <script type="application/json">{{ cfg | json }}</script>
+  </div>
+  {% if summary %}<figcaption class="sr-only">{{ summary }}</figcaption>{% endif %}
+</figure>
+{% endmacro %}
+
+{% macro empty(text, ic='chart-line') %}
+<div class="ch-empty">{{ icon(ic) }}<p>{{ text }}</p></div>
+{% endmacro %}
+
+{#- أشرطة أفقية HTML (نص حقيقي، اتجاه عربي طبيعي). opts: metric, won, ltr -#}
+{% macro hbars(b, opts={}) %}
+{% set metric = opts.metric or 'الطلبات' %}
+<ul class="ch-hbars{{ ' has-won' if opts.won }}">
+{% for r in b.rows %}
+  {% set tag = 'a' if r.href else 'div' %}
+  {% set tip = r.tip or (metric + '::' + nf(r.n) + '||الحصة::' + nf(r.share, 1) + '٪' + (('||تم التعاقد::' + nf(r.won)) if opts.won else '')) %}
+  <li><{{ tag }} class="ch-hb{{ ' is-other' if r.other }}"{% if r.href %} href="{{ r.href }}"{% if r.ext %} target="_blank" rel="noopener"{% endif %}{% endif %} data-tip-t="{{ r.label }}" data-tip="{{ tip }}">
+    <span class="ch-hb-l"{% if opts.ltr %} dir="ltr"{% endif %}>{{ r.label }}</span>
+    <span class="ch-hb-v"><b>{{ nf(r.n) }}</b>{% if r.share is defined and not r.tip %}<small>{{ nf(r.share) }}٪</small>{% endif %}</span>
+    <span class="ch-hb-t" aria-hidden="true"><i style="width:{{ r.w | round(1) }}%"></i>{% if opts.won and r.won %}<i class="won" style="width:{{ (r.w * r.won / r.n) | round(1) }}%"></i>{% endif %}</span>
+  </{{ tag }}></li>
+{% endfor %}
+</ul>
+{% if opts.won %}<ul class="ch-legend ch-legend-foot"><li><i class="ch-key rect" data-c="teal-soft"></i><span>كل الطلبات</span></li><li><i class="ch-key rect" data-c="teal"></i><span>منها تم التعاقد</span></li></ul>{% endif %}
+{% endmacro %}
+
+{#- قمع التحويل: كل شريط = نسبة من عبَر من المرحلة السابقة -#}
+{% macro funnel(f) %}
+<ol class="ch-fnl">
+{% for s in f.stages %}
+  <li class="{{ 'is-leak' if s.leak }}">
+    <div class="ch-fnl-h"><span class="ch-fnl-ic">{{ icon(s.icon) }}</span><span class="ch-fnl-l">{{ s.label }}</span><b>{{ nf(s.n) }}</b></div>
+    {% if not loop.first %}
+    <div class="ch-fnl-bar" tabindex="0" data-tip-t="{{ s.of }} ← {{ s.label }}" data-tip="نسبة العبور::{{ s.rateText or '—' }}||لم يكملوا::{{ nf(s.drop) }}">
+      <span class="ch-fnl-t" aria-hidden="true"><i style="width:{{ s.w | round(1) }}%"></i></span>
+      <small><b>{{ s.rateText or '—' }}</b> من «{{ s.of }}»</small>
+      {% if s.leak %}<span class="ch-flag">أكبر تسرّب</span>{% endif %}
+    </div>
+    {% endif %}
+  </li>
+{% endfor %}
+</ol>
+{% if f.overall %}<p class="ch-foot">من «{{ f.from }}» إلى «{{ f.to }}»: <b>{{ f.overall }}</b></p>{% endif %}
+{% endmacro %}
+
+{#- مسار الطلبات حسب الحالة: شريط مكدّس ١٠٠٪ + مفتاح بالأرقام -#}
+{% macro pipeline(p, links=true) %}
+<div class="ch-pipe" role="img" aria-label="توزيع {{ nf(p.total) }} طلبًا حسب الحالة: {% for s in p.segs %}{{ s.label }} {{ nf(s.n) }}{{ '، ' if not loop.last }}{% endfor %}">
+  {% for s in p.segs %}{% if s.n %}<a class="ch-pipe-s" data-c="st-{{ s.key }}" style="flex-grow:{{ s.n }}"{% if links %} href="/admin/leads?status={{ s.key }}"{% endif %} tabindex="-1" data-tip-t="{{ s.label }}" data-tip-c="st-{{ s.key }}" data-tip="الطلبات::{{ nf(s.n) }}||الحصة::{{ s.shareText }}"></a>{% endif %}{% endfor %}
+</div>
+<ul class="ch-pipe-legend">
+  {% for s in p.segs %}<li>{% if links %}<a href="/admin/leads?status={{ s.key }}">{% else %}<span class="ch-pl">{% endif %}<i class="ch-key rect" data-c="st-{{ s.key }}"></i><span>{{ s.label }}</span><b>{{ nf(s.n) }}</b><small>{{ s.shareText }}</small>{% if links %}</a>{% else %}</span>{% endif %}</li>{% endfor %}
+</ul>
+{% endmacro %}
+
+{#- خريطة حرارية: أيام الأسبوع × فترات الساعتين (جدول دلالي) -#}
+{% macro heat(h) %}
+<div class="ch-heat-wrap">
+<table class="ch-heat">
+  <caption class="sr-only">عدد الطلبات حسب اليوم والساعة بتوقيت الرياض</caption>
+  <thead><tr><td></td>{% for hr in h.hours %}<th scope="col"><span>{{ hr }}</span></th>{% endfor %}</tr></thead>
+  <tbody>
+  {% for row in h.rows %}
+    <tr><th scope="row"><abbr title="{{ row.name }}">{{ row.short }}</abbr></th>{% for c in row.cells %}<td class="l{{ c.l }}" data-tip-t="{{ c.label }}" data-tip-c="{{ 'heat' if c.n else '' }}" data-tip="الطلبات::{{ nf(c.n) }}"><span class="sr-only">{{ nf(c.n) }}</span></td>{% endfor %}</tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<div class="ch-heat-foot">
+  <span class="ch-scale" aria-hidden="true"><small>أقل</small>{% for i in range(1, 6) %}<i class="l{{ i }}"></i>{% endfor %}<small>أكثر</small></span>
+  {% if h.quiet %}<span class="muted">أهدأ يوم: {{ h.quiet }}</span>{% endif %}
+</div>
+{% if h.peaks.length %}
+<p class="ch-peaks">{{ icon('clock') }}<span>أكثر الأوقات طلبًا: {% for p in h.peaks %}<b class="{{ 'ch-mark' if loop.first }}">{{ p.day }} {{ p.span }}</b>{{ ' · ' if not loop.last }}{% endfor %} — جهّز من يرد على الهاتف والواتساب في هذه الأوقات.</span></p>
+{% endif %}
+{% endmacro %}
+
+{#- دائرة حلقية + مفتاح بالنسب -#}
+{% macro donut(id, cfg, items, label) %}
+{% set lead = items | sort(true, false, 'n') | first %}
+<div class="ch-donut">
+  <figure class="ch-fig ch-donut-fig">
+    <div class="ch-box" id="{{ id }}" data-chart style="--h:176px" role="img" aria-label="{{ label }}">
+      <script type="application/json">{{ cfg | json }}</script>
+    </div>
+    <div class="ch-donut-c" aria-hidden="true"><b>{{ lead.shareText }}</b><small>{{ lead.label }}</small></div>
+  </figure>
+  <ul class="ch-donut-legend">
+    {% for d in items %}<li><i class="ch-key rect" data-c="{{ d.color }}"></i><span>{{ d.label }}</span><b>{{ d.shareText }}</b><small>{{ nf(d.n) }}</small></li>{% endfor %}
+  </ul>
+</div>
+{% endmacro %}

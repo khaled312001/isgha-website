@@ -32,6 +32,7 @@
       </ul>
     </nav>
     <div class="nav-actions">
+      <button class="theme-btn" type="button" data-theme-toggle aria-pressed="false" aria-label="الوضع الليلي" data-tip="الوضع الليلي">{{ icon('moon', 'th-moon') }}{{ icon('sun', 'th-sun') }}</button>
       <a class="nav-call" href="{{ S.phone | tel }}" aria-label="{{ S.txt_call_now }} {{ S.phone }}">{{ icon('phone') }}</a>
       {% if S.nav_cta_label %}<a class="btn btn-white nav-cta" href="{{ S.nav_cta_url }}">{{ S.nav_cta_label }} {{ icon('arrow-left') }}</a>{% endif %}
       <button class="nav-toggle" type="button" data-menu-open aria-controls="mnav" aria-expanded="false" aria-label="فتح القائمة">{{ icon('menu') }}</button>
@@ -43,7 +44,8 @@
   <div class="mnav-backdrop" data-menu-close></div>
   <div class="mnav-panel">
     <div class="mnav-top">
-      <a href="/" aria-label="{{ S.site_name }} — الرئيسية"><img src="{{ S.logo or '/img/logo.svg' }}" alt="{{ S.brand_short }}" width="150" height="60"></a>
+      <a href="/" aria-label="{{ S.site_name }} — الرئيسية"><img class="logo-light" src="{{ S.logo or '/img/logo.svg' }}" alt="{{ S.brand_short }}" width="150" height="60"><img class="logo-dark" src="{{ S.logo_white or '/img/logo-white.svg' }}" alt="{{ S.brand_short }}" width="150" height="60" loading="lazy"></a>
+      <button class="theme-btn" type="button" data-theme-toggle aria-pressed="false" aria-label="الوضع الليلي" data-tip="الوضع الليلي">{{ icon('moon', 'th-moon') }}{{ icon('sun', 'th-sun') }}</button>
       <button class="mnav-close" type="button" data-menu-close aria-label="إغلاق القائمة">{{ icon('x') }}</button>
     </div>
     <ul class="mnav-list">

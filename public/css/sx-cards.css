@@ -8,6 +8,7 @@
 .sec[data-sxc]{padding-top:88px;padding-bottom:88px}
 .sec+.sec[data-sxc]:not([class*="bg-"]),.bg-white+.sec.bg-white[data-sxc],.bg-gray+.sec.bg-gray[data-sxc]{padding-top:0}
 [data-sxc] .sec-head{margin-bottom:44px}
+.bg-ink[data-sxc] mark,.bg-teal[data-sxc] mark{background:linear-gradient(transparent 60%,rgba(222,173,52,.5) 60%,rgba(222,173,52,.5) 90%,transparent 90%)}
 .sx-ic{display:grid;place-items:center;flex-shrink:0}
 .sx-ic .i{width:50%;height:50%}
 
@@ -405,7 +406,7 @@
     radial-gradient(60% 110% at 0% 100%,rgba(14,110,98,.55),transparent 65%),
     repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 1px,transparent 1px 14px),
     linear-gradient(135deg,var(--teal-dark),var(--teal-deep) 55%,#05302a)}
-.tst-mark{position:absolute;z-index:-1;inset-inline-end:-26px;bottom:-34px;width:190px;height:auto;opacity:.07;transform:rotate(-10deg);pointer-events:none}
+.tst-mark{position:absolute;z-index:-1;inset-inline-end:-26px;bottom:-34px;width:190px;height:auto;opacity:.05;transform:rotate(-10deg);pointer-events:none}
 .tst-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;scroll-behavior:smooth}
 .tst-track::-webkit-scrollbar{display:none}
 .tst-track:focus-visible{outline:3px solid var(--gold);outline-offset:-6px;border-radius:var(--r-xl)}
@@ -413,9 +414,8 @@
 .tst-q{grid-area:q;width:60px;height:60px;border-radius:19px;background:rgba(222,173,52,.14);color:var(--gold);display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(222,173,52,.3)}
 .tst-q .i{width:32px;height:32px;transform:scaleX(-1)}
 .tst-stars{grid-area:stars;display:flex;gap:3px;justify-self:end}
-.tst-stars span{color:rgba(255,255,255,.22);display:grid}
+.tst-stars span{color:rgba(255,255,255,.2);font-size:1.15rem;line-height:1}
 .tst-stars span.on{color:var(--gold)}
-.tst-stars .i{width:18px;height:18px}
 .tst-slide blockquote{grid-area:text;opacity:.25;transform:translateY(10px);transition:opacity .6s var(--ease),transform .7s var(--ease)}
 .tst-slide.is-on blockquote,.no-js .tst-slide blockquote,.tst-slide:only-child blockquote{opacity:1;transform:none}
 .tst-slide blockquote p{font-family:var(--disp);font-weight:700;font-size:clamp(1.2rem,2.1vw,1.5rem);line-height:1.85;color:#fff;text-wrap:pretty}
@@ -446,7 +446,7 @@
   .tst-slide{padding:26px 22px 24px;gap:16px 14px}
   .tst-q{width:50px;height:50px;border-radius:16px}
   .tst-q .i{width:26px;height:26px}
-  .tst-stars .i{width:15px;height:15px}
+  .tst-stars span{font-size:1rem}
   .tst-slide blockquote p{font-size:1.12rem;line-height:1.8}
   .tst-btn{width:46px;height:46px}
   .tst-mark{width:130px}

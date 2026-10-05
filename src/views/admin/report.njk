@@ -1,0 +1,181 @@
+{#- تقرير الأداء القابل للطباعة / الحفظ PDF من المتصفح (A4 عمودي، بلا واجهة اللوحة) -#}
+{% import "admin/partials/charts.njk" as ch with context %}
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>تقرير أداء إصغاء — {{ rangeLabel }} ({{ period }})</title>
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/ThmanyahText-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{ asset('/css/admin.css') }}">
+<link rel="stylesheet" href="{{ asset('/css/admin-charts.css') }}">
+</head>
+<body class="adm rpt">
+<div class="rpt-bar">
+  <a class="btn btn-ghost btn-sm" href="/admin/analytics?d={{ range }}">{{ icon('arrow-right') }} العودة للتقارير</a>
+  <nav class="seg" aria-label="فترة التقرير">
+    {% for o in [[7, '٧ أيام'], [30, '٣٠ يومًا'], [90, '٩٠ يومًا'], [365, 'سنة']] %}<a href="?d={{ o[0] }}&print=0" class="{{ 'on' if range == o[0] }}">{{ o[1] }}</a>{% endfor %}
+  </nav>
+  <button class="btn btn-teal btn-sm" type="button" data-print>{{ icon('download') }} حفظ PDF / طباعة</button>
+  <p>في نافذة الطباعة اختر «حفظ بتنسيق PDF» كوجهة، وفعّل «رسومات الخلفية» إن ظهرت.</p>
+</div>
+
+<main class="rpt-sheet">
+  <header class="rpt-head">
+    <img class="rpt-logo" src="/img/logo.svg" alt="إصغاء للمحاماة والاستشارات القانونية">
+    <div class="rpt-meta">
+      <h1>تقرير أداء الموقع والطلبات</h1>
+      <p><b>{{ rangeLabel }}</b> · {{ period }}</p>
+      <p class="muted">المقارنة مع: {{ prevPeriod }} · أُعدّ في {{ generated }}{% if me %} · {{ me.name }}{% endif %}</p>
+    </div>
+  </header>
+
+  <section class="rpt-kpis" aria-label="ملخص المؤشرات">
+    {{ ch.kpi({ icon: 'users', label: 'الزوار', value: nf(totals.uniques), delta: deltas.uniques, spark: sparks.uniques, sparkColor: 'gold' }) }}
+    {{ ch.kpi({ icon: 'eye', label: 'المشاهدات', value: nf(totals.views), delta: deltas.views, spark: sparks.views, sparkColor: 'gold' }) }}
+    {{ ch.kpi({ icon: 'inbox', tone: 'teal', label: 'الطلبات', value: nf(totals.leads), delta: deltas.leads, spark: sparks.leads, sparkColor: 'teal' }) }}
+    {{ ch.kpi({ icon: 'percent', tone: 'yellow', label: 'معدل التحويل', value: totals.convText, delta: deltas.conv }) }}
+    {{ ch.kpi({ icon: 'award', tone: 'teal', label: 'تم التعاقد', value: nf(totals.won), sub: 'من طلبات الفترة' }) }}
+    {{ ch.kpi({ icon: 'phone', label: 'نقرات الاتصال', value: nf(totals.calls), delta: deltas.calls, spark: sparks.calls, sparkColor: 'c2' }) }}
+    {{ ch.kpi({ icon: 'whatsapp', label: 'نقرات واتساب', value: nf(totals.whatsapp), delta: deltas.whatsapp, spark: sparks.whatsapp, sparkColor: 'c1' }) }}
+    {{ ch.kpi({ icon: 'clipboard', label: 'بدأوا تعبئة النموذج', value: nf(totals.formStarts), delta: deltas.formStarts, spark: sparks.formStarts, sparkColor: 'teal' }) }}
+  </section>
+
+  <h2 class="rpt-section">الزيارات والتحويل</h2>
+  <section class="rpt-card">
+    <header class="card-head"><div><h3>الزوار والطلبات {{ 'أسبوعيًا' if range > 90 else 'يوميًا' }}</h3><p class="ch-subtitle">معدل التحويل للفترة: {{ totals.convText }}</p></div></header>
+    {% if hasCombo %}{{ ch.chart('r-combo', combo, 'الزوار والطلبات خلال ' + rangeLabel, 250) }}{% else %}{{ ch.empty('لا توجد زيارات أو طلبات مسجّلة في هذه الفترة.') }}{% endif %}
+  </section>
+
+  <div class="rpt-row">
+    <section class="rpt-card">
+      <header class="card-head"><div><h3>قمع التحويل</h3><p class="ch-subtitle">نسبة العبور من كل مرحلة إلى التالية</p></div></header>
+      {% if funnel %}{{ ch.funnel(funnel) }}{% else %}{{ ch.empty('لا توجد زيارات في هذه الفترة.', 'filter') }}{% endif %}
+    </section>
+    {% if pipeline %}
+    <section class="rpt-card">
+      <header class="card-head"><div><h3>حالة طلبات الفترة</h3><p class="ch-subtitle">{{ nf(pipeline.total) }} طلبًا{% if pipeline.spam %} (عدا {{ nf(pipeline.spam) }} غير جاد){% endif %}</p></div></header>
+      {% if pipeline.total %}{{ ch.pipeline(pipeline, false) }}{% else %}{{ ch.empty('لا توجد طلبات في هذه الفترة.', 'inbox') }}{% endif %}
+      {% if resp %}<div class="ch-facts"><div><small>زمن الرد المعتاد</small><b>{{ resp.text }}</b><em>الوسيط لـ{{ nf(resp.n) }} طلبًا</em></div><div><small>تم التواصل خلال ساعة</small><b>{{ nf(resp.within1h) }}٪</b><em>من الطلبات التي تم التواصل معها</em></div></div>{% endif %}
+    </section>
+    {% else %}
+    <section class="rpt-card">
+      <header class="card-head"><div><h3>الأجهزة</h3><p class="ch-subtitle">توزيع الزوار حسب الجهاز</p></div></header>
+      {% if devTotal %}{{ ch.donut('r-devices-a', devicesChart, devices, 'توزيع الزوار حسب الجهاز') }}{% else %}{{ ch.empty('لا توجد بيانات.', 'smartphone') }}{% endif %}
+    </section>
+    {% endif %}
+  </div>
+
+  <div class="rpt-row">
+    <section class="rpt-card">
+      <header class="card-head"><div><h3>مصادر الزيارات عبر الزمن</h3><p class="ch-subtitle">عدد الزوار من أكبر ٤ مصادر</p></div></header>
+      {% if sourcesChart %}{{ ch.legend(sourcesLegend) }}<div style="height:8px"></div>{{ ch.chart('r-sources', sourcesChart, 'مصادر الزيارات عبر الزمن', 200) }}{% else %}{{ ch.empty('لا توجد بيانات.', 'globe') }}{% endif %}
+    </section>
+    {% if pipeline %}
+    <section class="rpt-card">
+      <header class="card-head"><div><h3>الأجهزة</h3><p class="ch-subtitle">توزيع الزوار حسب الجهاز</p></div></header>
+      {% if devTotal %}{{ ch.donut('r-devices', devicesChart, devices, 'توزيع الزوار حسب الجهاز') }}{% else %}{{ ch.empty('لا توجد بيانات.', 'smartphone') }}{% endif %}
+    </section>
+    {% else %}
+    <section class="rpt-card">
+      <header class="card-head"><div><h3>نقرات الاتصال والواتساب</h3></div>{{ ch.legend([{ label: 'واتساب', color: 'c1', value: nf(totals.whatsapp) }, { label: 'اتصال', color: 'c2', value: nf(totals.calls) }]) }}</header>
+      {% if hasContacts %}{{ ch.chart('r-contacts-a', contactsChart, 'نقرات الاتصال والواتساب', 200) }}{% else %}{{ ch.empty('لا توجد نقرات مسجّلة.', 'phone') }}{% endif %}
+    </section>
+    {% endif %}
+  </div>
+
+  <h2 class="rpt-section">الطلبات</h2>
+  <div class="rpt-row">
+    <section class="rpt-card">
+      <header class="card-head"><div><h3>مصادر الطلبات</h3><p class="ch-subtitle">حسب القناة، مع عدد المتعاقدين</p></div></header>
+      {% if leadSources.rows.length %}{{ ch.hbars(leadSources, { won: true }) }}{% else %}{{ ch.empty('لا توجد طلبات في هذه الفترة.', 'megaphone') }}{% endif %}
+    </section>
+    {% if cases %}
+    <section class="rpt-card">
+      <header class="card-head"><div><h3>أنواع القضايا المطلوبة</h3><p class="ch-subtitle">حسب نوع القضية أو الخدمة</p></div></header>
+      {% if cases.rows.length %}{{ ch.hbars(cases, { won: true }) }}{% else %}{{ ch.empty('لا توجد طلبات في هذه الفترة.', 'scale') }}{% endif %}
+    </section>
+    {% else %}
+    <section class="rpt-card">
+      <header class="card-head"><div><h3>كل مصادر الزيارات</h3></div></header>
+      {% if sourceBars.rows.length %}{{ ch.hbars(sourceBars, { metric: 'الزوار' }) }}{% else %}{{ ch.empty('لا توجد بيانات.', 'globe') }}{% endif %}
+    </section>
+    {% endif %}
+  </div>
+
+  {% if pipeline %}
+  <div class="rpt-row">
+    <section class="rpt-card">
+      <header class="card-head"><div><h3>نقرات الاتصال والواتساب</h3><p class="ch-subtitle">كيف يفضّل الزوار التواصل؟</p></div>{{ ch.legend([{ label: 'واتساب', color: 'c1', value: nf(totals.whatsapp) }, { label: 'اتصال', color: 'c2', value: nf(totals.calls) }]) }}</header>
+      {% if hasContacts %}{{ ch.chart('r-contacts', contactsChart, 'نقرات الاتصال والواتساب', 200) }}{% else %}{{ ch.empty('لا توجد نقرات مسجّلة.', 'phone') }}{% endif %}
+    </section>
+    <section class="rpt-card">
+      <header class="card-head"><div><h3>أوقات وصول الطلبات</h3><p class="ch-subtitle">اليوم × الساعة بتوقيت الرياض</p></div></header>
+      {% if heat and heat.total %}{{ ch.heat(heat) }}{% else %}{{ ch.empty('لا توجد طلبات في هذه الفترة.', 'clock') }}{% endif %}
+    </section>
+  </div>
+  {% endif %}
+
+  <h2 class="rpt-section">الصفحات والحملات</h2>
+  <section class="rpt-card">
+    <header class="card-head"><h3>أكثر الصفحات زيارة</h3></header>
+    {% if pages.length %}
+    <table class="rpt-tbl">
+      <thead><tr><th>الرابط</th><th class="num">المشاهدات</th><th class="num">الزوار</th><th class="num">بدء النموذج</th><th class="num">الطلبات</th><th class="num">التحويل</th></tr></thead>
+      <tbody>{% for p in pages | batch(15) | first %}<tr><td class="ltr" dir="ltr">{{ p.path }}</td><td class="num">{{ nf(p.v) }}</td><td class="num">{{ nf(p.u) }}</td><td class="num">{{ nf(p.starts) }}</td><td class="num">{{ nf(p.leads) }}</td><td class="num">{{ p.conv }}</td></tr>{% endfor %}</tbody>
+    </table>
+    {% else %}<p class="muted">لا توجد زيارات مسجّلة في هذه الفترة.</p>{% endif %}
+  </section>
+
+  <div class="rpt-row">
+    <section class="rpt-card">
+      <header class="card-head"><h3>مصادر الزيارات</h3></header>
+      {% if sources.length %}
+      <table class="rpt-tbl">
+        <thead><tr><th>المصدر</th><th class="num">الزوار</th><th class="num">المشاهدات</th><th class="num">الحصة</th></tr></thead>
+        <tbody>{% for s in sources | batch(10) | first %}<tr><td>{{ s.label }}</td><td class="num">{{ nf(s.u) }}</td><td class="num">{{ nf(s.v) }}</td><td class="num">{{ nf(s.u / totals.uniques * 100 if totals.uniques else 0, 1) }}٪</td></tr>{% endfor %}</tbody>
+      </table>
+      {% else %}<p class="muted">لا توجد بيانات.</p>{% endif %}
+    </section>
+    <section class="rpt-card">
+      <header class="card-head"><h3>صفحات الهبوط</h3></header>
+      {% if landing.length %}
+      <table class="rpt-tbl">
+        <thead><tr><th>الصفحة</th><th class="num">الزوار</th><th>الاتجاه</th><th class="num">الطلبات</th><th class="num">التحويل</th></tr></thead>
+        <tbody>{% for p in landing %}<tr><td>{{ p.title }}</td><td class="num">{{ nf(p.uniques) }}</td><td>{% if p.uniques %}<svg class="ch-spark sm" data-spark="{{ p.spark | join(',') }}" data-color="gold" aria-hidden="true"></svg>{% endif %}</td><td class="num">{{ nf(p.leads) }}</td><td class="num">{{ p.conv }}</td></tr>{% endfor %}</tbody>
+      </table>
+      {% else %}<p class="muted">لا توجد صفحات هبوط.</p>{% endif %}
+    </section>
+  </div>
+
+  {% if campaigns.length %}
+  <section class="rpt-card">
+    <header class="card-head"><h3>الحملات الإعلانية (UTM)</h3></header>
+    <table class="rpt-tbl">
+      <thead><tr><th>الحملة</th><th>المصدر</th><th class="num">الطلبات</th><th class="num">تم التعاقد</th><th class="num">نسبة التعاقد</th></tr></thead>
+      <tbody>{% for c in campaigns %}<tr><td class="ltr" dir="ltr">{{ c.campaign }}</td><td class="ltr" dir="ltr">{{ c.source }}</td><td class="num">{{ nf(c.leads) }}</td><td class="num">{{ nf(c.won) }}</td><td class="num">{{ nf(c.won / c.leads * 100 if c.leads else 0, 1) }}٪</td></tr>{% endfor %}</tbody>
+    </table>
+  </section>
+  {% endif %}
+
+  <p class="rpt-note">الإحصاءات من الموقع نفسه بدون كوكيز طرف ثالث وتستبعد الزواحف والروبوتات. الأوقات بتوقيت الرياض. الطلبات غير الجادة مستبعدة من الأرقام.</p>
+</main>
+
+<script src="/vendor/chart.umd.min.js"></script>
+<script src="{{ asset('/js/admin-charts.js') }}"></script>
+<script>
+(function () {
+  var btn = document.querySelector('[data-print]');
+  if (btn) btn.addEventListener('click', function () { window.print(); });
+  {% if autoprint %}
+  // طباعة تلقائية بعد اكتمال الرسوم (يمكن تعطيلها بـ ?print=0)
+  var printed = false;
+  function go() { if (printed) return; printed = true; setTimeout(function () { window.print(); }, 500); }
+  if (document.documentElement.classList.contains('charts-ready')) go(); else window.addEventListener('adm:charts-ready', go);
+  {% endif %}
+})();
+</script>
+</body>
+</html>

@@ -342,7 +342,7 @@ export const SECTION_TYPES = {
       { name: 'address_title', label: 'بطاقة العنوان — العنوان', type: 'text', default: 'المكتب الرئيسي' },
       { name: 'show_map', label: 'إظهار الخريطة', type: 'toggle', default: true },
       { name: 'map_title', label: 'وصف الخريطة لقارئات الشاشة', type: 'text', default: 'موقع إصغاء على الخريطة' },
-      { name: 'map_link_label', label: 'رابط فتح الخريطة (اتركه فارغًا لإخفائه)', type: 'text', default: 'افتح في خرائط جوجل' },
+      { name: 'map_link_label', label: 'زر فتح الخريطة فوقها (اختياري — مثال: افتح في خرائط جوجل)', type: 'text', default: '' },
       bg, anchor,
     ],
   },
@@ -415,7 +415,13 @@ export const SECTION_TYPES = {
   },
   posts_latest: {
     label: 'أحدث المقالات (تلقائي)', group: 'عام', icon: 'newspaper',
-    fields: [...head('المعرفة القانونية', 'مقالات وإرشادات قانونية'), { name: 'count', label: 'العدد', type: 'number', default: 3 }, bg, anchor],
+    fields: [
+      ...head('المعرفة القانونية', 'مقالات وإرشادات قانونية'),
+      { name: 'count', label: 'العدد', type: 'number', default: 3 },
+      { name: 'all_label', label: 'نص زر كل المقالات', type: 'text', default: 'كل المقالات' },
+      { name: 'all_url', label: 'رابط زر كل المقالات', type: 'text', dir: 'ltr', default: '/insights' },
+      bg, anchor,
+    ],
   },
   video: {
     label: 'فيديو يوتيوب', group: 'عام', icon: 'play',

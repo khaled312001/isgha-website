@@ -377,8 +377,12 @@
         $$('.has-err', container.ownerDocument).forEach(function (x) { x.classList.remove('has-err'); });
         var c = ctrls[name];
         if (!c || !c.wrap) return;
-        c.wrap.classList.add('has-err', 'fld');
-        c.wrap.appendChild(h('span', { class: 'err-msg fld-err', text: msg }));
+        c.wrap.classList.add('has-err');
+        var em = h('span', { class: 'err-msg fld-err', text: msg, role: 'alert' });
+        c.wrap.appendChild(em);
+        // يختفي الخطأ بمجرد أن يصحح المستخدم الحقل
+        var clear = function () { em.remove(); c.wrap.classList.remove('has-err'); c.wrap.removeEventListener('input', clear); c.wrap.removeEventListener('change', clear); };
+        c.wrap.addEventListener('input', clear); c.wrap.addEventListener('change', clear);
         c.wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
         if (c.input) c.input.focus();
       },
