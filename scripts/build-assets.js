@@ -41,7 +41,7 @@ export const ICONS = {
   baby: 'baby', heart: 'heart', 'shield-alert': 'shield-warning', receipt: 'receipt', ship: 'boat',
   crown: 'crown', compass: 'compass', route: 'path', sliders: 'sliders-horizontal', wand: 'magic-wand',
   graduation: 'graduation-cap', presentation: 'presentation-chart', 'pen-tool': 'pen-nib', notebook: 'notebook',
-  clipboard: 'clipboard-text', 'circle-dot': 'radio-button', sun: 'sun', moon: 'moon', laptop: 'laptop',
+  clipboard: 'clipboard-text', 'circle-dot': 'radio-button', sun: 'sun', moon: 'moon', laptop: 'laptop', more: 'dots-three-vertical',
 };
 
 // شعارات المنصات بوزن fill (مصمتة) لأنها أوضح وأقرب للشعار الرسمي
@@ -52,6 +52,7 @@ const BRAND = {
 
 // رموز الواجهة الصغيرة (أسهم، إغلاق، علامة صح…) بوزن regular لأن طبقة duotone تشوّهها
 const UI_REGULAR = new Set([
+  'more',
   'check', 'plus', 'minus', 'x', 'menu', 'grip', 'list', 'list-ordered', 'hash', 'percent', 'activity', 'type', 'code', 'quote',
   'arrow-left', 'arrow-right', 'arrow-up-left', 'chevron-down', 'chevron-left', 'chevron-right', 'chevron-up',
   'external-link', 'refresh', 'undo', 'move', 'link', 'trending-up', 'rows', 'columns',

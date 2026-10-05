@@ -1,11 +1,10 @@
 /* إصغاء — الوضع الليلي/النهاري
-   السكربت المضمّن أعلى <head> يضبط data-theme قبل أول رسم؛ هذا الملف يتولى زر التبديل والحفظ ومتابعة إعداد النظام */
+   النهاري هو الافتراضي دائمًا؛ الليلي فقط باختيار الزائر. السكربت المضمّن أعلى <head> يضبط data-theme قبل أول رسم؛ هذا الملف يتولى زر التبديل والحفظ */
 (function () {
   'use strict';
   var doc = document.documentElement;
   var KEY = 'isgha_theme';
   var DARK_META = '#0e1412';
-  var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
   var meta = document.querySelector('meta[name="theme-color"]');
   var lightMeta = meta ? meta.getAttribute('content') : '';
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -17,7 +16,7 @@
   function save(v) {
     try { localStorage.setItem(KEY, v); } catch (e) {}
   }
-  function system() { return mq && mq.matches ? 'dark' : 'light'; }
+  function system() { return 'light'; }
   function current() { return doc.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
 
   function sync(t) {
@@ -52,13 +51,6 @@
     save(next);
     apply(next, true);
   });
-
-  // متابعة إعداد النظام فقط ما دام الزائر لم يختر بنفسه
-  function onSystem() { if (!saved()) apply(system(), true); }
-  if (mq) {
-    if (mq.addEventListener) mq.addEventListener('change', onSystem);
-    else if (mq.addListener) mq.addListener(onSystem);
-  }
 
   // مزامنة التبويبات المفتوحة الأخرى
   window.addEventListener('storage', function (e) {

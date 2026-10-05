@@ -136,7 +136,7 @@
   .cx-fl-wires{display:none}
   .cx-fl-col{align-items:center;gap:14px}
   .cx-fl-list{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:10px}
-  .cx-fl-out .cx-fl-list{flex-direction:column;width:100%}
+  .cx-fl-col{gap:10px}
   .cx-fl-in .cx-fl-list{align-items:center}
   .cx-fl-in .cx-fl-box:nth-child(n){transform:rotate(-1.2deg);margin:0}
   .cx-fl-in .cx-fl-box:nth-child(2n){transform:rotate(1.2deg)}
@@ -145,16 +145,16 @@
   .cx-fl-ic .i{width:16px;height:16px}
   .cx-fl .cx-fl-out .cx-fl-box{transform:translateY(10px)}
   .cx-fl-hub{width:min(290px,100%);margin:0 auto}
-  .cx-fl-core{padding:34px 20px 20px;border-radius:120px 120px 24px 24px}
-  .cx-fl-mark{width:32px;margin-bottom:4px}
+  .cx-fl-core{padding:28px 18px 18px;border-radius:120px 120px 24px 24px}
+  .cx-fl-mark{width:28px;margin-bottom:2px}
   .cx-fl-name{font-size:1.6rem}
   .cx-fl-stages{margin-top:10px;padding-top:10px}
-  .cx-fl-v{display:block;position:relative;width:2px;height:34px;margin:6px auto;background:repeating-linear-gradient(to bottom,var(--line-2) 0 4px,transparent 4px 9px);overflow:visible}
+  .cx-fl-v{display:block;position:relative;width:2px;height:28px;margin:4px auto;background:repeating-linear-gradient(to bottom,var(--line-2) 0 4px,transparent 4px 9px);overflow:visible}
   .cx-fl-v::after{content:"";position:absolute;top:0;left:-3px;width:8px;height:8px;border-radius:50%;background:var(--muted-2);animation:cxDrop 1.8s var(--ease) infinite}
   .cx-fl-v2{background:var(--teal)}
   .cx-fl-v2::after{background:var(--gold)}
 }
-@keyframes cxDrop{0%{transform:translateY(-4px);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateY(30px);opacity:0}}
+@keyframes cxDrop{0%{transform:translateY(-4px);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translateY(24px);opacity:0}}
 
 /* ═══════════════ بطاقات بواجهات مصغرة ═══════════════ */
 .cx-show-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
@@ -316,7 +316,11 @@ html.js:not(.no-js) .cx-faq-list:not(.is-all) .cx-qa.is-extra{display:none}
   .cx-qa-t{font-size:.95rem}
   .cx-qa-pm{width:30px;height:30px}
   .cx-qa-txt{padding-inline:42px 14px;font-size:.92rem}
-  .cx-faq-ask{padding:22px 20px}
+  .cx-faq-ask{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:0 14px;padding:18px}
+  .cx-faq-ask-ic{margin:0;width:44px;height:44px}
+  .cx-faq-ask b{font-size:1.06rem}
+  .cx-faq-ask p{display:none}
+  .cx-faq-ask-btn{grid-column:1/-1;justify-content:center;margin-top:14px}
 }
 
 /* ═══════════════ شريط الدعوة: تركوازي عميق نحيف ═══════════════ */

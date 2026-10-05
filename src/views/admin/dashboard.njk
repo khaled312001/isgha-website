@@ -62,7 +62,7 @@
       <span class="ch-badge">معدل التحويل <b>{{ TR.convText }}</b></span>
     </header>
     {% if TR.hasCombo %}
-    {{ ch.chart('ch-combo', TR.combo, 'الزوار والطلبات يوميًا خلال آخر ٣٠ يومًا', 270, nf(TR.visitors) + ' زائرًا و' + nf(L.month if L else 0) + ' طلبًا، بمعدل تحويل ' + TR.convText) }}
+    {{ ch.chart('ch-combo', TR.combo, 'الزوار والطلبات يوميًا خلال آخر ٣٠ يومًا', 380,nf(TR.visitors) + ' زائرًا و' + nf(L.month if L else 0) + ' طلبًا، بمعدل تحويل ' + TR.convText) }}
     {% else %}
     {{ ch.empty('ستظهر الزيارات والطلبات هنا بعد أول زيارات للموقع.', 'users') }}
     {% endif %}
@@ -104,8 +104,8 @@
       {{ ch.legend([{ label: 'واتساب', color: 'c1', value: nf(TR.wa) }, { label: 'اتصال هاتفي', color: 'c2', value: nf(TR.calls) }]) }}
     </header>
     {% if TR.hasContacts %}
-    <p class="ch-note">{{ icon('whatsapp') }} <span><b>{{ nf(TR.waShare) }}٪</b> من نقرات التواصل كانت على واتساب {{ ch.delta(TR.contactsDelta) }}</span></p>
-    {{ ch.chart('ch-contacts', TR.contactsChart, 'نقرات الاتصال والواتساب يوميًا خلال آخر ٣٠ يومًا', 210, nf(TR.wa) + ' نقرة واتساب و' + nf(TR.calls) + ' نقرة اتصال.') }}
+    <p class="ch-note">{{ icon('whatsapp') }} <span><b>{{ nf(TR.waShare) }}٪</b> من نقرات التواصل كانت على واتساب</span></p>
+    {{ ch.chart('ch-contacts', TR.contactsChart, 'نقرات الاتصال والواتساب يوميًا خلال آخر ٣٠ يومًا', 280,nf(TR.wa) + ' نقرة واتساب و' + nf(TR.calls) + ' نقرة اتصال.') }}
     {% else %}
     {{ ch.empty('لم تُسجَّل نقرات على أزرار الاتصال أو الواتساب بعد.', 'phone') }}
     {% endif %}

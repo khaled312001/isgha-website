@@ -25,7 +25,7 @@
       <td class="w-act nowrap">
         <a class="btn btn-ink btn-sm" href="/admin/pages/{{ p.id }}">{{ icon('pencil') }} تعديل</a>
         <details class="menu">
-          <summary class="icon-btn" aria-label="المزيد">{{ icon('sliders') }}</summary>
+          <summary class="icon-btn" aria-label="المزيد" title="المزيد">{{ icon('more') }}</summary>
           <div class="menu-pop">
             {% if p.url %}<a href="{{ p.url }}" target="_blank" rel="noopener">{{ icon('external-link') }} عرض</a>{% endif %}
             <form method="post" action="/admin/pages/{{ p.id }}/duplicate"><input type="hidden" name="_csrf" value="{{ csrf }}"><button type="submit">{{ icon('copy') }} نسخ الصفحة</button></form>

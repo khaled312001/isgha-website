@@ -597,3 +597,7 @@ select.status-select{width:auto;min-height:0;line-height:1.7;box-shadow:none}
   .tbl.cards td:empty{display:none}
   .card-head.pad{padding:16px 16px 0}
 }
+
+/* أزرار النسخ والحذف أسفل زر الحفظ في نموذج التعديل */
+.side-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.side-acts .btn{justify-content:center}

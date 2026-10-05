@@ -39,7 +39,7 @@
         <a class="icon-btn" href="/admin/r/{{ def.key }}/{{ r.id }}" title="تعديل" aria-label="تعديل">{{ icon('pencil') }}</a>
         {% if r._view %}<a class="icon-btn" href="{{ r._view }}" target="_blank" rel="noopener" title="عرض في الموقع" aria-label="عرض">{{ icon('external-link') }}</a>{% endif %}
         <details class="menu">
-          <summary class="icon-btn" aria-label="المزيد">{{ icon('sliders') }}</summary>
+          <summary class="icon-btn" aria-label="المزيد" title="المزيد">{{ icon('more') }}</summary>
           <div class="menu-pop">
             <form method="post" action="/admin/r/{{ def.key }}/{{ r.id }}/duplicate"><input type="hidden" name="_csrf" value="{{ csrf }}"><button type="submit">{{ icon('copy') }} نسخ</button></form>
             <form method="post" action="/admin/r/{{ def.key }}/{{ r.id }}/delete"><input type="hidden" name="_csrf" value="{{ csrf }}"><button type="submit" class="danger" data-confirm="حذف «{{ r._title | plain | truncate_ar(60) }}» نهائيًا؟">{{ icon('trash') }} حذف</button></form>

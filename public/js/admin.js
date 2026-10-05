@@ -162,6 +162,8 @@
     input.value = f.type === 'datetime' ? toLocalInput(v) : (v == null ? '' : v);
     if (f.type === 'datetime') input.classList.toggle('is-empty', !input.value);
     input.addEventListener('input', ctx.changed);
+    // رابط بلا بروتوكول (example.com/x) يُكمَّل تلقائيًا بـ https:// حتى لا يُرفض عند الحفظ
+    if (f.type === 'url') input.addEventListener('blur', function () { var s = input.value.trim(); if (s && !/^(\/|https?:\/\/|#|tel:|mailto:)/i.test(s) && /^[^\s\/]+\.[^\s\/]{2,}/.test(s)) { input.value = 'https://' + s.replace(/^\/+/, ''); ctx.changed(); } });
     return { el: input, input: input, get: function () {
       if (f.type === 'number') return input.value === '' ? '' : Number(input.value);
       if (f.type === 'datetime') return input.value ? new Date(input.value).toISOString() : '';
@@ -604,6 +606,25 @@
     }
     sel.addEventListener('change', upd); custom.addEventListener('change', upd); upd();
   })();
+
+  // القوائم المنبثقة داخل الجداول: تُثبَّت فوق الصفحة حتى لا تقصّها حاوية الجدول، وتفتح لأعلى إذا لم تتسع المساحة
+  document.addEventListener('toggle', function (e) {
+    var m = e.target;
+    if (!m.matches || !m.matches('details.menu')) return;
+    var pop = m.querySelector('.menu-pop');
+    if (!pop) return;
+    if (!m.open) { pop.removeAttribute('style'); return; }
+    var r = m.querySelector('summary').getBoundingClientRect();
+    pop.style.position = 'fixed';
+    pop.style.insetInlineEnd = 'auto';
+    var w = pop.offsetWidth, h = pop.offsetHeight;
+    var left = Math.min(Math.max(8, r.left), innerWidth - w - 8);
+    var top = r.bottom + 4 + h > innerHeight - 8 ? Math.max(8, r.top - h - 4) : r.bottom + 4;
+    pop.style.left = left + 'px';
+    pop.style.top = top + 'px';
+    pop.style.right = 'auto';
+  }, true);
+  window.addEventListener('scroll', function () { $$('details.menu[open]').forEach(function (m) { m.removeAttribute('open'); }); }, true);
 
   window.ADM = { api: api, toast: toast, h: h, icon: icon, busy: busy, debounce: debounce, copy: copyText, modal: modal, openPicker: openPicker, renderFields: renderFields, mountForm: mountForm, chart: chart, utmBuilder: utmBuilder, uploadFiles: uploadFiles };
 })();

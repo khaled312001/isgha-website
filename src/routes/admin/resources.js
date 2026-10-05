@@ -128,6 +128,9 @@ async function save(req, res, def, id) {
   const data = coerceFields(def.fields, req.body?.values || {}, { allowCode: false, prev: prev || {} });
   for (const f of def.fields) {
     if (f.required && (data[f.name] === '' || data[f.name] == null)) return fail(res, 422, `الحقل «${f.label}» مطلوب.`, { field: f.name });
+    // رابط مكتوب لكنه رُفض عند التنقية — نُنبّه بدل حذفه بصمت
+    const raw = req.body?.values?.[f.name];
+    if (f.type === 'url' && typeof raw === 'string' && raw.trim() && !data[f.name]) return fail(res, 422, `الحقل «${f.label}» يجب أن يبدأ بـ https:// أو /`, { field: f.name });
   }
   if (def.table === 'redirects') {
     let from = String(data.from_path || '').trim();
@@ -179,6 +182,8 @@ async function save(req, res, def, id) {
   afterChange(def);
   const title = plain(String(data[def.titleField] || '')).slice(0, 120);
   logActivity(req, id ? 'update' : 'create', def.key, newId, title);
+  // بعد الإضافة ينتقل المتصفح لصفحة التعديل، فتُعرض رسالة النجاح هناك
+  if (!id) flash(req, 'success', `تمت إضافة «${title || def.singular}» — يمكنك متابعة التعديل هنا.`);
   return res.json({ ok: true, id: newId, redirect: id ? null : `/admin/r/${def.key}/${newId}`, message: id ? 'تم حفظ التعديلات.' : 'تمت الإضافة.' });
 }
 

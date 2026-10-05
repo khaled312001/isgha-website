@@ -142,7 +142,7 @@ a.ch-hb:hover,.ch-hb:focus-visible{background:var(--soft)}
 .ch-heat{width:100%;border-collapse:separate;border-spacing:3px;table-layout:fixed;margin:-3px}
 .ch-heat th{font-weight:400;font-size:.7rem;color:var(--muted);text-align:center;padding:0 0 3px}
 .ch-heat thead th span{display:block;white-space:nowrap;overflow:hidden}
-.ch-heat thead td{width:44px}
+.ch-heat thead td{width:44px;background:none;height:auto}
 .ch-heat tbody th{text-align:start;font-size:.76rem;color:var(--ink-2);padding:0 0 0 4px;white-space:nowrap}
 .ch-heat abbr{text-decoration:none}
 .ch-heat td{height:27px;border-radius:5px;background:var(--heat-0);transition:box-shadow .12s}
@@ -293,4 +293,12 @@ body.rpt{background:#e9e7df;padding:0 0 40px;-webkit-print-color-adjust:exact;pr
   .rpt-sheet{width:auto;margin:0;padding:0;box-shadow:none;gap:4.5mm}
   .rpt-card,.rpt-kpis .kpi{box-shadow:none}
   a{color:inherit}
+  /* أمان: لا تتجاوز اللوحات بطاقاتها مهما كان عرض الشاشة وقت الرسم (تُصغَّر بنسبتها) */
+  .ch-box canvas{max-width:100%!important;height:auto!important}
+  .ch-box{height:auto!important}
+  .ch-panel-c{height:auto!important}
+  /* ألوان صلبة بدل التدرجات في PDF */
+  .ch-mark{background:#ffe680}
+  .ch-empty{background:#faf9f5}
 }
+.ch-fnl-l .ch-flag{margin-inline-start:6px;vertical-align:1px}

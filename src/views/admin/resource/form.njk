@@ -12,11 +12,19 @@
       <button class="btn btn-teal btn-block btn-lg" type="submit">{{ icon('save') }} {{ 'حفظ التعديلات' if row else 'إضافة' }}</button>
       <a class="btn btn-ghost btn-block" href="{{ boot.back }}">رجوع للقائمة</a>
       {% if row %}<p class="hint center">آخر تعديل: {{ row.updated_at | rel | ar if row.updated_at else '—' }}</p>{% endif %}
+      {% if row %}<div class="side-acts">
+        <button class="btn btn-line btn-sm" type="submit" form="dup-row">{{ icon('copy') }} نسخ</button>
+        <button class="btn btn-danger-ghost btn-sm" type="submit" form="del-row" data-confirm="حذف «{{ (row[def.titleField] or def.singular) | plain | truncate_ar(60) }}» نهائيًا؟">{{ icon('trash') }} حذف</button>
+      </div>{% endif %}
       <p class="hint center kbd-hint">اختصار الحفظ: <kbd>Ctrl</kbd> + <kbd>S</kbd></p>
     </div>
     <div class="card" id="ff-seo" hidden><h3 class="mini-title">{{ icon('scan-search') }} محركات البحث</h3></div>
   </aside>
 </form>
+{% if row %}
+<form id="dup-row" method="post" action="/admin/r/{{ def.key }}/{{ row.id }}/duplicate" hidden><input type="hidden" name="_csrf" value="{{ csrf }}"></form>
+<form id="del-row" method="post" action="/admin/r/{{ def.key }}/{{ row.id }}/delete" hidden><input type="hidden" name="_csrf" value="{{ csrf }}"></form>
+{% endif %}
 {% endblock %}
 {% block scripts %}
 <script src="/vendor/sortable.min.js"></script>

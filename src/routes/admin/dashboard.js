@@ -50,12 +50,12 @@ const rate = (a, b) => (b ? (a / b) * 100 : null);
 function delta(cur, prev, vs) {
   if (!prev) return cur ? { cls: 'up', text: 'جديد', vs } : null;
   const p = Math.round(((cur - prev) / prev) * 100);
-  return { cls: p > 0 ? 'up' : p < 0 ? 'down' : 'flat', text: `${nf(Math.abs(p))}٪`, vs };
+  return p === 0 ? { cls: 'flat', text: 'دون تغيير', vs } : { cls: p > 0 ? 'up' : 'down', text: `${nf(Math.abs(p))}٪`, vs };
 }
 function deltaPts(cur, prev, vs) {
   if (cur == null || prev == null) return null;
   const d = Math.round((cur - prev) * 10) / 10;
-  return { cls: d > 0 ? 'up' : d < 0 ? 'down' : 'flat', text: `${nf(Math.abs(d), Math.abs(d) < 10 ? 1 : 0)} نقطة`, vs };
+  return d === 0 ? { cls: 'flat', text: 'دون تغيير', vs } : { cls: d > 0 ? 'up' : 'down', text: `${nf(Math.abs(d), Math.abs(d) < 10 ? 1 : 0)} نقطة`, vs };
 }
 function duration(mins) {
   if (mins == null) return null;
@@ -546,7 +546,7 @@ router.get('/analytics/report', requirePerm('analytics'), wrap(async (req, res) 
   const A = await analyticsData(range, req.user, { report: true });
   res.render('admin/report.njk', {
     title: `تقرير الأداء — ${A.rangeLabel}`, ...A, nf,
-    generated: arDate(new Date(), true), autoprint: req.query.print !== '0',
+    generated: arDigits(arDate(new Date(), true)), autoprint: req.query.print !== '0',
   });
 }));
 

@@ -59,12 +59,11 @@
 <ol class="ch-fnl">
 {% for s in f.stages %}
   <li class="{{ 'is-leak' if s.leak }}">
-    <div class="ch-fnl-h"><span class="ch-fnl-ic">{{ icon(s.icon) }}</span><span class="ch-fnl-l">{{ s.label }}</span><b>{{ nf(s.n) }}</b></div>
+    <div class="ch-fnl-h"><span class="ch-fnl-ic">{{ icon(s.icon) }}</span><span class="ch-fnl-l">{{ s.label }}{% if s.leak %} <span class="ch-flag">أكبر تسرّب</span>{% endif %}</span><b>{{ nf(s.n) }}</b></div>
     {% if not loop.first %}
     <div class="ch-fnl-bar" tabindex="0" data-tip-t="{{ s.of }} ← {{ s.label }}" data-tip="نسبة العبور::{{ s.rateText or '—' }}||لم يكملوا::{{ nf(s.drop) }}">
       <span class="ch-fnl-t" aria-hidden="true"><i style="width:{{ s.w | round(1) }}%"></i></span>
       <small><b>{{ s.rateText or '—' }}</b> من «{{ s.of }}»</small>
-      {% if s.leak %}<span class="ch-flag">أكبر تسرّب</span>{% endif %}
     </div>
     {% endif %}
   </li>
@@ -97,7 +96,7 @@
 </table>
 </div>
 <div class="ch-heat-foot">
-  <span class="ch-scale" aria-hidden="true"><small>أقل</small>{% for i in range(1, 6) %}<i class="l{{ i }}"></i>{% endfor %}<small>أكثر</small></span>
+  <span class="ch-scale" aria-hidden="true"><small>أقل</small>{% for i in [1, 2, 3, 4, 5] %}<i class="l{{ i }}"></i>{% endfor %}<small>أكثر</small></span>
   {% if h.quiet %}<span class="muted">أهدأ يوم: {{ h.quiet }}</span>{% endif %}
 </div>
 {% if h.peaks.length %}

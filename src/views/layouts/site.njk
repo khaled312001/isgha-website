@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl" class="no-js">
 <head>
 <meta charset="utf-8">
-{# الوضع الليلي: يُضبط قبل أول رسم (اختيار الزائر المحفوظ، وإلا إعداد النظام) — التفاصيل في theme.js #}
-<script>(function(d){var t;try{t=localStorage.getItem('isgha_theme')}catch(e){}if(t!=='dark'&&t!=='light')t=window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t)})(document.documentElement)</script>
+{# الوضع النهاري هو الافتراضي؛ الليلي فقط إذا اختاره الزائر بنفسه (يُضبط قبل أول رسم) — التفاصيل في theme.js #}
+<script>(function(d){var t;try{t=localStorage.getItem('isgha_theme')}catch(e){}d.setAttribute('data-theme',t==='dark'?'dark':'light')})(document.documentElement)</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <script>(function(d){d.className=d.className.replace('no-js','js');setTimeout(function(){if(!window.ISGHA_READY)d.classList.add('no-js')},3500)})(document.documentElement)</script>
 <title>{{ meta.title }}</title>
