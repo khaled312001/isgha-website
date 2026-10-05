@@ -97,12 +97,17 @@ function copyVendor() {
     ['chart.js/dist/chart.umd.min.js', 'chart.umd.min.js'],
     ['sortablejs/Sortable.min.js', 'sortable.min.js'],
   ];
+  const done = [];
   for (const [from, to] of files) {
+    if (!fs.existsSync(nm(from))) continue;
     fs.copyFileSync(nm(from), path.join(v, to));
+    done.push(to);
   }
-  console.log('vendor copied:', files.map((f) => f[1]).join(', '));
+  console.log(done.length ? `vendor copied: ${done.join(', ')}` : 'vendor: dev packages not installed — keeping the prebuilt files in public/vendor');
 }
 
+// على الخادم يثبّت npm حزم التشغيل فقط (NODE_ENV=production)، فتُستخدم الملفات المبنية مسبقًا والمحفوظة في المستودع
 fs.mkdirSync(path.join(root, 'src', 'content'), { recursive: true });
-buildSprite();
+if (fs.existsSync(iconsDir)) buildSprite();
+else console.log('icons: @phosphor-icons/core not installed — keeping the prebuilt public/img/icons.svg');
 copyVendor();
