@@ -199,8 +199,8 @@ async function blogIndex(req, res, next, activeCat = null) {
       title: pageNum > 1 ? `${baseTitle} — صفحة ${pageNum}` : baseTitle,
       description: activeCat?.description || sys?.meta_description || hero.lead,
       path: pageNum > 1 ? `${path}?page=${pageNum}` : path,
-      // تصنيف بلا مقالات منشورة = صفحة فارغة ← لا تُفهرس
-      noindex: sys?.noindex || (activeCat && Number(total) === 0),
+      // صفحة بلا مقالات منشورة (المدونة أو تصنيف) = محتوى فارغ ← لا تُفهرس حتى يُنشر أول مقال
+      noindex: sys?.noindex || Number(total) === 0,
     });
     const tail = sys ? preparedSections(sys).filter((s) => !s.hidden && s.type !== 'hero_page') : [];
     const D = await loadSectionData(tail);
@@ -303,7 +303,7 @@ router.get('/sitemap.xml', async (req, res, next) => {
     for (const p of pages) {
       if (['thank-you', 'service_tail'].includes(p.system_key)) continue;
       if (p.system_key === 'home') add('/', latest(p.updated_at, newestPost), '1.0', 'weekly');
-      else if (p.system_key === 'insights') add('/insights', latest(p.updated_at, newestPost), '0.7', 'weekly');
+      else if (p.system_key === 'insights') { if (posts.length) add('/insights', latest(p.updated_at, newestPost), '0.7', 'weekly'); }
       else if (p.system_key === 'services') add('/services', p.updated_at, '0.9');
       else add(`/${p.slug}`, p.updated_at, '0.8');
     }

@@ -4,36 +4,91 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0b1f1c">
 <title>الدخول — لوحة تحكم إصغاء</title>
 <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/img/site/isgha-vision-skyline.webp" as="image">
 <link rel="stylesheet" href="{{ asset('/css/admin.css') }}">
 </head>
 <body class="login-page">
 <main class="login">
-  <section class="login-card">
-    <img class="login-logo" src="/img/logo.svg" alt="إصغاء للمحاماة والاستشارات القانونية" width="190" height="58">
-    <h1>الدخول إلى لوحة التحكم</h1>
-    <p class="muted">أدخل بيانات حسابك لإدارة المحتوى والطلبات والإعلانات.</p>
-    {% if error %}<div class="alert alert-error" role="alert">{{ icon('triangle-alert') }}<span>{{ error }}</span></div>{% endif %}
-    <form method="post" action="/admin/login" class="stack" autocomplete="on">
-      <input type="hidden" name="_csrf" value="{{ csrf }}">
-      <input type="hidden" name="next" value="{{ next or '/admin' }}">
-      <label class="fld"><span>البريد الإلكتروني</span><input type="email" name="email" value="{{ email }}" required autocomplete="username" dir="ltr" autofocus></label>
-      <label class="fld"><span>كلمة المرور</span>
-        <span class="pw"><input type="password" name="password" required autocomplete="current-password" dir="ltr"><button type="button" class="icon-btn" data-pw-toggle aria-label="إظهار كلمة المرور">{{ icon('eye') }}</button></span>
-      </label>
-      <button class="btn btn-teal btn-block btn-lg" type="submit">دخول {{ icon('arrow-left') }}</button>
-    </form>
+  <section class="login-main">
+    <div class="login-top">
+      <a href="/" class="login-brand"><img src="/img/logo.svg" alt="إصغاء للمحاماة والاستشارات القانونية" width="168" height="51"></a>
+      <a href="/" class="login-back">{{ icon('external-link') }}<span>زيارة الموقع</span></a>
+    </div>
+
+    <div class="login-card">
+      <span class="login-badge">{{ icon('lock') }}</span>
+      <h1>مرحبًا بعودتك</h1>
+      <p class="login-sub">سجّل الدخول إلى لوحة تحكم إصغاء لإدارة المحتوى والطلبات والإعلانات.</p>
+
+      {% if error %}<div class="alert alert-error login-alert" role="alert">{{ icon('triangle-alert') }}<span>{{ error }}</span></div>{% endif %}
+
+      <form method="post" action="/admin/login" class="login-form" autocomplete="on" data-login>
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+        <input type="hidden" name="next" value="{{ next or '/admin' }}">
+
+        <div class="lf">
+          <label for="lf-email">البريد الإلكتروني</label>
+          <div class="ig">
+            <span class="ig-ic">{{ icon('mail') }}</span>
+            <input id="lf-email" type="email" name="email" value="{{ email }}" required autocomplete="username" dir="ltr" placeholder="name@isgha.sa" {% if not email %}autofocus{% endif %}>
+          </div>
+        </div>
+
+        <div class="lf">
+          <label for="lf-pass">كلمة المرور</label>
+          <div class="ig">
+            <span class="ig-ic">{{ icon('key') }}</span>
+            <input id="lf-pass" type="password" name="password" required autocomplete="current-password" dir="ltr" placeholder="••••••••••" {% if email %}autofocus{% endif %}>
+            <button type="button" class="ig-btn" data-pw-toggle aria-label="إظهار كلمة المرور" aria-pressed="false" aria-controls="lf-pass">
+              <span class="ig-eye">{{ icon('eye') }}</span><span class="ig-eye-off">{{ icon('eye-off') }}</span>
+            </button>
+          </div>
+          <p class="lf-caps" data-caps hidden>{{ icon('triangle-alert') }}<span>زر الأحرف الكبيرة (Caps Lock) مفعّل</span></p>
+        </div>
+
+        <button class="btn btn-teal btn-block btn-lg login-submit" type="submit"><span>تسجيل الدخول</span>{{ icon('arrow-left') }}</button>
+      </form>
+
+      <p class="login-secure">{{ icon('shield') }}<span>اتصال مشفّر — تُغلق الجلسة تلقائيًا بعد فترة من عدم النشاط.</span></p>
+    </div>
+
+    <p class="login-foot">© {{ now().getFullYear() }} إصغاء للمحاماة والاستشارات القانونية</p>
   </section>
+
   <aside class="login-side" aria-hidden="true">
-    <img src="/img/mark.svg" alt="" width="70" height="80">
-    <p>نُصغي أولًا..<br>ثم نصنع <mark>الحل القانوني</mark></p>
+    <div class="login-side-media"><img src="/img/site/isgha-vision-skyline.webp" alt="" width="1600" height="1000"></div>
+    <div class="login-side-body">
+      <img class="login-side-mark" src="/img/mark.svg" alt="" width="54" height="62">
+      <p class="login-quote">نُصغي أولًا..<br>ثم نصنع <mark>الحل القانوني</mark></p>
+      <ul class="login-points">
+        <li>{{ icon('users') }}<span>طلبات العملاء</span></li>
+        <li>{{ icon('megaphone') }}<span>صفحات الهبوط والإعلانات</span></li>
+        <li>{{ icon('globe') }}<span>محركات البحث SEO</span></li>
+      </ul>
+    </div>
   </aside>
 </main>
 <script>
-document.querySelectorAll('[data-pw-toggle]').forEach(function (b) {
-  b.addEventListener('click', function () { var i = b.parentNode.querySelector('input'); i.type = i.type === 'password' ? 'text' : 'password'; });
-});
+(function () {
+  var t = document.querySelector('[data-pw-toggle]');
+  var pw = document.getElementById('lf-pass');
+  if (t && pw) t.addEventListener('click', function () {
+    var show = pw.type === 'password';
+    pw.type = show ? 'text' : 'password';
+    t.setAttribute('aria-pressed', show ? 'true' : 'false');
+    t.setAttribute('aria-label', show ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور');
+    pw.focus();
+  });
+  var caps = document.querySelector('[data-caps]');
+  if (pw && caps) ['keydown', 'keyup'].forEach(function (ev) {
+    pw.addEventListener(ev, function (e) { if (e.getModifierState) caps.hidden = !e.getModifierState('CapsLock'); });
+  });
+  var f = document.querySelector('[data-login]');
+  if (f) f.addEventListener('submit', function () { var b = f.querySelector('.login-submit'); b.classList.add('is-busy'); });
+})();
 </script>
 </body>
 </html>

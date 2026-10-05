@@ -1,20 +1,28 @@
-<header class="nav" role="banner">
+<header class="nav" role="banner" data-nav>
   <div class="nav-in">
     <a class="nav-logo" href="/" aria-label="{{ S.site_name }} — الرئيسية"><img src="{{ S.logo_compact or '/img/logo-compact-white.svg' }}" alt="{{ S.brand_short }}" width="160" height="45"></a>
-    <nav aria-label="القائمة الرئيسية" style="display:contents">
+    <nav class="nav-main" aria-label="القائمة الرئيسية">
       <ul class="nav-links">
         {% for item in S.nav_items %}
         {% if item.dropdown == 'services' and navCats.length %}
         <li class="has-dd">
-          <a href="{{ item.url }}" {% if currentPath.indexOf(item.url) == 0 and item.url != '/' %}aria-current="page"{% endif %}>{{ item.label }} {{ icon('chevron-down') }}</a>
+          <a href="{{ item.url }}" aria-haspopup="true" {% if currentPath.indexOf(item.url) == 0 and item.url != '/' %}aria-current="page"{% endif %}>{{ item.label }}{{ icon('chevron-down', 'chev') }}</a>
           <div class="dropdown">
-            {% for c in navCats %}
-            <a class="dd-item" href="{{ c.url }}">
-              <span class="dd-ic">{{ icon(c.icon or 'scale') }}</span>
-              <span><b>{{ c.title }}</b><span class="dd-tx">{{ c.tagline or (c.summary | truncate_ar(70)) }}</span></span>
-            </a>
-            {% endfor %}
-            <div class="dd-foot"><span>غير متأكد من الخدمة المناسبة؟</span><a class="link-arrow" href="/consultation">اطلب تقييمًا أوليًا {{ icon('arrow-left') }}</a></div>
+            <div class="dd-grid">
+              {% for c in navCats %}
+              <a class="dd-item" href="{{ c.url }}">
+                <span class="dd-ic">{{ icon(c.icon or 'scale') }}</span>
+                <span class="dd-body"><b>{{ c.title }}</b><span class="dd-tx">{{ c.tagline or (c.summary | truncate_ar(70)) }}</span></span>
+                {{ icon('arrow-left', 'dd-go') }}
+              </a>
+              {% endfor %}
+            </div>
+            {% if S.mega_note or S.mega_cta_label %}
+            <div class="dd-foot">
+              {% if S.mega_note %}<span>{{ S.mega_note }}</span>{% endif %}
+              {% if S.mega_cta_label %}<a class="link-arrow" href="{{ S.mega_cta_url or '/consultation' }}">{{ S.mega_cta_label }} {{ icon('arrow-left') }}</a>{% endif %}
+            </div>
+            {% endif %}
           </div>
         </li>
         {% else %}
@@ -24,28 +32,34 @@
       </ul>
     </nav>
     <div class="nav-actions">
-      <a class="nav-call" href="{{ S.phone | tel }}" aria-label="اتصل بنا {{ S.phone }}">{{ icon('phone') }}</a>
-      {% if S.nav_cta_label %}<a class="btn btn-white" href="{{ S.nav_cta_url }}">{{ S.nav_cta_label }}</a>{% endif %}
-      <button class="nav-toggle" type="button" data-menu-open aria-controls="mnav" aria-label="فتح القائمة">{{ icon('menu') }}</button>
+      <a class="nav-call" href="{{ S.phone | tel }}" aria-label="{{ S.txt_call_now }} {{ S.phone }}">{{ icon('phone') }}</a>
+      {% if S.nav_cta_label %}<a class="btn btn-white nav-cta" href="{{ S.nav_cta_url }}">{{ S.nav_cta_label }} {{ icon('arrow-left') }}</a>{% endif %}
+      <button class="nav-toggle" type="button" data-menu-open aria-controls="mnav" aria-expanded="false" aria-label="فتح القائمة">{{ icon('menu') }}</button>
     </div>
   </div>
 </header>
 
-<div class="mnav" id="mnav" aria-hidden="true" role="dialog" aria-label="القائمة">
-  <div class="mnav-top">
-    <img src="{{ S.logo or '/img/logo.svg' }}" alt="{{ S.brand_short }}" width="150" height="60">
-    <button class="mnav-close" type="button" data-menu-close aria-label="إغلاق القائمة">{{ icon('x') }}</button>
-  </div>
-  <ul>
-    {% for item in S.nav_items %}
-    <li><a href="{{ item.url }}">{{ item.label }} {{ icon('arrow-left') }}</a></li>
-    {% if item.dropdown == 'services' %}
-    {% for c in navCats %}<li class="sub"><a href="{{ c.url }}">{{ c.title }}</a></li>{% endfor %}
-    {% endif %}
-    {% endfor %}
-  </ul>
-  <div class="mnav-cta">
-    <a class="btn btn-teal btn-lg" href="{{ S.nav_cta_url }}">{{ S.nav_cta_label }}</a>
-    <a class="btn btn-line btn-lg" href="{{ S.phone | tel }}">{{ icon('phone') }} {{ S.phone }}</a>
+<div class="mnav" id="mnav" aria-hidden="true" role="dialog" aria-modal="true" aria-label="القائمة">
+  <div class="mnav-backdrop" data-menu-close></div>
+  <div class="mnav-panel">
+    <div class="mnav-top">
+      <a href="/" aria-label="{{ S.site_name }} — الرئيسية"><img src="{{ S.logo or '/img/logo.svg' }}" alt="{{ S.brand_short }}" width="150" height="60"></a>
+      <button class="mnav-close" type="button" data-menu-close aria-label="إغلاق القائمة">{{ icon('x') }}</button>
+    </div>
+    <ul class="mnav-list">
+      {% for item in S.nav_items %}
+      <li style="--k:{{ loop.index0 }}"><a href="{{ item.url }}" {% if (item.url == '/' and currentPath == '/') or (item.url != '/' and currentPath.indexOf(item.url) == 0) %}aria-current="page"{% endif %}>{{ item.label }} {{ icon('arrow-left') }}</a>
+        {% if item.dropdown == 'services' and navCats.length %}
+        <ul class="mnav-sub">
+          {% for c in navCats %}<li><a href="{{ c.url }}"><span class="dd-ic">{{ icon(c.icon or 'scale') }}</span><span>{{ c.title }}</span></a></li>{% endfor %}
+        </ul>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    <div class="mnav-cta">
+      {% if S.nav_cta_label %}<a class="btn btn-teal btn-lg" href="{{ S.nav_cta_url }}">{{ S.nav_cta_label }} {{ icon('arrow-left') }}</a>{% endif %}
+      <a class="btn btn-line btn-lg" href="{{ S.phone | tel }}">{{ icon('phone') }} <span dir="ltr">{{ S.phone }}</span></a>
+    </div>
   </div>
 </div>

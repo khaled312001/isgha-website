@@ -118,4 +118,30 @@
       }, 60);
     }, { passive: true });
   });
+  /* ── الأسئلة الشائعة: أكورديون بزر و aria-expanded + «عرض المزيد» ── */
+  $$('[data-cx-acc]').forEach(function (list) {
+    function setOpen(item, open) {
+      var q = item.querySelector('.cx-qa-q');
+      item.classList.toggle('is-open', open);
+      if (q) q.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    list.addEventListener('click', function (e) {
+      var q = e.target.closest('.cx-qa-q');
+      if (q && list.contains(q)) {
+        var item = q.closest('.cx-qa');
+        var open = !item.classList.contains('is-open');
+        // سؤال واحد مفتوح في كل مرة ليبقى القسم مختصرًا
+        if (open) $$('.cx-qa.is-open', list).forEach(function (x) { if (x !== item) setOpen(x, false); });
+        setOpen(item, open);
+        return;
+      }
+      var more = e.target.closest('[data-cx-more]');
+      if (more && list.contains(more)) {
+        list.classList.add('is-all');
+        more.setAttribute('aria-expanded', 'true');
+        var first = list.querySelector('.cx-qa.is-extra .cx-qa-q');
+        if (first) first.focus({ preventScroll: true });
+      }
+    });
+  });
 })();

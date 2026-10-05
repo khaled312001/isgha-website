@@ -338,10 +338,14 @@
     $('[data-serp-desc]').textContent = (v.meta_description || 'سيُستخدم وصف الصفحة التلقائي…').slice(0, 165);
     $('[data-serp-url]').textContent = base + (B.publicUrl && B.publicUrl !== '/' ? ' › ' + decodeURIComponent(B.publicUrl.slice(1)) : '');
   }
+  var serpBox = $('.serp', psDlg);
   $('[data-bld-settings]').addEventListener('click', function () {
     var box = $('#ps-fields');
     box.innerHTML = '';
     psForm = A.renderFields(box, psFields(), B.settings, { slotImages: {}, onChange: serp });
+    // معاينة جوجل بجانب حقول العنوان والوصف لتُرى أثناء الكتابة
+    var md = $('[data-name="meta_description"]', box);
+    if (md && serpBox) md.parentNode.insertBefore(serpBox, md.nextSibling);
     serp();
     psDlg.showModal();
   });

@@ -32,22 +32,22 @@
     <select name="action" class="sm"><option value="">إجراء جماعي…</option>{% for s in statuses %}<option value="{{ s[0] }}">تغيير الحالة إلى: {{ s[1] }}</option>{% endfor %}<option value="delete">حذف نهائي</option></select>
     <button class="btn btn-ink btn-sm" type="submit" data-confirm="تطبيق الإجراء على الطلبات المحددة؟">تنفيذ</button>
   </div>
-  <div class="table-wrap"><table class="tbl leads-tbl">
+  <div class="table-wrap"><table class="tbl leads-tbl cards" style="--actw:78px">
     <thead><tr><th class="w-chk"><input type="checkbox" data-check-all aria-label="تحديد الكل"></th><th>العميل</th><th>الطلب</th><th>المصدر</th><th>الحالة</th><th>المسؤول</th><th>التاريخ</th><th class="w-act"><span class="sr-only">إجراءات</span></th></tr></thead>
     <tbody>
     {% for l in leads %}
     <tr class="{{ 'is-new' if l.status == 'new' }}">
       <td class="w-chk"><input type="checkbox" name="ids" value="{{ l.id }}" aria-label="تحديد {{ l.name }}"></td>
-      <td><a href="/admin/leads/{{ l.id }}" class="strong">{{ l.name }}</a><small class="ltr muted">{{ l.phonePretty }}</small></td>
-      <td><span>{{ l.case_type or formLabels[l.form] }}</span>{% if l.message %}<small class="muted clamp">{{ l.message | truncate_ar(70) }}</small>{% endif %}</td>
-      <td><span class="src">{{ l.source }}</span>{% if l.utm_campaign %}<small class="muted">{{ l.utm_campaign }}</small>{% endif %}{% if l.page_title %}<small class="muted">{{ l.page_title }}</small>{% endif %}</td>
-      <td>
+      <td class="c-main"><a href="/admin/leads/{{ l.id }}" class="strong">{{ l.name }}</a><small class="ltr muted">{{ l.phonePretty }}</small></td>
+      <td data-label="الطلب"><span>{{ l.case_type or formLabels[l.form] }}</span>{% if l.message %}<small class="muted clamp">{{ l.message | truncate_ar(70) }}</small>{% endif %}</td>
+      <td data-label="المصدر"><span class="src">{{ l.source }}</span>{% if l.utm_campaign %}<small class="muted">{{ l.utm_campaign }}</small>{% endif %}{% if l.page_title %}<small class="muted">{{ l.page_title }}</small>{% endif %}</td>
+      <td data-label="الحالة">
         <select class="status-select {{ l.st.color }}" data-lead-status="{{ l.id }}" aria-label="حالة الطلب">
           {% for s in statuses %}<option value="{{ s[0] }}" {{ 'selected' if l.status == s[0] }}>{{ s[1] }}</option>{% endfor %}
         </select>
       </td>
-      <td class="muted">{{ l.assignee or '—' }}</td>
-      <td class="nowrap"><span title="{{ l.created_at | date(true) | ar }}">{{ l.created_at | rel | ar }}</span></td>
+      <td class="muted" data-label="المسؤول"><span>{{ l.assignee or '—' }}</span></td>
+      <td class="nowrap" data-label="التاريخ"><span title="{{ l.created_at | date(true) | ar }}">{{ l.created_at | rel | ar }}</span></td>
       <td class="w-act nowrap">
         <a class="icon-btn" href="{{ l.phone | tel }}" title="اتصال" aria-label="اتصال">{{ icon('phone') }}</a>
         <a class="icon-btn wa" href="{{ l.phone | wa('السلام عليكم ' + l.name + '، معك فريق إصغاء للمحاماة بخصوص طلبك.') }}" target="_blank" rel="noopener" title="واتساب" aria-label="واتساب">{{ icon('whatsapp') }}</a>

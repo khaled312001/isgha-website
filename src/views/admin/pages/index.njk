@@ -7,21 +7,21 @@
 
 {% if pages.length %}
 <div class="card flush">
-  <div class="table-wrap"><table class="tbl">
+  <div class="table-wrap"><table class="tbl cards" style="--actw:126px">
     <thead><tr><th>الصفحة</th><th>الرابط</th><th>الحالة</th>{% if kind == 'landing' %}<th>الزيارات</th><th>الطلبات</th><th>التحويل</th>{% else %}<th>المشاهدات</th>{% endif %}<th>آخر تعديل</th><th class="w-act"></th></tr></thead>
     <tbody>
     {% for p in pages %}
     <tr>
-      <td><a class="strong" href="/admin/pages/{{ p.id }}">{{ p.title }}</a>
+      <td class="c-main"><a class="strong" href="/admin/pages/{{ p.id }}">{{ p.title }}</a>
         {% if p.kind == 'system' %}<small class="muted">صفحة أساسية</small>{% elif p.kind == 'custom' %}<small class="muted">صفحة مخصصة</small>{% endif %}</td>
-      <td class="ltr">{% if p.url %}<a class="muted" href="{{ p.url }}" target="_blank" rel="noopener">{{ p.url | replace('%20', ' ') }}</a>{% else %}<span class="muted">— (تظهر داخل صفحات الخدمات)</span>{% endif %}</td>
-      <td>
+      <td class="ltr" data-label="الرابط">{% if p.url %}<a class="muted" href="{{ p.url }}" target="_blank" rel="noopener">{{ p.url | replace('%20', ' ') }}</a>{% else %}<span class="muted">— (تظهر داخل صفحات الخدمات)</span>{% endif %}</td>
+      <td data-label="الحالة"><span class="pills">
         {% if p.status == 'published' %}<span class="pill green">منشورة</span>{% else %}<span class="pill gray">مسودة</span>{% endif %}
         {% if p.hasDraft %}<span class="pill amber" title="توجد تعديلات لم تُنشر بعد">تعديلات غير منشورة</span>{% endif %}
         {% if p.noindex and p.kind != 'landing' and not (p.system_key in ['thank-you', 'service_tail']) %}<span class="pill red" title="مستبعدة من جوجل">noindex</span>{% endif %}
-      </td>
-      {% if kind == 'landing' %}<td>{{ p.views | ar }}</td><td><a href="/admin/leads?page_id={{ p.id }}">{{ p.leads | ar }}</a></td><td>{{ p.conv | ar }}٪</td>{% else %}<td>{{ p.views | ar }}</td>{% endif %}
-      <td class="muted nowrap">{{ p.updated_at | rel | ar }}</td>
+      </span></td>
+      {% if kind == 'landing' %}<td data-label="الزيارات"><span>{{ p.views | ar }}</span></td><td data-label="الطلبات"><a href="/admin/leads?page_id={{ p.id }}">{{ p.leads | ar }}</a></td><td data-label="التحويل"><span>{{ p.conv | ar }}٪</span></td>{% else %}<td data-label="المشاهدات"><span>{{ p.views | ar }}</span></td>{% endif %}
+      <td class="muted nowrap" data-label="آخر تعديل"><span>{{ p.updated_at | rel | ar }}</span></td>
       <td class="w-act nowrap">
         <a class="btn btn-ink btn-sm" href="/admin/pages/{{ p.id }}">{{ icon('pencil') }} تعديل</a>
         <details class="menu">

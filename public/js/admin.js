@@ -431,7 +431,8 @@
       },
       options: {
         maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
-        plugins: { legend: { position: 'bottom', rtl: true, labels: { usePointStyle: true, boxWidth: 8 } }, tooltip: { rtl: true } },
+        // نصف قطر علامة الدليل يُحسب من boxHeight؛ إن تجاوز boxWidth تتداخل العلامة مع النص في وضع RTL
+        plugins: { legend: { position: 'bottom', rtl: true, labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 10, boxHeight: 7, padding: 18 } }, tooltip: { rtl: true, usePointStyle: true, boxPadding: 4 } },
         scales: {
           x: { grid: { display: false }, ticks: { maxTicksLimit: 10 } },
           y: { position: 'left', beginAtZero: true, grid: { color: '#efede6' }, ticks: { precision: 0 } },

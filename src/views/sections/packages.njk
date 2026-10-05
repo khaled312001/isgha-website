@@ -62,8 +62,7 @@
               {% for p in D.packages | reverse %}
               <th scope="col" class="cmp-pk{% if p.is_featured %} hl{% endif %}">
                 {% if p.is_featured and p.badge %}<span class="cmp-badge">{{ p.badge }}</span>{% endif %}
-                <span class="cmp-pk-ic">{{ icon(p.icon or 'gem') }}</span>
-                <span class="cmp-pk-n">{{ p.name | replace('الباقة ', '') }}</span>
+                <span class="cmp-pk-h"><span class="cmp-pk-ic">{{ icon(p.icon or 'gem') }}</span><span class="cmp-pk-n">{{ p.name | replace('الباقة ', '') }}</span></span>
               </th>
               {% endfor %}
             </tr>

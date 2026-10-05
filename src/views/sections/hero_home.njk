@@ -1,29 +1,33 @@
 {% import "partials/macros.njk" as m %}
 {% set heroImg = imgFor(d.image, 'home_hero') %}
-<section class="hero" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
-  <div class="wrap hero-grid">
-    <div class="hero-copy">
-      {% if d.eyebrow %}<p class="eyebrow">{{ d.eyebrow }}</p>{% endif %}
-      <h1>{{ d.title | markup }}</h1>
-      {% if d.lead %}<p class="lead">{{ d.lead }}</p>{% endif %}
-      <div class="hero-actions">
-        {% if d.primary_label %}<a class="btn btn-teal btn-lg" href="{{ d.primary_url }}">{{ d.primary_label }} {{ icon('arrow-left') }}</a>{% endif %}
-        {% if d.show_call %}<a class="btn btn-white btn-lg" href="{{ S.phone | tel }}">{{ icon('phone') }} اتصل الآن</a>{% endif %}
-        {% if d.show_whatsapp %}<a class="btn btn-wa btn-lg" href="{{ S.whatsapp | wa(S.whatsapp_message) }}" target="_blank" rel="noopener">{{ icon('whatsapp') }} واتساب</a>{% endif %}
+<section class="hero hx" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="hx-bg" aria-hidden="true"></div>
+  <div class="wrap hero-grid hx-grid">
+    <div class="hero-copy hx-copy">
+      {% if d.eyebrow %}<p class="eyebrow hx-eyebrow hx-in" style="--d:0">{{ d.eyebrow }}</p>{% endif %}
+      <h1 class="hx-title hx-in" style="--d:1">{{ d.title | markup }}</h1>
+      {% if d.lead %}<p class="lead hx-in" style="--d:2">{{ d.lead }}</p>{% endif %}
+      <div class="hero-actions hx-actions hx-in" style="--d:3">
+        {% if d.primary_label %}<a class="btn btn-teal btn-lg hx-btn hx-btn-main" href="{{ d.primary_url }}"><span>{{ d.primary_label }}</span><span class="hx-btn-bub">{{ icon('arrow-left') }}</span></a>{% endif %}
+        {% if d.show_call %}<a class="btn btn-white btn-lg hx-btn hx-btn-call" href="{{ S.phone | tel }}"><span class="hx-btn-ic">{{ icon('phone') }}</span>اتصل الآن</a>{% endif %}
+        {% if d.show_whatsapp %}<a class="btn btn-wa btn-lg hx-btn hx-btn-wa" href="{{ S.whatsapp | wa(S.whatsapp_message) }}" target="_blank" rel="noopener"><span class="hx-btn-ic">{{ icon('whatsapp') }}</span>واتساب</a>{% endif %}
       </div>
       {% if d.badges | length %}
-      <ul class="trust">
+      <ul class="trust hx-trust hx-in" style="--d:4">
         {% set ics = ['shield', 'lock', 'clock', 'check-circle'] %}
-        {% for b in d.badges %}<li>{{ icon(ics[loop.index0 % 4]) }}{{ b }}</li>{% endfor %}
+        {% for b in d.badges %}<li><span class="hx-trust-ic">{{ icon(ics[loop.index0 % 4]) }}</span><span>{{ b }}</span></li>{% endfor %}
       </ul>
       {% endif %}
     </div>
-    <div class="hero-media">
-      {{ m.pic(heroImg, d.image_alt, 'arch', true) }}
+    <div class="hero-media hx-media">
+      <span class="hx-frame" aria-hidden="true"></span>
+      <span class="hx-tri" aria-hidden="true"></span>
+      <div class="hx-photo">{{ m.pic(heroImg, d.image_alt, 'arch', true) }}</div>
+      <span class="hx-key" aria-hidden="true"><img src="/img/mark.svg" alt="" width="26" height="29"></span>
       {% if d.card_title %}
-      <div class="float-card">
+      <div class="float-card hx-card">
         <span class="mk"><img src="/img/mark.svg" alt="" width="20" height="23"></span>
-        <div><b>{{ d.card_title }}</b><span>{{ d.card_text }}</span></div>
+        <div><b>{{ d.card_title }}</b>{% if d.card_text %}<span>{{ d.card_text }}</span>{% endif %}</div>
       </div>
       {% endif %}
     </div>

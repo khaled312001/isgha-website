@@ -210,5 +210,42 @@
   .sxt-panels{padding:20px 16px 20px}
 }
 
+/* ═══ ٣. مجالات العمل القضائي — مربعات أيقونات ═══ */
+.sxa-grid{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.sxa-tile{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;padding:18px 18px 18px;border-radius:var(--r);background:#fff;border:1px solid var(--line);transition:transform .45s var(--ease),box-shadow .45s var(--ease),border-color .3s,opacity .75s var(--ease)}
+.bg-white .sxa-tile{background:var(--bg)}
+.sxa-tile::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--sx-deep);transform:scaleY(0);transform-origin:50% 100%;transition:transform .5s var(--ease)}
+.sxa-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sxa-ic{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:var(--teal-soft);color:var(--teal);transition:background .35s,color .35s,transform .5s var(--ease)}
+.sxa-ic .i{width:22px;height:22px}
+.sxa-n{font-family:var(--disp);font-weight:900;font-size:.8rem;color:var(--muted-2);transition:color .3s}
+.sxa-t{font-family:var(--disp);font-weight:700;font-size:1.02rem;line-height:1.5;transition:color .3s}
+.sxa-tile::after{content:"";position:absolute;top:-1px;inset-inline-start:18px;width:30px;height:3px;border-radius:0 0 3px 3px;background:var(--gold);transform-origin:right;transition:transform .5s var(--ease)}
+.sxa-tile:hover::after{transform:scaleX(2.4)}
+.sxa-d{display:block;margin-top:3px;font-size:.82rem;line-height:1.65;color:var(--muted);transition:color .3s}
+.sxa-wm{position:absolute;z-index:-1;inset-inline-start:-14px;bottom:-18px;color:var(--teal);opacity:0;transform:translate(10px,10px) rotate(-14deg);transition:opacity .5s,transform .7s var(--ease)}
+.sxa-wm .i{width:96px;height:96px}
+.sxa-tile:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:transparent}
+.sxa-tile:hover::before{transform:scaleY(1)}
+.sxa-tile:hover .sxa-ic{background:var(--gold);color:var(--teal-deep);transform:rotate(-8deg)}
+.sxa-tile:hover .sxa-t{color:#fff}
+.sxa-tile:hover .sxa-d{color:rgba(255,255,255,.75)}
+.sxa-tile:hover .sxa-n{color:var(--gold)}
+.sxa-tile:hover .sxa-wm{opacity:.12;color:#fff;transform:rotate(-14deg)}
+.sxa-grid.plain .sxa-tile{flex-direction:row;align-items:center;gap:12px}
+.sxa-grid.plain .sxa-top{margin:0}
+.sxa-grid.plain .sxa-n{display:none}
+
+@media (max-width:1120px){.sxa-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:720px){
+  .sxa-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .sxa-tile{padding:14px 14px 15px}
+  .sxa-top{margin-bottom:9px}
+  .sxa-ic{width:38px;height:38px;border-radius:11px}
+  .sxa-ic .i{width:19px;height:19px}
+  .sxa-t{font-size:.92rem}
+  .sxa-d{font-size:.76rem;line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+}
+
 /* ═══ قواعد الطيّ بين الأقسام المتتالية (تبقى في آخر الملف) ═══ */
 .sec + .sec[data-sx]:not([class*="bg-"]),.bg-white + .bg-white[data-sx],.bg-gray + .bg-gray[data-sx]{padding-top:0}

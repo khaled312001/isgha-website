@@ -1,43 +1,54 @@
 {% import "partials/macros.njk" as m %}
-<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+{% set waHref = S.whatsapp | wa(S.whatsapp_message) %}
+<section class="sec cx-contact {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
   <div class="wrap">
     {{ m.sechead(d) }}
-    <div class="contact-grid">
-      <form class="contact-form rv" data-cform data-ts="{{ ts }}" novalidate id="form">
+    <div class="cx-ct-grid">
+      <form class="contact-form cx-cform rv" data-cform data-ts="{{ ts }}" novalidate id="form">
         <div class="cform-body">
-          <h3>{{ d.form_title or 'أرسل رسالتك' }}</h3>
-          <div class="form-error" role="alert"></div>
-          <div class="row2">
-            <div class="field"><label for="c-name">الاسم الكامل</label><input id="c-name" name="name" autocomplete="name" maxlength="120" required><span class="msg">يرجى إدخال الاسم الكامل</span></div>
-            <div class="field"><label for="c-phone">رقم الجوال</label><input id="c-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" style="text-align:right" placeholder="05xxxxxxxx" maxlength="20" required><span class="msg">يرجى إدخال رقم جوال صحيح</span></div>
-          </div>
-          <div class="row2">
-            <div class="field"><label for="c-email">البريد الإلكتروني</label><input id="c-email" name="email" type="email" autocomplete="email" dir="ltr" style="text-align:right" maxlength="190"><span class="msg">يرجى إدخال بريد إلكتروني صحيح</span></div>
-            <div class="field"><label for="c-service">نوع الخدمة المطلوبة</label>
-              <select id="c-service" name="service"><option value="">اختر الخدمة</option>{% for o in S.contact_services %}<option>{{ o }}</option>{% endfor %}</select>
+          <div class="cx-cform-head">
+            <span class="cx-cform-ic" aria-hidden="true">{{ icon('send') }}</span>
+            <div>
+              <h2 class="cx-form-title">{{ d.form_title or 'أرسل رسالتك' }}</h2>
+              {% if d.form_sub %}<p>{{ d.form_sub }}</p>{% endif %}
             </div>
           </div>
-          <div class="field"><label for="c-msg">الرسالة</label><textarea id="c-msg" name="message" rows="5" maxlength="3000" required></textarea><span class="msg">يرجى كتابة رسالتك</span></div>
+          <div class="form-error" role="alert"></div>
+          <div class="row2">
+            <div class="field"><label for="c-name">{{ d.name_label or 'الاسم الكامل' }}</label><div class="cx-in">{{ icon('user') }}<input id="c-name" name="name" autocomplete="name" maxlength="120" required {% if d.name_placeholder %}placeholder="{{ d.name_placeholder }}"{% endif %}></div><span class="msg">{{ icon('info') }}{{ d.name_error or 'يرجى إدخال الاسم الكامل' }}</span></div>
+            <div class="field"><label for="c-phone">{{ d.phone_label or 'رقم الجوال' }}</label><div class="cx-in">{{ icon('phone') }}<input id="c-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="{{ d.phone_placeholder or '05xxxxxxxx' }}" maxlength="20" required></div><span class="msg">{{ icon('info') }}{{ d.phone_error or 'يرجى إدخال رقم جوال صحيح' }}</span></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="c-email">{{ d.email_label or 'البريد الإلكتروني' }}</label><div class="cx-in">{{ icon('mail') }}<input id="c-email" name="email" type="email" autocomplete="email" dir="ltr" maxlength="190" {% if d.email_placeholder %}placeholder="{{ d.email_placeholder }}"{% endif %}></div><span class="msg">{{ icon('info') }}{{ d.email_error or 'يرجى إدخال بريد إلكتروني صحيح' }}</span></div>
+            <div class="field"><label for="c-service">{{ d.service_label or 'نوع الخدمة المطلوبة' }}</label>
+              <div class="cx-in">{{ icon('briefcase') }}<select id="c-service" name="service"><option value="">{{ d.service_placeholder or 'اختر الخدمة' }}</option>{% for o in S.contact_services %}<option>{{ o }}</option>{% endfor %}</select></div>
+            </div>
+          </div>
+          <div class="field"><label for="c-msg">{{ d.message_label or 'الرسالة' }}</label><div class="cx-in is-area">{{ icon('message-square') }}<textarea id="c-msg" name="message" rows="4" maxlength="3000" required {% if d.message_placeholder %}placeholder="{{ d.message_placeholder }}"{% endif %}></textarea></div><span class="msg">{{ icon('info') }}{{ d.message_error or 'يرجى كتابة رسالتك' }}</span></div>
           <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <button class="btn btn-teal btn-lg btn-block" type="submit">{{ d.submit_label or 'إرسال الرسالة' }} {{ icon('send') }}</button>
-          <p class="form-note">{{ icon('lock') }}<span>نحافظ على سرية بياناتك ولا نشاركها مع أي طرف.</span></p>
+          <button class="btn btn-teal btn-lg btn-block cx-submit" type="submit">{{ d.submit_label or 'إرسال الرسالة' }} {{ icon('send') }}</button>
+          {% if d.privacy_note %}<p class="form-note">{{ icon('lock') }}<span>{{ d.privacy_note }}</span></p>{% endif %}
         </div>
-        <div class="form-done" role="status">
+        <div class="form-done cx-done" role="status">
           <div class="ok">{{ icon('check') }}</div>
-          <h4>شكرًا لتواصلك</h4>
-          <p>وصلت رسالتك وسيتواصل معك فريقنا خلال ساعات العمل.</p>
+          <h3>{{ d.done_title or 'شكرًا لتواصلك' }}</h3>
+          <p>{{ d.done_text or 'وصلت رسالتك وسيتواصل معك فريقنا خلال ساعات العمل.' }}</p>
         </div>
       </form>
-      <div class="ccards rv d1">
-        <a class="ccard" href="{{ S.phone | tel }}"><span class="ic">{{ icon('phone') }}</span><span><small>اتصل بنا</small><b dir="ltr">{{ S.phone }}</b></span></a>
-        <a class="ccard" href="mailto:{{ S.email }}"><span class="ic">{{ icon('mail') }}</span><span><small>راسلنا</small><b>{{ S.email }}</b></span></a>
-        <div class="ccard"><span class="ic">{{ icon('map-pin') }}</span><span><small>المكتب الرئيسي</small><b>{{ S.address }}</b>{% if S.working_hours %}<small style="margin-top:6px">{{ S.working_hours }}</small>{% endif %}</span></div>
+      <div class="cx-ct-side">
+        <div class="cx-ct-cards">
+          {% if S.phone %}<a class="cx-cc is-call rv" style="--i:0" href="{{ S.phone | tel }}"><span class="cx-cc-ic">{{ icon('phone') }}</span><span class="cx-cc-tx"><small>{{ d.call_title or 'اتصل بنا' }}</small><b dir="ltr">{{ S.phone }}</b></span>{{ icon('arrow-up-left', 'cx-cc-go') }}</a>{% endif %}
+          {% if S.whatsapp %}<a class="cx-cc is-wa rv" style="--i:1" href="{{ waHref }}" target="_blank" rel="noopener"><span class="cx-cc-ic">{{ icon('whatsapp') }}</span><span class="cx-cc-tx"><small>{{ d.wa_title or 'واتساب' }}</small><b dir="ltr">{{ S.whatsapp | pretty_phone }}</b></span>{{ icon('arrow-up-left', 'cx-cc-go') }}</a>{% endif %}
+          {% if S.email %}<a class="cx-cc is-mail rv" style="--i:2" href="mailto:{{ S.email }}"><span class="cx-cc-ic">{{ icon('mail') }}</span><span class="cx-cc-tx"><small>{{ d.email_title or 'راسلنا' }}</small><b>{{ S.email }}</b></span>{{ icon('arrow-up-left', 'cx-cc-go') }}</a>{% endif %}
+          {% if S.address %}<div class="cx-cc is-addr rv" style="--i:3"><span class="cx-cc-ic">{{ icon('map-pin') }}</span><span class="cx-cc-tx"><small>{{ d.address_title or 'المكتب الرئيسي' }}</small><b>{{ S.address }}</b>{% if S.working_hours %}<em>{{ icon('clock') }}{{ S.working_hours }}</em>{% endif %}</span></div>{% endif %}
+        </div>
+        {% if d.show_map and S.map_query %}
+        <div class="cx-map rv d2">
+          <iframe title="{{ d.map_title or ('موقع ' + S.brand_short + ' على الخريطة') }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q={{ S.map_query | urlencode }}&hl=ar&z=15&output=embed"></iframe>
+          {% if d.map_link_label %}<a class="cx-map-go" href="https://www.google.com/maps/search/?api=1&query={{ S.map_query | urlencode }}" target="_blank" rel="noopener">{{ icon('map-pin') }}<span>{{ d.map_link_label }}</span>{{ icon('arrow-up-left', 'cx-arr') }}</a>{% endif %}
+        </div>
+        {% endif %}
       </div>
     </div>
-    {% if d.show_map and S.map_query %}
-    <div class="map rv">
-      <iframe title="موقع {{ S.brand_short }} على الخريطة" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q={{ S.map_query | urlencode }}&hl=ar&z=15&output=embed"></iframe>
-    </div>
-    {% endif %}
   </div>
 </section>

@@ -1,0 +1,102 @@
+{
+ "/img/site/isgha-about-office.webp": {
+  "w": 1024,
+  "sm": "/img/site/isgha-about-office-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-about-team.webp": {
+  "w": 1024,
+  "sm": "/img/site/isgha-about-team-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-ben-companies.webp": {
+  "w": 1024,
+  "sm": "/img/site/isgha-ben-companies-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-ben-government.webp": {
+  "w": 1024,
+  "sm": "/img/site/isgha-ben-government-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-ben-individuals.webp": {
+  "w": 1536,
+  "sm": "/img/site/isgha-ben-individuals-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-ben-nonprofit.webp": {
+  "w": 1536,
+  "sm": "/img/site/isgha-ben-nonprofit-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-consultation-call.webp": {
+  "w": 1536,
+  "sm": "/img/site/isgha-consultation-call-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-contact-office.webp": {
+  "w": 1536,
+  "sm": "/img/site/isgha-contact-office-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-home-about.webp": {
+  "w": 1024,
+  "sm": "/img/site/isgha-home-about-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-home-hero.webp": {
+  "w": 1024,
+  "sm": "/img/site/isgha-home-hero-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-insights-cover.webp": {
+  "w": 1536,
+  "sm": "/img/site/isgha-insights-cover-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-packages-hero.webp": {
+  "w": 1024,
+  "sm": "/img/site/isgha-packages-hero-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-service-judicial.webp": {
+  "w": 1024,
+  "sm": "/img/site/isgha-service-judicial-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-service-legal.webp": {
+  "w": 1024,
+  "sm": "/img/site/isgha-service-legal-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-service-notary.webp": {
+  "w": 1024,
+  "sm": "/img/site/isgha-service-notary-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-service-specialized.webp": {
+  "w": 1024,
+  "sm": "/img/site/isgha-service-specialized-sm.webp",
+  "smw": 800
+ },
+ "/img/site/isgha-vision-skyline.webp": {
+  "w": 1800,
+  "sm": "/img/site/isgha-vision-skyline-sm.webp",
+  "smw": 800
+ },
+ "/img/site/covers/corporate-law.webp": {
+  "w": 1280,
+  "sm": "/img/site/covers/corporate-law-sm.webp",
+  "smw": 800
+ },
+ "/img/site/covers/litigation.webp": {
+  "w": 1280,
+  "sm": "/img/site/covers/litigation-sm.webp",
+  "smw": 800
+ },
+ "/img/site/covers/notary.webp": {
+  "w": 1280,
+  "sm": "/img/site/covers/notary-sm.webp",
+  "smw": 800
+ }
+}

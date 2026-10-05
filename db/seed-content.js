@@ -366,4 +366,5 @@ export const REDIRECTS = [
   ['/pages', '/'],
   ['/assets/images/favicon.png', '/img/favicon-32.png'],
   ['/assets/images/logo1.png', '/img/logo.svg'],
+  ['/privacy', '/privacy-policy'],
 ];

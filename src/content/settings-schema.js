@@ -176,7 +176,7 @@ export const SETTINGS_GROUPS = [
     permission: 'seo',
     fields: [
       { name: 'seo_title_suffix', label: 'لاحقة عناوين الصفحات', type: 'text', default: ' | إصغاء للمحاماة والاستشارات القانونية' },
-      { name: 'seo_default_title', label: 'عنوان الصفحة الرئيسية', type: 'text', default: 'شركة إصغاء للمحاماة والاستشارات القانونية — محامون ومستشارون في الرياض' },
+      { name: 'seo_default_title', label: 'عنوان الصفحة الرئيسية', type: 'text', default: 'إصغاء للمحاماة والاستشارات القانونية — محامون في الرياض', hint: 'يفضّل ألا يتجاوز 60 حرفًا حتى يظهر كاملًا في جوجل.' },
       { name: 'seo_default_description', label: 'الوصف الافتراضي', type: 'textarea', default: 'شركة إصغاء للمحاماة والاستشارات القانونية — محامون، مستشارون، محكمون، موثقون. تمثيل قضائي، استشارات، تأسيس شركات، توثيق عدلي وباقات قانونية للشركات في المملكة العربية السعودية.' },
       { name: 'seo_og_image', label: 'صورة المشاركة الافتراضية', type: 'image', default: '/img/og-default.jpg' },
       { name: 'seo_keywords', label: 'كلمات مفتاحية', type: 'text', default: 'محامي الرياض، مكتب محاماة، استشارات قانونية، تأسيس شركات، توثيق عدلي، محامي تجاري، محامي عمالي، تحكيم' },
