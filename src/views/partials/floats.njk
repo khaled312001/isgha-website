@@ -1,18 +1,26 @@
 {% set waNumber = (page.settings.whatsapp if page and page.settings and page.settings.whatsapp else S.whatsapp) %}
 {% set waMsg = (page.settings.whatsapp_message if page and page.settings and page.settings.whatsapp_message else S.whatsapp_message) %}
 {% set callNumber = (page.settings.phone if page and page.settings and page.settings.phone else S.phone) %}
+{% set legal = S.footer_legal_links | links %}
 {% if S.show_mobile_callbar %}
-<div class="callbar">
-  <a class="btn btn-white" href="{{ callNumber | tel }}">{{ icon('phone') }} اتصل الآن</a>
-  <a class="btn btn-wa" href="{{ waNumber | wa(waMsg) }}" target="_blank" rel="noopener">{{ icon('whatsapp') }} واتساب</a>
+{# شريط الجوال: اتصال + حجز — وواتساب يتولاه الزر العائم فوقه #}
+<div class="callbar{% if not S.show_whatsapp_float %} has-wa{% endif %}">
+  <a class="btn btn-white" href="{{ callNumber | tel }}">{{ icon('phone') }} {{ S.txt_call_now }}</a>
+  {% if S.show_whatsapp_float %}
+  <a class="btn btn-teal" href="{{ '#form' if layout == 'landing' else S.nav_cta_url }}">{{ S.txt_book }} {{ icon('arrow-left') }}</a>
+  {% else %}
+  <a class="btn btn-wa" href="{{ waNumber | wa(waMsg) }}" target="_blank" rel="noopener">{{ icon('whatsapp') }} {{ S.txt_whatsapp }}</a>
+  {% endif %}
 </div>
 {% endif %}
 {% if S.show_whatsapp_float %}
-<a class="wa-float" href="{{ waNumber | wa(waMsg) }}" target="_blank" rel="noopener" aria-label="تواصل عبر واتساب">{{ icon('whatsapp') }}</a>
+<a class="wa-float" href="{{ waNumber | wa(waMsg) }}" target="_blank" rel="noopener" aria-label="{{ S.txt_whatsapp_float }}" data-wa-float>
+  {{ icon('whatsapp') }}<span class="wa-tip" aria-hidden="true">{{ S.txt_whatsapp_float }}</span>
+</a>
 {% endif %}
 {% if S.cookie_notice %}
-<div class="cookie" id="cookie" role="region" aria-label="تنبيه ملفات الارتباط">
-  <p>{{ S.cookie_text }} <a href="/privacy">سياسة الخصوصية</a></p>
-  <button class="btn btn-white btn-sm" type="button">موافق</button>
+<div class="cookie" id="cookie" role="region" aria-label="{{ legal[0].label if legal.length else S.cookie_text }}">
+  <p>{{ S.cookie_text }}{% if legal.length %} <a href="{{ legal[0].url }}">{{ legal[0].label }}</a>{% endif %}</p>
+  <button class="btn btn-white btn-sm" type="button">{{ S.txt_cookie_ok }}</button>
 </div>
 {% endif %}
