@@ -1,0 +1,43 @@
+{% import "partials/macros.njk" as m %}
+<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap">
+    {{ m.sechead(d) }}
+    <div class="contact-grid">
+      <form class="contact-form rv" data-cform data-ts="{{ ts }}" novalidate id="form">
+        <div class="cform-body">
+          <h3>{{ d.form_title or 'أرسل رسالتك' }}</h3>
+          <div class="form-error" role="alert"></div>
+          <div class="row2">
+            <div class="field"><label for="c-name">الاسم الكامل</label><input id="c-name" name="name" autocomplete="name" maxlength="120" required><span class="msg">يرجى إدخال الاسم الكامل</span></div>
+            <div class="field"><label for="c-phone">رقم الجوال</label><input id="c-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" style="text-align:right" placeholder="05xxxxxxxx" maxlength="20" required><span class="msg">يرجى إدخال رقم جوال صحيح</span></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label for="c-email">البريد الإلكتروني</label><input id="c-email" name="email" type="email" autocomplete="email" dir="ltr" style="text-align:right" maxlength="190"><span class="msg">يرجى إدخال بريد إلكتروني صحيح</span></div>
+            <div class="field"><label for="c-service">نوع الخدمة المطلوبة</label>
+              <select id="c-service" name="service"><option value="">اختر الخدمة</option>{% for o in S.contact_services %}<option>{{ o }}</option>{% endfor %}</select>
+            </div>
+          </div>
+          <div class="field"><label for="c-msg">الرسالة</label><textarea id="c-msg" name="message" rows="5" maxlength="3000" required></textarea><span class="msg">يرجى كتابة رسالتك</span></div>
+          <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <button class="btn btn-teal btn-lg btn-block" type="submit">{{ d.submit_label or 'إرسال الرسالة' }} {{ icon('send') }}</button>
+          <p class="form-note">{{ icon('lock') }}<span>نحافظ على سرية بياناتك ولا نشاركها مع أي طرف.</span></p>
+        </div>
+        <div class="form-done" role="status">
+          <div class="ok">{{ icon('check') }}</div>
+          <h4>شكرًا لتواصلك</h4>
+          <p>وصلت رسالتك وسيتواصل معك فريقنا خلال ساعات العمل.</p>
+        </div>
+      </form>
+      <div class="ccards rv d1">
+        <a class="ccard" href="{{ S.phone | tel }}"><span class="ic">{{ icon('phone') }}</span><span><small>اتصل بنا</small><b dir="ltr">{{ S.phone }}</b></span></a>
+        <a class="ccard" href="mailto:{{ S.email }}"><span class="ic">{{ icon('mail') }}</span><span><small>راسلنا</small><b>{{ S.email }}</b></span></a>
+        <div class="ccard"><span class="ic">{{ icon('map-pin') }}</span><span><small>المكتب الرئيسي</small><b>{{ S.address }}</b>{% if S.working_hours %}<small style="margin-top:6px">{{ S.working_hours }}</small>{% endif %}</span></div>
+      </div>
+    </div>
+    {% if d.show_map and S.map_query %}
+    <div class="map rv">
+      <iframe title="موقع {{ S.brand_short }} على الخريطة" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q={{ S.map_query | urlencode }}&hl=ar&z=15&output=embed"></iframe>
+    </div>
+    {% endif %}
+  </div>
+</section>

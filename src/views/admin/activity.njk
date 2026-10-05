@@ -1,0 +1,21 @@
+{% extends "admin/layout.njk" %}
+{% set crumbs = [{label: 'النظام', url: '/admin/system'}, {label: 'سجل النشاط'}] %}
+{% block content %}
+<form class="filters card" method="get">
+  <label class="fld"><span>المستخدم</span><select name="user" onchange="this.form.submit()"><option value="">الكل</option>{% for u in users %}<option value="{{ u.id }}" {{ 'selected' if q.user == u.id | string }}>{{ u.name }}</option>{% endfor %}</select></label>
+  <label class="fld"><span>الإجراء</span><select name="action" onchange="this.form.submit()"><option value="">الكل</option>{% for k, l in labels %}<option value="{{ k }}" {{ 'selected' if q.action == k }}>{{ l }}</option>{% endfor %}</select></label>
+</form>
+<div class="card flush">
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>الوقت</th><th>المستخدم</th><th>الإجراء</th><th>القسم</th><th>التفاصيل</th><th>IP</th></tr></thead>
+    <tbody>
+    {% for r in rows %}
+    <tr><td class="nowrap muted" title="{{ r.created_at | date(true) | ar }}">{{ r.created_at | rel | ar }}</td><td>{{ r.user_name or 'النظام' }}</td><td><span class="pill sm">{{ labels[r.action] or r.action }}</span></td><td class="ltr muted">{{ r.entity }}{{ ' #' + r.entity_id if r.entity_id and r.entity_id.length < 12 }}</td><td>{{ r.summary }}</td><td class="ltr muted small">{{ r.ip }}</td></tr>
+    {% else %}
+    <tr><td colspan="6" class="muted center">لا يوجد نشاط مسجّل.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</div>
+{% include "admin/partials/pager.njk" %}
+{% endblock %}

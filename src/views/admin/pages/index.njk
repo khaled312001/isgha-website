@@ -1,0 +1,65 @@
+{% extends "admin/layout.njk" %}
+{% block actions %}<button class="btn btn-teal btn-sm" type="button" data-modal-open="new-page">{{ icon('plus') }} {{ 'صفحة هبوط جديدة' if kind == 'landing' else 'صفحة جديدة' }}</button>{% endblock %}
+{% block content %}
+{% if kind == 'landing' %}
+<div class="note-box">{{ icon('info') }}<div><b>صفحات الهبوط مخصصة للإعلانات المدفوعة.</b> بدون قائمة تنقل لتقليل التشتت، ومستبعدة من محركات البحث تلقائيًا. كل طلب يُسجَّل باسم الصفحة ومصدر الإعلان (UTM)، ويمكنك إضافة أكواد تتبع خاصة لكل صفحة من «إعدادات الصفحة».</div></div>
+{% endif %}
+
+{% if pages.length %}
+<div class="card flush">
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>الصفحة</th><th>الرابط</th><th>الحالة</th>{% if kind == 'landing' %}<th>الزيارات</th><th>الطلبات</th><th>التحويل</th>{% else %}<th>المشاهدات</th>{% endif %}<th>آخر تعديل</th><th class="w-act"></th></tr></thead>
+    <tbody>
+    {% for p in pages %}
+    <tr>
+      <td><a class="strong" href="/admin/pages/{{ p.id }}">{{ p.title }}</a>
+        {% if p.kind == 'system' %}<small class="muted">صفحة أساسية</small>{% elif p.kind == 'custom' %}<small class="muted">صفحة مخصصة</small>{% endif %}</td>
+      <td class="ltr">{% if p.url %}<a class="muted" href="{{ p.url }}" target="_blank" rel="noopener">{{ p.url | replace('%20', ' ') }}</a>{% else %}<span class="muted">— (تظهر داخل صفحات الخدمات)</span>{% endif %}</td>
+      <td>
+        {% if p.status == 'published' %}<span class="pill green">منشورة</span>{% else %}<span class="pill gray">مسودة</span>{% endif %}
+        {% if p.hasDraft %}<span class="pill amber" title="توجد تعديلات لم تُنشر بعد">تعديلات غير منشورة</span>{% endif %}
+        {% if p.noindex and p.kind != 'landing' and not (p.system_key in ['thank-you', 'service_tail']) %}<span class="pill red" title="مستبعدة من جوجل">noindex</span>{% endif %}
+      </td>
+      {% if kind == 'landing' %}<td>{{ p.views | ar }}</td><td><a href="/admin/leads?page_id={{ p.id }}">{{ p.leads | ar }}</a></td><td>{{ p.conv | ar }}٪</td>{% else %}<td>{{ p.views | ar }}</td>{% endif %}
+      <td class="muted nowrap">{{ p.updated_at | rel | ar }}</td>
+      <td class="w-act nowrap">
+        <a class="btn btn-ink btn-sm" href="/admin/pages/{{ p.id }}">{{ icon('pencil') }} تعديل</a>
+        <details class="menu">
+          <summary class="icon-btn" aria-label="المزيد">{{ icon('sliders') }}</summary>
+          <div class="menu-pop">
+            {% if p.url %}<a href="{{ p.url }}" target="_blank" rel="noopener">{{ icon('external-link') }} عرض</a>{% endif %}
+            <form method="post" action="/admin/pages/{{ p.id }}/duplicate"><input type="hidden" name="_csrf" value="{{ csrf }}"><button type="submit">{{ icon('copy') }} نسخ الصفحة</button></form>
+            {% if p.status == 'published' and p.canUnpublish %}<form method="post" action="/admin/pages/{{ p.id }}/unpublish"><input type="hidden" name="_csrf" value="{{ csrf }}"><button type="submit" data-confirm="إلغاء نشر «{{ p.title }}»؟ ستختفي من الموقع حتى تنشرها من جديد.">{{ icon('eye-off') }} إلغاء النشر</button></form>{% endif %}
+            {% if p.kind != 'system' %}<form method="post" action="/admin/pages/{{ p.id }}/delete"><input type="hidden" name="_csrf" value="{{ csrf }}"><button type="submit" class="danger" data-confirm="حذف الصفحة «{{ p.title }}» نهائيًا؟">{{ icon('trash') }} حذف</button></form>{% endif %}
+          </div>
+        </details>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</div>
+{% else %}
+<div class="card empty big">{{ icon('mouse-pointer') }}<h3>لا توجد صفحات بعد</h3><p>أنشئ أول صفحة هبوط لحملتك الإعلانية في دقيقة.</p><button class="btn btn-teal" type="button" data-modal-open="new-page">{{ icon('plus') }} إنشاء صفحة</button></div>
+{% endif %}
+
+<dialog class="modal" id="new-page" aria-labelledby="np-title">
+  <form method="post" action="/admin/pages" class="modal-body stack">
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+    <header class="modal-head"><h3 id="np-title">{{ 'صفحة هبوط جديدة' if kind == 'landing' else 'صفحة جديدة' }}</h3><button class="icon-btn" type="button" data-modal-close aria-label="إغلاق">{{ icon('x') }}</button></header>
+    <label class="fld"><span>عنوان الصفحة</span><input name="title" required maxlength="190" placeholder="{{ 'مثال: حملة تأسيس الشركات — سناب' if kind == 'landing' else 'مثال: التحكيم التجاري' }}"></label>
+    <label class="fld"><span>الرابط (اختياري)</span><input name="slug" dir="ltr" placeholder="company-formation"><small class="hint">سيكون: {{ S.canonical_host or '' }}/الرابط — يُنشأ تلقائيًا من العنوان إذا تركته فارغًا.</small></label>
+    <fieldset class="tpl-pick">
+      <legend>ابدأ من</legend>
+      {% for t in templates %}
+      <label class="tpl"><input type="radio" name="template" value="{{ t.key }}" {{ 'checked' if loop.first }}><span>{{ icon(t.icon) }}<b>{{ t.label }}</b><small>{{ t.desc }}</small></span></label>
+      {% endfor %}
+      {% if pages.length %}
+      <label class="tpl"><input type="radio" name="template" value="copy" data-copy-pick><span>{{ icon('copy') }}<b>نسخة من صفحة موجودة</b>
+        <select name="copy_from" class="sm" data-copy-select>{% for p in pages %}<option value="copy:{{ p.id }}">{{ p.title }}</option>{% endfor %}</select></span></label>
+      {% endif %}
+    </fieldset>
+    <footer class="modal-foot"><button class="btn btn-ghost" type="button" data-modal-close>إلغاء</button><button class="btn btn-teal" type="submit">إنشاء وفتح المنشئ {{ icon('arrow-left') }}</button></footer>
+  </form>
+</dialog>
+{% endblock %}

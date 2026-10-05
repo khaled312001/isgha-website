@@ -1,0 +1,98 @@
+{% extends "admin/layout.njk" %}
+{% set crumbs = [{label: 'طلبات العملاء', url: '/admin/leads'}, {label: '#' + lead.id}] %}
+{% block actions %}
+{% if prevId %}<a class="icon-btn" href="/admin/leads/{{ prevId }}" title="الطلب الأحدث" aria-label="الطلب الأحدث">{{ icon('chevron-right') }}</a>{% endif %}
+{% if nextId %}<a class="icon-btn" href="/admin/leads/{{ nextId }}" title="الطلب الأقدم" aria-label="الطلب الأقدم">{{ icon('chevron-left') }}</a>{% endif %}
+{% endblock %}
+{% block content %}
+<div class="lead-layout">
+  <div class="stack-lg">
+    <section class="card lead-hero">
+      <div class="lead-id">
+        <span class="avatar lg">{{ lead.name | first }}</span>
+        <div>
+          <h2>{{ lead.name }}</h2>
+          <p class="muted">{{ formLabels[lead.form] or lead.form }} · {{ lead.created_at | date(true) | ar }} ({{ lead.created_at | rel | ar }})</p>
+        </div>
+        <span class="pill {{ st.color }}">{{ st.label }}</span>
+      </div>
+      <div class="lead-actions">
+        <a class="btn btn-teal" href="{{ lead.phone | tel }}">{{ icon('phone') }} <span dir="ltr">{{ phonePretty }}</span></a>
+        <a class="btn btn-wa" href="{{ lead.phone | wa(waText) }}" target="_blank" rel="noopener">{{ icon('whatsapp') }} واتساب</a>
+        {% if lead.email %}<a class="btn btn-line" href="mailto:{{ lead.email }}">{{ icon('mail') }} {{ lead.email }}</a>{% endif %}
+        <button class="btn btn-ghost" type="button" data-copy="{{ lead.phone }}">{{ icon('copy') }} نسخ الرقم</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <header class="card-head"><h3>تفاصيل الطلب</h3></header>
+      <dl class="dl">
+        <dt>نوع القضية / الخدمة</dt><dd>{{ lead.case_type or '—' }}</dd>
+        <dt>الرسالة</dt><dd class="pre">{{ lead.message or '—' }}</dd>
+        {% if lead.page_title %}<dt>الصفحة</dt><dd>{{ lead.page_title }}{% if lead.page_kind == 'landing' %} <span class="pill sm">صفحة هبوط</span>{% endif %}</dd>{% endif %}
+        {% if meta.url %}<dt>رابط الإرسال</dt><dd class="ltr"><a href="{{ meta.url }}" target="_blank" rel="noopener">{{ meta.url | truncate_ar(80) }}</a></dd>{% endif %}
+      </dl>
+    </section>
+
+    <section class="card">
+      <header class="card-head"><h3>مصدر العميل (الإسناد)</h3><span class="src">{{ source }}</span></header>
+      <dl class="dl cols">
+        <dt>utm_source</dt><dd class="ltr">{{ lead.utm_source or '—' }}</dd>
+        <dt>utm_medium</dt><dd class="ltr">{{ lead.utm_medium or '—' }}</dd>
+        <dt>utm_campaign</dt><dd class="ltr">{{ lead.utm_campaign or '—' }}</dd>
+        <dt>utm_term</dt><dd class="ltr">{{ lead.utm_term or '—' }}</dd>
+        <dt>utm_content</dt><dd class="ltr">{{ lead.utm_content or '—' }}</dd>
+        <dt>معرّف النقرة</dt><dd class="ltr">{{ (lead.click_type + ': ' + lead.click_id | truncate_ar(40)) if lead.click_id else '—' }}</dd>
+        <dt>المُحيل</dt><dd class="ltr">{{ lead.referrer | truncate_ar(60) if lead.referrer else '—' }}</dd>
+        <dt>صفحة الدخول الأولى</dt><dd class="ltr">{{ lead.landing_url | truncate_ar(60) if lead.landing_url else '—' }}</dd>
+      </dl>
+    </section>
+
+    <section class="card">
+      <header class="card-head"><h3>سجل المتابعة</h3></header>
+      <form method="post" action="/admin/leads/{{ lead.id }}/update" class="note-form">
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+        <textarea name="note" rows="3" placeholder="أضف ملاحظة: نتيجة المكالمة، موعد المتابعة، تفاصيل القضية…" required></textarea>
+        <button class="btn btn-ink btn-sm" type="submit">{{ icon('send') }} إضافة ملاحظة</button>
+      </form>
+      {% if notes.length %}
+      <ol class="timeline">
+        {% for n in notes %}
+        <li class="tl-{{ n.kind }}"><span class="tl-dot">{{ icon('message-square' if n.kind == 'note' else ('user' if n.kind == 'assign' else 'refresh')) }}</span>
+          <div><p class="pre">{{ n.body }}</p><small class="muted">{{ n.user_name or 'النظام' }} · {{ n.created_at | date(true) | ar }}</small></div></li>
+        {% endfor %}
+        <li class="tl-created"><span class="tl-dot">{{ icon('inbox') }}</span><div><p>وصل الطلب من الموقع</p><small class="muted">{{ lead.created_at | date(true) | ar }}</small></div></li>
+      </ol>
+      {% endif %}
+    </section>
+  </div>
+
+  <aside class="stack-lg">
+    <form class="card stack" method="post" action="/admin/leads/{{ lead.id }}/update">
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+      <h3>إدارة الطلب</h3>
+      <label class="fld"><span>الحالة</span><select name="status">{% for s in statuses %}<option value="{{ s[0] }}" {{ 'selected' if lead.status == s[0] }}>{{ s[1] }}</option>{% endfor %}</select></label>
+      <label class="fld"><span>المسؤول عن المتابعة</span><select name="assigned_to"><option value="">— غير مسند —</option>{% for u in users %}<option value="{{ u.id }}" {{ 'selected' if lead.assigned_to == u.id }}>{{ u.name }}</option>{% endfor %}</select></label>
+      <label class="fld"><span>قيمة التعاقد (ريال) — اختياري</span><input name="value" inputmode="decimal" value="{{ lead.value or '' }}" dir="ltr"></label>
+      <button class="btn btn-teal btn-block" type="submit">{{ icon('save') }} حفظ</button>
+    </form>
+
+    {% if others.length %}
+    <section class="card">
+      <h3>طلبات سابقة من نفس الرقم</h3>
+      <ul class="mini-list">{% for o in others %}<li><a href="/admin/leads/{{ o.id }}">#{{ o.id }} · {{ o.case_type or 'طلب' }}</a><small class="muted">{{ o.created_at | rel | ar }}</small></li>{% endfor %}</ul>
+    </section>
+    {% endif %}
+
+    <section class="card muted-card">
+      <h3>معلومات تقنية</h3>
+      <dl class="dl tight">
+        <dt>IP</dt><dd class="ltr">{{ lead.ip or '—' }}</dd>
+        <dt>المتصفح</dt><dd class="ltr small">{{ lead.user_agent | truncate_ar(90) if lead.user_agent else '—' }}</dd>
+        <dt>Event ID</dt><dd class="ltr small">{{ lead.event_id }}</dd>
+      </dl>
+      <form method="post" action="/admin/leads/{{ lead.id }}/delete"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="btn btn-danger-ghost btn-sm" type="submit" data-confirm="حذف هذا الطلب نهائيًا؟">{{ icon('trash') }} حذف الطلب</button></form>
+    </section>
+  </aside>
+</div>
+{% endblock %}

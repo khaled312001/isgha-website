@@ -1,0 +1,17 @@
+{% extends "layouts/site.njk" %}
+{% block main %}
+<section class="sec">
+  <div class="wrap thanks">
+    <div class="ok">{{ icon('check') }}</div>
+    <span class="tag">تم استلام طلبك</span>
+    <h1 style="font-size:clamp(1.9rem,4.4vw,2.8rem);margin-bottom:12px">{{ (t.title or 'شكرًا لثقتك، ==وصلنا طلبك==') | markup }}</h1>
+    <p class="muted" style="font-size:1.06rem;margin-bottom:28px">{{ t.text or 'سيتواصل معك محامٍ مختص من فريق إصغاء خلال ساعات العمل الرسمية. إذا كان أمرك عاجلًا يمكنك الاتصال بنا مباشرة.' }}</p>
+    <div class="cta-actions">
+      <a class="btn btn-teal btn-lg" href="{{ S.phone | tel }}">{{ icon('phone') }} <span dir="ltr">{{ S.phone }}</span></a>
+      <a class="btn btn-wa btn-lg" href="{{ S.whatsapp | wa(S.whatsapp_message) }}" target="_blank" rel="noopener">{{ icon('whatsapp') }} واتساب</a>
+      <a class="btn btn-line btn-lg" href="/">العودة للرئيسية</a>
+    </div>
+  </div>
+</section>
+{% for sec in sections %}{% if not sec.hidden %}{% set d = sec.data %}{% include "sections/" + sec.type + ".njk" ignore missing %}{% endif %}{% endfor %}
+{% endblock %}

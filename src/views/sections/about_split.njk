@@ -1,0 +1,17 @@
+{% import "partials/macros.njk" as m %}
+{% set aImg = imgFor(d.image, d.image_slot or 'home_about') %}
+<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap split {% if d.image_side == 'end' %}img-end{% endif %}">
+    <div class="split-media rv">
+      {{ m.pic(aImg, d.image_alt or d.title | plain) }}
+      {% if d.badge %}<span class="badge-on"><img src="/img/mark.svg" alt="" width="14" height="16">{{ d.badge }}</span>{% endif %}
+    </div>
+    <div class="rv d1">
+      {% if d.tag %}<span class="tag">{{ d.tag }}</span>{% endif %}
+      {% if d.title %}<h2 style="font-size:clamp(1.65rem,3.4vw,2.35rem);margin-bottom:18px">{{ d.title | markup }}</h2>{% endif %}
+      {% if d.intro %}<p class="muted" style="margin-bottom:14px">{{ d.intro }}</p>{% endif %}
+      <div class="prose">{{ d.body | safe }}</div>
+      {% if d.cta_label %}<a class="btn btn-ink" style="margin-top:26px" href="{{ d.cta_url }}">{{ d.cta_label }} {{ icon('arrow-left') }}</a>{% endif %}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,13 @@
+{% import "partials/macros.njk" as m %}
+{% set yid = ytId(d.youtube) %}
+{% if yid %}
+<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap">
+    {{ m.sechead(d) }}
+    <div class="video rv" data-yt="{{ yid }}" role="button" tabindex="0" aria-label="تشغيل الفيديو">
+      <img src="https://i.ytimg.com/vi/{{ yid }}/hqdefault.jpg" alt="" loading="lazy">
+      <span class="play"><span>{{ icon('play') }}</span></span>
+    </div>
+  </div>
+</section>
+{% endif %}

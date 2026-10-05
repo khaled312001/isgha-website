@@ -1,0 +1,46 @@
+{% extends "admin/layout.njk" %}
+{% block content %}
+<div class="int-grid">
+  {% for i in integrations %}<div class="int {{ 'on' if i.on }}"><span class="dot {{ 'green' if i.on else 'gray' }}"></span><b>{{ i.name }}</b><small>{{ i.note if (i.on and i.note) else ('مفعّل' if i.on else 'غير مربوط') }}</small></div>{% endfor %}
+</div>
+
+<div class="grid-2-1">
+  <form class="card" id="mk-form" novalidate>
+    <header class="card-head"><h3>أكواد التتبع والبكسلات</h3><button class="btn btn-teal btn-sm" type="submit">{{ icon('save') }} حفظ</button></header>
+    <div id="ff-main"></div>
+    <div class="form-foot"><button class="btn btn-teal" type="submit">{{ icon('save') }} حفظ الإعدادات</button></div>
+  </form>
+
+  <aside class="stack-lg">
+    <section class="card">
+      <h3>{{ icon('zap') }} الأحداث التي تُرسل تلقائيًا</h3>
+      <ul class="ev-list">
+        <li><b>إرسال نموذج (طلب)</b><span>GA4: generate_lead · Ads: تحويل الطلب · Meta: Lead (من المتصفح + السيرفر عبر CAPI) · TikTok: SubmitForm · Snap: SIGN_UP · X · LinkedIn</span></li>
+        <li><b>نقرة اتصال</b><span>Meta: Contact · Ads: تحويل الاتصال · GA4</span></li>
+        <li><b>نقرة واتساب</b><span>Meta: Contact · GA4</span></li>
+        <li><b>بدء تعبئة النموذج</b><span>GA4: form_start</span></li>
+      </ul>
+      <p class="hint">كل الأحداث تُدفع أيضًا إلى <code>dataLayer</code> لاستخدامها في Google Tag Manager. حدث Meta يحمل نفس event_id من المتصفح والسيرفر لمنع تكرار احتساب التحويل.</p>
+    </section>
+
+    <section class="card" id="utm">
+      <h3>{{ icon('link') }} منشئ روابط الحملات (UTM)</h3>
+      <p class="hint">استخدم رابطًا مختلفًا لكل حملة لتعرف مصدر كل عميل في «طلبات العملاء» و«التقارير».</p>
+      <div class="stack">
+        <label class="fld"><span>الصفحة</span><select data-utm="page">{% for p in pages %}<option value="{{ p.url }}">{{ p.title }}{{ ' — هبوط' if p.kind == 'landing' }}</option>{% endfor %}</select></label>
+        <label class="fld"><span>المنصة (utm_source)</span><select data-utm="utm_source"><option>google</option><option>snapchat</option><option>tiktok</option><option>meta</option><option>instagram</option><option>x</option><option>linkedin</option><option>whatsapp</option><option>email</option></select></label>
+        <label class="fld"><span>النوع (utm_medium)</span><select data-utm="utm_medium"><option>cpc</option><option>paid_social</option><option>social</option><option>email</option><option>referral</option></select></label>
+        <label class="fld"><span>اسم الحملة (utm_campaign)</span><input data-utm="utm_campaign" dir="ltr" placeholder="company-formation-oct"></label>
+        <label class="fld"><span>المحتوى (utm_content) — اختياري</span><input data-utm="utm_content" dir="ltr" placeholder="video-1"></label>
+        <div class="utm-out"><code class="ltr" data-utm-out></code><button class="btn btn-ink btn-sm" type="button" data-utm-copy>{{ icon('copy') }} نسخ الرابط</button></div>
+      </div>
+    </section>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+ADM.mountForm(document.getElementById('mk-form'), {{ boot | json }});
+ADM.utmBuilder({{ (S.canonical_host or '') | json }});
+</script>
+{% endblock %}

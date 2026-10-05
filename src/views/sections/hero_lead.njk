@@ -1,0 +1,19 @@
+{% import "partials/macros.njk" as m %}
+{% set side = imgFor(d.side_image, d.image_slot) %}
+{% set types = d.case_types if (d.case_types and d.case_types.length) else caseTypes %}
+<header class="lhero {% if side %}has-side{% endif %}">
+  <div class="wrap">
+    {% if side %}<div class="lhero-grid"><div>{% endif %}
+    <h1>{{ d.title | markup }}</h1>
+    {% if d.lead %}<p class="lead">{{ d.lead }}</p>{% endif %}
+    {% if d.badges | length %}
+    <ul class="trust">
+      {% set ics = ['shield', 'clock', 'lock', 'check-circle'] %}
+      {% for b in d.badges %}<li>{{ icon(ics[loop.index0 % 4]) }}{{ b }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+    {% if side %}{{ m.pic(side, 'محامٍ من إصغاء', 'arch-soft', true) }}</div><div>{% endif %}
+    {{ m.mform(d, S, types, ts) }}
+    {% if side %}</div></div>{% endif %}
+  </div>
+</header>

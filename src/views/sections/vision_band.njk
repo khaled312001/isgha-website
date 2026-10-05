@@ -1,0 +1,12 @@
+{% import "partials/macros.njk" as m %}
+{% set vImg = imgFor(d.image, 'vision_skyline') %}
+<section class="sec tight">
+  <div class="vband rv">
+    {{ m.pic(vImg, 'الرياض') }}
+    <div class="vband-in">
+      <h2>{{ d.title | markup }}</h2>
+      {% if d.text %}<p>{{ d.text }}</p>{% endif %}
+      {% if d.cta_label %}<a class="btn btn-white" href="{{ d.cta_url }}">{{ d.cta_label }} {{ icon('arrow-left') }}</a>{% endif %}
+    </div>
+  </div>
+</section>

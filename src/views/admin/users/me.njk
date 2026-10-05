@@ -1,0 +1,14 @@
+{% extends "admin/layout.njk" %}
+{% block content %}
+<form method="post" action="/admin/users/me" class="card stack narrow" autocomplete="off">
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+  <div class="user-cell big"><span class="avatar lg">{{ me.name | first }}</span><div><b>{{ me.email }}</b><small class="muted">{{ roleLabel(me.role) }}</small></div></div>
+  <label class="fld"><span>الاسم</span><input name="name" value="{{ me.name }}" maxlength="120"></label>
+  <hr>
+  <h3>تغيير كلمة المرور</h3>
+  <label class="fld"><span>كلمة المرور الحالية</span><input type="password" name="current_password" dir="ltr" autocomplete="current-password"></label>
+  <label class="fld"><span>كلمة المرور الجديدة</span><input type="password" name="new_password" dir="ltr" autocomplete="new-password" minlength="10"><small class="hint">١٠ أحرف على الأقل، حروف وأرقام.</small></label>
+  <label class="fld"><span>تأكيد كلمة المرور الجديدة</span><input type="password" name="confirm_password" dir="ltr" autocomplete="new-password"></label>
+  <button class="btn btn-teal" type="submit">{{ icon('save') }} حفظ</button>
+</form>
+{% endblock %}

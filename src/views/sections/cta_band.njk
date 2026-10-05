@@ -1,0 +1,14 @@
+<section class="sec tight">
+  <div class="wrap">
+    <div class="cta-band rv">
+      {% if d.tag %}<span class="tag">{{ d.tag }}</span>{% endif %}
+      <h2>{{ d.title | markup }}</h2>
+      {% if d.text %}<p>{{ d.text }}</p>{% endif %}
+      <div class="cta-actions">
+        {% if d.primary_label %}<a class="btn btn-white btn-lg" href="{{ d.primary_url }}">{{ d.primary_label }} {{ icon('arrow-left') }}</a>{% endif %}
+        {% if d.show_call %}<a class="btn btn-teal btn-lg" href="{{ ((page.settings.phone if page and page.settings and page.settings.phone) or S.phone) | tel }}">{{ icon('phone') }} اتصل الآن</a>{% endif %}
+        {% if d.show_whatsapp %}<a class="btn btn-wa btn-lg" href="{{ S.whatsapp | wa(S.whatsapp_message) }}" target="_blank" rel="noopener">{{ icon('whatsapp') }} واتساب</a>{% endif %}
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,16 @@
+{% import "partials/macros.njk" as m %}
+{% if D.areas.length %}
+<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap">
+    {{ m.sechead(d) }}
+    <div class="areas {% if not d.show_desc %}plain{% endif %}">
+      {% for a in D.areas %}
+      <div class="area rv d{{ loop.index0 % 4 }}">
+        <span class="ic">{{ icon(a.icon or 'scale') }}</span>
+        <div><b>{{ a.title }}</b>{% if d.show_desc and a.description %}<span>{{ a.description }}</span>{% endif %}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}

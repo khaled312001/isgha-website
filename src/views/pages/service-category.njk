@@ -1,0 +1,78 @@
+{% extends "layouts/site.njk" %}
+{% import "partials/macros.njk" as m %}
+{% block main %}
+{% set cImg = imgFor(cat.image, 'service_' + cat.slug) %}
+<section class="phero">
+  <img class="phero-deco" src="/img/mark-teal.svg" alt="" aria-hidden="true">
+  <div class="wrap">
+    <ol class="crumbs" aria-label="مسار التنقل">{% for c in crumbs %}<li>{% if not loop.last %}<a href="{{ c.url }}">{{ c.label }}</a>{% else %}<span aria-current="page">{{ c.label }}</span>{% endif %}</li>{% endfor %}</ol>
+    <div class="phero-grid">
+      <div>
+        <span class="tag">خدماتنا</span>
+        <h1>{{ cat.title }}</h1>
+        <p class="lead">{{ cat.intro or cat.summary }}</p>
+        <div class="hero-actions" style="margin:26px 0 0">
+          <a class="btn btn-teal" href="/consultation?service={{ cat.slug }}">احجز استشارة {{ icon('arrow-left') }}</a>
+          <a class="btn btn-white" href="{{ S.phone | tel }}">{{ icon('phone') }} اتصل الآن</a>
+          <a class="btn btn-wa" href="{{ S.whatsapp | wa('السلام عليكم، أستفسر عن ' + cat.title) }}" target="_blank" rel="noopener">{{ icon('whatsapp') }} واتساب</a>
+        </div>
+      </div>
+      {{ m.pic(cImg, cat.title, 'arch-soft', true) }}
+    </div>
+    <div class="phero-line"></div>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:20px">
+  <div class="wrap svc-layout">
+    <div>
+      {% if cat.body %}<div class="prose rv">{{ cat.body | safe }}</div>{% endif %}
+
+      {% if cat.bullets.length %}
+      <h2 class="block-title rv">ما نقدمه في {{ cat.title }}</h2>
+      <div class="inner rv" style="padding:6px 22px">
+        <ul class="checks">
+          {% for b in cat.bullets %}{% set L = b | lead %}<li>{{ icon('check') }}<span>{% if L.title %}<b style="font-weight:500">{{ L.title }}:</b> {% endif %}{{ L.text }}</span></li>{% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if cat.services.length %}
+      <h2 class="block-title rv">{{ 'مجالات الخدمة بالتفصيل' if cat.slug != 'specialized' else 'مجالات تخصصنا' }}</h2>
+      <div class="sub-svcs" style="margin-top:0">
+        {% for s in cat.services %}
+        <article class="sub-svc rv d{{ loop.index0 % 2 }}">
+          <span class="ic">{{ icon(s.icon or cat.icon or 'scale') }}</span>
+          <h3>{% if s.url %}<a href="{{ s.url }}">{{ s.title }}</a>{% else %}{{ s.title }}{% endif %}</h3>
+          {% if s.summary %}<p>{{ s.summary }}</p>{% endif %}
+          {% if s.bullets.length %}<ul class="checks">{% for b in s.bullets.slice(0, 5) %}{% set L = b | lead %}<li>{{ icon('check') }}<span>{{ L.title or L.text }}</span></li>{% endfor %}</ul>{% endif %}
+          {% if s.url %}<a class="link-arrow" style="margin-top:12px" href="{{ s.url }}">التفاصيل {{ icon('arrow-left') }}</a>{% endif %}
+        </article>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if cat.slug == 'judicial' and D.areas.length %}
+      <h2 class="block-title rv">مجالات العمل القضائي</h2>
+      <div class="areas cols-3">
+        {% for a in D.areas %}<div class="area rv"><span class="ic">{{ icon(a.icon or 'scale') }}</span><div><b>{{ a.title }}</b>{% if a.description %}<span>{{ a.description }}</span>{% endif %}</div></div>{% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    <aside>
+      <nav class="svc-nav" aria-label="أقسام الخدمات">
+        <h4>خدماتنا</h4>
+        {% for c in navCats %}<a href="{{ c.url }}" {% if c.slug == cat.slug %}class="on" aria-current="page"{% endif %}>{{ c.title }}{{ icon('arrow-left') }}</a>{% endfor %}
+        <a href="/packages">الباقات القانونية{{ icon('arrow-left') }}</a>
+      </nav>
+      <div class="side-card ink">
+        <h4>هل تحتاج رأيًا قانونيًا الآن؟</h4>
+        <p>تواصل مع محامٍ مختص يوضح لك موقفك وخياراتك قبل أي التزام.</p>
+        <a class="btn btn-white btn-block" href="/consultation?service={{ cat.slug }}">اطلب تقييمًا أوليًا</a>
+      </div>
+    </aside>
+  </div>
+</section>
+
+{% for sec in tailSections %}{% set d = sec.data %}{% include "sections/" + sec.type + ".njk" ignore missing %}{% endfor %}
+{% endblock %}

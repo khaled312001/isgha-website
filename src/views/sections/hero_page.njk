@@ -1,0 +1,22 @@
+{% import "partials/macros.njk" as m %}
+{% set hImg = imgFor(d.image, d.image_slot) %}
+<section class="phero {% if not hImg %}no-img{% endif %}">
+  <img class="phero-deco" src="/img/mark-teal.svg" alt="" aria-hidden="true">
+  <div class="wrap">
+    {% if d.breadcrumbs and crumbs and crumbs.length > 1 %}
+    <ol class="crumbs" aria-label="مسار التنقل">
+      {% for c in crumbs %}<li>{% if not loop.last %}<a href="{{ c.url }}">{{ c.label }}</a>{% else %}<span aria-current="page">{{ c.label | plain }}</span>{% endif %}</li>{% endfor %}
+    </ol>
+    {% endif %}
+    <div class="phero-grid">
+      <div>
+        {% if d.tag %}<span class="tag">{{ d.tag }}</span>{% endif %}
+        <h1>{{ d.title | markup }}</h1>
+        {% if d.lead %}<p class="lead">{{ d.lead }}</p>{% endif %}
+        {% if d.cta_label %}<a class="btn btn-teal" href="{{ d.cta_url }}">{{ d.cta_label }} {{ icon('arrow-left') }}</a>{% endif %}
+      </div>
+      {% if hImg %}{{ m.pic(hImg, d.image_alt, 'arch-soft', true) }}{% endif %}
+    </div>
+    <div class="phero-line"></div>
+  </div>
+</section>

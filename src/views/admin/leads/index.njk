@@ -1,0 +1,64 @@
+{% extends "admin/layout.njk" %}
+{% block actions %}<a class="btn btn-line btn-sm" href="/admin/leads/export.csv?{{ qs }}">{{ icon('download') }} تصدير Excel (CSV)</a>{% endblock %}
+{% block content %}
+<nav class="tabs-line" aria-label="حالات الطلبات">
+  <a href="/admin/leads" class="{{ 'on' if not q.status }}">الكل <b>{{ ((counts.new or 0) + (counts.contacted or 0) + (counts.qualified or 0) + (counts.won or 0) + (counts.lost or 0)) | ar }}</b></a>
+  {% for s in statuses %}<a href="/admin/leads?status={{ s[0] }}" class="{{ 'on' if q.status == s[0] }}"><span class="dot {{ s[2] }}"></span>{{ s[1] }} <b>{{ (counts[s[0]] or 0) | ar }}</b></a>{% endfor %}
+</nav>
+
+<form class="filters card" method="get" action="/admin/leads">
+  {% if q.status %}<input type="hidden" name="status" value="{{ q.status }}">{% endif %}
+  <label class="fld grow"><span>بحث</span><input type="search" name="q" value="{{ q.q }}" placeholder="الاسم، الجوال، البريد، نوع القضية…"></label>
+  <label class="fld"><span>المصدر</span><select name="source">
+    <option value="">كل المصادر</option>
+    {% for v, l in {'ads': 'كل الإعلانات', 'google': 'إعلانات جوجل', 'meta': 'إعلانات ميتا', 'snap': 'إعلانات سناب', 'tiktok': 'إعلانات تيك توك', 'x': 'إعلانات X', 'organic': 'بدون حملة (عضوي/مباشر)'} %}<option value="{{ v }}" {{ 'selected' if q.source == v }}>{{ l }}</option>{% endfor %}
+  </select></label>
+  <label class="fld"><span>الصفحة</span><select name="page_id">
+    <option value="">كل الصفحات</option>
+    {% for p in pages %}<option value="{{ p.id }}" {{ 'selected' if q.page_id == p.id | string }}>{{ p.title }}{{ ' (هبوط)' if p.kind == 'landing' }}</option>{% endfor %}
+  </select></label>
+  {% if campaigns.length %}<label class="fld"><span>الحملة</span><select name="campaign"><option value="">كل الحملات</option>{% for c in campaigns %}<option {{ 'selected' if q.campaign == c }}>{{ c }}</option>{% endfor %}</select></label>{% endif %}
+  <label class="fld"><span>من</span><input type="date" name="from" value="{{ q.from }}"></label>
+  <label class="fld"><span>إلى</span><input type="date" name="to" value="{{ q.to }}"></label>
+  <label class="fld chk"><input type="checkbox" name="assigned" value="me" {{ 'checked' if q.assigned == 'me' }}><span>المسندة لي</span></label>
+  <div class="filters-actions"><button class="btn btn-ink btn-sm" type="submit">{{ icon('filter') }} تطبيق</button>{% if qs %}<a class="btn btn-ghost btn-sm" href="/admin/leads">مسح</a>{% endif %}</div>
+</form>
+
+{% if leads.length %}
+<form method="post" action="/admin/leads/bulk" class="card flush" data-bulk>
+  <input type="hidden" name="_csrf" value="{{ csrf }}"><input type="hidden" name="back" value="{{ qs }}">
+  <div class="bulkbar" hidden>
+    <span><b data-bulk-count>0</b> محدد</span>
+    <select name="action" class="sm"><option value="">إجراء جماعي…</option>{% for s in statuses %}<option value="{{ s[0] }}">تغيير الحالة إلى: {{ s[1] }}</option>{% endfor %}<option value="delete">حذف نهائي</option></select>
+    <button class="btn btn-ink btn-sm" type="submit" data-confirm="تطبيق الإجراء على الطلبات المحددة؟">تنفيذ</button>
+  </div>
+  <div class="table-wrap"><table class="tbl leads-tbl">
+    <thead><tr><th class="w-chk"><input type="checkbox" data-check-all aria-label="تحديد الكل"></th><th>العميل</th><th>الطلب</th><th>المصدر</th><th>الحالة</th><th>المسؤول</th><th>التاريخ</th><th class="w-act"><span class="sr-only">إجراءات</span></th></tr></thead>
+    <tbody>
+    {% for l in leads %}
+    <tr class="{{ 'is-new' if l.status == 'new' }}">
+      <td class="w-chk"><input type="checkbox" name="ids" value="{{ l.id }}" aria-label="تحديد {{ l.name }}"></td>
+      <td><a href="/admin/leads/{{ l.id }}" class="strong">{{ l.name }}</a><small class="ltr muted">{{ l.phonePretty }}</small></td>
+      <td><span>{{ l.case_type or formLabels[l.form] }}</span>{% if l.message %}<small class="muted clamp">{{ l.message | truncate_ar(70) }}</small>{% endif %}</td>
+      <td><span class="src">{{ l.source }}</span>{% if l.utm_campaign %}<small class="muted">{{ l.utm_campaign }}</small>{% endif %}{% if l.page_title %}<small class="muted">{{ l.page_title }}</small>{% endif %}</td>
+      <td>
+        <select class="status-select {{ l.st.color }}" data-lead-status="{{ l.id }}" aria-label="حالة الطلب">
+          {% for s in statuses %}<option value="{{ s[0] }}" {{ 'selected' if l.status == s[0] }}>{{ s[1] }}</option>{% endfor %}
+        </select>
+      </td>
+      <td class="muted">{{ l.assignee or '—' }}</td>
+      <td class="nowrap"><span title="{{ l.created_at | date(true) | ar }}">{{ l.created_at | rel | ar }}</span></td>
+      <td class="w-act nowrap">
+        <a class="icon-btn" href="{{ l.phone | tel }}" title="اتصال" aria-label="اتصال">{{ icon('phone') }}</a>
+        <a class="icon-btn wa" href="{{ l.phone | wa('السلام عليكم ' + l.name + '، معك فريق إصغاء للمحاماة بخصوص طلبك.') }}" target="_blank" rel="noopener" title="واتساب" aria-label="واتساب">{{ icon('whatsapp') }}</a>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</form>
+{% include "admin/partials/pager.njk" %}
+{% else %}
+<div class="card empty big">{{ icon('inbox') }}<h3>لا توجد طلبات {{ 'مطابقة للفلاتر' if qs else 'بعد' }}</h3><p>عندما يرسل زائر نموذج الاستشارة أو التواصل سيظهر هنا فورًا، ويصلك إشعار على البريد.</p></div>
+{% endif %}
+{% endblock %}

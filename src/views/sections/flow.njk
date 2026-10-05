@@ -1,0 +1,38 @@
+{% import "partials/macros.njk" as m %}
+{% set ins = d.inputs | lines %}
+{% set outs = d.outputs | lines %}
+{% set stages = (d.center_sub or '').split('·') %}
+{% set inIcons = ['scale', 'file-text', 'circle-help', 'message-square'] %}
+<section class="sec cx-flow {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap">
+    {{ m.sechead(d) }}
+    <div class="cx-fl rv d1" data-cx-flow>
+      <svg class="cx-fl-wires" aria-hidden="true" focusable="false"></svg>
+      <div class="cx-fl-col cx-fl-in">
+        {% if d.inputs_title %}<span class="cx-fl-cap">{{ d.inputs_title }}</span>{% endif %}
+        <ul class="cx-fl-list">
+          {% for x in ins %}<li class="cx-fl-box" style="--i:{{ loop.index0 }}"><span class="cx-fl-ic">{{ icon(inIcons[loop.index0 % 4]) }}</span><span>{{ x }}</span></li>{% endfor %}
+        </ul>
+      </div>
+      <i class="cx-fl-v" aria-hidden="true"></i>
+      <div class="cx-fl-hub">
+        <div class="cx-fl-core">
+          <img class="cx-fl-mark" src="/img/mark.svg" alt="" width="44" height="50">
+          {% if d.center_title %}<b class="cx-fl-name">{{ d.center_title }}</b>{% endif %}
+          {% if d.center_sub %}
+          <ol class="cx-fl-stages" style="--n:{{ stages.length }}">
+            {% for s in stages %}{% if s | trim %}<li style="--i:{{ loop.index0 }}">{{ s | trim }}</li>{% endif %}{% endfor %}
+          </ol>
+          {% endif %}
+        </div>
+      </div>
+      <i class="cx-fl-v cx-fl-v2" aria-hidden="true"></i>
+      <div class="cx-fl-col cx-fl-out">
+        {% if d.outputs_title %}<span class="cx-fl-cap">{{ d.outputs_title }}</span>{% endif %}
+        <ul class="cx-fl-list">
+          {% for x in outs %}<li class="cx-fl-box" style="--i:{{ loop.index0 }}"><span class="cx-fl-ic">{{ icon('check') }}</span><span>{{ x }}</span></li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

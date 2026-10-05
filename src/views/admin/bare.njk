@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="csrf" content="{{ csrf }}">
+<title>{{ title }} — لوحة تحكم إصغاء</title>
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/vendor/quill.snow.css">
+<link rel="stylesheet" href="{{ asset('/css/admin.css') }}">
+</head>
+<body class="adm {{ bodyClass }}">
+{% block content %}{% endblock %}
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="/vendor/sortable.min.js"></script>
+<script src="/vendor/quill.js"></script>
+<script src="{{ asset('/js/admin.js') }}"></script>
+{% if flash %}<script>ADM.toast({{ flash.text | json }}, {{ ('error' if flash.type == 'error' else 'success') | json }});</script>{% endif %}
+{% block scripts %}{% endblock %}
+</body>
+</html>

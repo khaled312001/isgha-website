@@ -1,0 +1,65 @@
+{% extends "admin/layout.njk" %}
+{% block content %}
+{% if not indexing %}
+<div class="alert alert-warn">{{ icon('triangle-alert') }}<span><b>الأرشفة مغلقة حاليًا (وضع التجربة):</b> كل الصفحات تحمل noindex وملف robots.txt يمنع الزحف حتى لا يظهر الدومين التجريبي في جوجل. بعد ربط الدومين النهائي اضبط <code>ALLOW_INDEXING=true</code> في متغيرات البيئة على الاستضافة.</span></div>
+{% else %}
+<div class="alert alert-success">{{ icon('check-circle') }}<span>الأرشفة مفتوحة — الموقع متاح لمحركات البحث.</span></div>
+{% endif %}
+
+<div class="kpis">
+  <div class="kpi"><span class="kpi-ic teal">{{ icon('file-check') }}</span><small>صفحات بدون ملاحظات</small><b>{{ stats.ok | ar }} / {{ stats.total | ar }}</b></div>
+  <div class="kpi"><span class="kpi-ic {{ 'red' if stats.errors }}">{{ icon('triangle-alert') }}</span><small>أخطاء تحتاج إصلاح</small><b>{{ stats.errors | ar }}</b></div>
+  <div class="kpi"><span class="kpi-ic">{{ icon('route') }}</span><small>التحويلات 301</small><b>{{ redirectsN | ar }}</b><em><a href="/admin/r/redirects">إدارة التحويلات</a></em></div>
+  <div class="kpi"><span class="kpi-ic">{{ icon('globe') }}</span><small>ملفات محركات البحث</small><b class="small-b"><a href="/sitemap.xml" target="_blank" rel="noopener">sitemap.xml</a> · <a href="/robots.txt" target="_blank" rel="noopener">robots.txt</a></b></div>
+</div>
+
+<section class="card flush">
+  <header class="card-head pad"><h3>فحص العناوين والأوصاف</h3><span class="muted small">العنوان المثالي ٣٠–٦٠ حرفًا · الوصف ٧٠–١٦٠ حرفًا</span></header>
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>الصفحة</th><th>النوع</th><th>الحالة في جوجل</th><th>ملاحظات</th><th class="w-act"></th></tr></thead>
+    <tbody>
+    {% for r in rows %}
+    <tr>
+      <td><a class="strong" href="{{ r.edit }}">{{ r.title }}</a><small class="ltr muted">{{ r.url }}</small></td>
+      <td class="muted">{{ r.type }}</td>
+      <td>{% if r.draft %}<span class="pill gray">غير منشورة</span>{% elif r.noindex %}<span class="pill amber">مستبعدة (noindex)</span>{% else %}<span class="pill green">قابلة للأرشفة</span>{% endif %}</td>
+      <td>{% if r.issues.length %}{% for i in r.issues %}<span class="pill sm {{ 'red' if i[0] == 'err' else 'amber' }}">{{ i[1] }}</span> {% endfor %}{% else %}<span class="pill sm green">{{ icon('check') }} ممتاز</span>{% endif %}</td>
+      <td class="w-act"><a class="btn btn-line btn-xs" href="{{ r.edit }}">{{ icon('pencil') }} تعديل</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</section>
+
+<div class="grid-2-1">
+  <form class="card" id="seo-form" novalidate>
+    <header class="card-head"><h3>إعدادات SEO العامة والتحقق</h3><button class="btn btn-teal btn-sm" type="submit">{{ icon('save') }} حفظ</button></header>
+    <div id="ff-main"></div>
+    <div class="form-foot"><button class="btn btn-teal" type="submit">{{ icon('save') }} حفظ الإعدادات</button></div>
+  </form>
+  <aside class="stack-lg">
+    <section class="card">
+      <h3>{{ icon('ghost') }} روابط لا تعمل (404)</h3>
+      {% if notFound.length %}
+      <p class="hint">روابط زارها الناس ولم يجدوا صفحة — أضف لها تحويلًا لصفحة مناسبة.</p>
+      <ul class="mini-list">{% for n in notFound %}<li><span class="ltr">{{ n.path }}</span><small>{{ n.n | ar }} مرة · <a href="/admin/r/redirects/new?from={{ n.path | urlencode }}">تحويل</a></small></li>{% endfor %}</ul>
+      {% else %}<p class="muted">لا توجد روابط مفقودة مسجّلة.</p>{% endif %}
+    </section>
+    <section class="card">
+      <h3>{{ icon('list-checks') }} مطبّق تلقائيًا في الموقع</h3>
+      <ul class="checks-plain">
+        <li>عنوان ووصف لكل صفحة + Open Graph وTwitter Cards</li>
+        <li>بيانات منظمة Schema: LegalService · WebSite · Breadcrumb · FAQ · Service · Article</li>
+        <li>خريطة موقع ديناميكية تتحدث مع كل تعديل</li>
+        <li>روابط Canonical وتحويل 301 تلقائي عند تغيير أي رابط</li>
+        <li>صور بتحميل كسول، خطوط مسبقة التحميل، ضغط Gzip</li>
+        <li>عنوان H1 واحد لكل صفحة وهيكل عناوين سليم</li>
+      </ul>
+    </section>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="/vendor/sortable.min.js"></script>
+<script>ADM.mountForm(document.getElementById('seo-form'), {{ boot | json }});</script>
+{% endblock %}

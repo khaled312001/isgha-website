@@ -1,0 +1,7 @@
+{% if pager and pager.pages > 1 %}
+<nav class="pager" aria-label="الصفحات">
+  {% if pager.page > 1 %}<a class="btn btn-line btn-sm" href="?{{ qs }}{{ '&' if qs }}page={{ pager.page - 1 }}">{{ icon('chevron-right') }} السابق</a>{% endif %}
+  <span class="muted">صفحة {{ pager.page | ar }} من {{ pager.pages | ar }} · {{ pager.total | ar }} عنصر</span>
+  {% if pager.page < pager.pages %}<a class="btn btn-line btn-sm" href="?{{ qs }}{{ '&' if qs }}page={{ pager.page + 1 }}">التالي {{ icon('chevron-left') }}</a>{% endif %}
+</nav>
+{% endif %}

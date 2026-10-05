@@ -1,0 +1,75 @@
+{# عنوان القسم #}
+{% macro sechead(d, cls='', tag='h2') %}
+{% if d.title or d.tag or d.intro %}
+<div class="sec-head rv {{ cls }}">
+  <div>
+    {% if d.tag %}<span class="tag">{{ d.tag }}</span>{% endif %}
+    {% if d.title %}<{{ tag }}>{{ d.title | markup }}</{{ tag }}>{% endif %}
+  </div>
+  {% if d.intro %}<p>{{ d.intro }}</p>{% endif %}
+</div>
+{% endif %}
+{% endmacro %}
+
+{# صورة أو بديل مصمم #}
+{% macro pic(src, alt='', cls='', eager=false, sizes='100vw', ph='') %}
+<div class="media {{ cls }}">
+  {% if src %}
+  <img src="{{ src }}" alt="{{ alt }}" {% if imgPos(src) %}style="object-position:{{ imgPos(src) }}" {% endif %}{% if eager %}fetchpriority="high"{% else %}loading="lazy" decoding="async"{% endif %}>
+  {% else %}
+  <div class="ph {{ ph }}" role="img" aria-label="{{ alt or 'إصغاء للمحاماة' }}"></div>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro bgclass(d) %}{% if d.bg %}bg-{{ d.bg }}{% endif %}{% endmacro %}
+
+{# النموذج متعدد الخطوات #}
+{% macro mform(d, S, caseTypes, ts) %}
+<div class="frame rv d2" id="form">
+  <div class="frame-head">
+    <b><img src="/img/mark.svg" alt="" width="15" height="17">{{ d.frame_title or 'طلب تقييم قضية' }}</b>
+    <span>{{ d.frame_note or 'آمن وسرّي' }} {{ icon('lock') }}</span>
+  </div>
+  <form class="form-card" data-mform data-ts="{{ ts }}" novalidate>
+    <div class="form-steps">
+      <h3>{{ d.form_title or 'ابدأ تقييم قضيتك مجانًا' }}</h3>
+      {% if d.form_sub %}<p class="sub">{{ d.form_sub }}</p>{% endif %}
+      <div class="progress" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+      <div class="form-error" role="alert"></div>
+      <div class="mstep active" data-step="1">
+        <p class="step-label">{{ d.step1_label or 'ما نوع قضيتك؟' }}</p>
+        <div class="choice">
+          {% for t in caseTypes %}<button type="button" data-value="{{ t }}" aria-pressed="false">{{ t }}</button>{% endfor %}
+        </div>
+      </div>
+      <div class="mstep" data-step="2">
+        <p class="step-label">{{ d.step2_label or 'اشرح موقفك باختصار (اختياري)' }}</p>
+        <div class="field"><label class="sr-only" for="m-msg-{{ ts }}">التفاصيل</label><textarea id="m-msg-{{ ts }}" name="message" rows="4" maxlength="2000" placeholder="{{ d.message_placeholder or 'اكتب تفاصيل قضيتك باختصار…' }}"></textarea></div>
+        <div class="step-nav">
+          <button type="button" class="btn btn-back" data-back>رجوع</button>
+          <button type="button" class="btn btn-teal" data-next>التالي</button>
+        </div>
+      </div>
+      <div class="mstep" data-step="3">
+        <p class="step-label">{{ d.step3_label or 'إلى من نتحدث؟' }}</p>
+        <div class="field"><label for="m-name-{{ ts }}">الاسم</label><input id="m-name-{{ ts }}" name="name" autocomplete="name" placeholder="اسمك الكريم" maxlength="120"><span class="msg">اكتب اسمك من فضلك</span></div>
+        <div class="field"><label for="m-phone-{{ ts }}">رقم الجوال</label><input id="m-phone-{{ ts }}" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xxxxxxxx" dir="ltr" style="text-align:right" maxlength="20"><span class="msg">أدخل رقم جوال صحيح مثل 0555555555</span></div>
+        {% if d.ask_email %}<div class="field"><label for="m-email-{{ ts }}">البريد الإلكتروني (اختياري)</label><input id="m-email-{{ ts }}" name="email" type="email" autocomplete="email" dir="ltr" style="text-align:right" maxlength="190"></div>{% endif %}
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="step-nav">
+          <button type="button" class="btn btn-back" data-back>رجوع</button>
+          <button type="submit" class="btn btn-teal">{{ d.submit_label or 'أرسل الطلب' }}</button>
+        </div>
+        <p class="form-note">{{ icon('lock') }}<span>{{ d.privacy_note or 'بياناتك سرية ولا تُستخدم إلا للتواصل معك.' }}</span></p>
+      </div>
+    </div>
+    <div class="form-done" role="status">
+      <div class="ok">{{ icon('check') }}</div>
+      <h4>{{ d.done_title or 'وصلنا طلبك' }}</h4>
+      <p>{{ d.done_text or 'سيتواصل معك محامٍ مختص خلال ساعات العمل. إذا كان أمرك عاجلًا:' }}</p>
+      <a class="btn btn-teal" href="{{ S.phone | tel }}">{{ icon('phone') }} <span dir="ltr">{{ S.phone }}</span></a>
+    </div>
+  </form>
+</div>
+{% endmacro %}

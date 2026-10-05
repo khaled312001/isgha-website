@@ -1,0 +1,31 @@
+{% extends "admin/layout.njk" %}
+{% set crumbs = [{label: 'المستخدمون', url: '/admin/users'}, {label: title}] %}
+{% block content %}
+<form method="post" action="/admin/users{{ '/' + u.id if u }}" class="res-form" autocomplete="off">
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+  <div class="res-main card stack">
+    <div class="grid-2 tight">
+      <label class="fld"><span>الاسم</span><input name="name" value="{{ u.name if u }}" required maxlength="120"></label>
+      <label class="fld"><span>البريد الإلكتروني (للدخول)</span><input type="email" name="email" value="{{ u.email if u }}" required dir="ltr" autocomplete="off"></label>
+    </div>
+    <label class="fld"><span>{{ 'كلمة مرور جديدة (اتركها فارغة للإبقاء)' if u else 'كلمة المرور' }}</span><input type="password" name="password" dir="ltr" autocomplete="new-password" minlength="10" {{ 'required' if not u }}><small class="hint">١٠ أحرف على الأقل، حروف وأرقام.</small></label>
+    <label class="fld"><span>الدور</span><select name="role" data-role-select>
+      {% for k, r in roles %}<option value="{{ k }}" data-perms="{{ r.perms | join(',') }}" {{ 'selected' if (u and u.role == k) or (not u and k == 'editor') }}>{{ r.label }}</option>{% endfor %}
+    </select></label>
+    <label class="switch-row"><span class="switch"><input type="checkbox" name="custom_perms" value="1" data-custom-perms {{ 'checked' if custom.length }}><span></span></span> تخصيص الصلاحيات يدويًا</label>
+    <fieldset class="perm-grid" data-perm-grid>
+      <legend>الصلاحيات</legend>
+      {% for p in permissions %}<label class="chk"><input type="checkbox" name="perms" value="{{ p[0] }}" {{ 'checked' if p[0] in custom }}><span>{{ p[1] }}</span></label>{% endfor %}
+    </fieldset>
+    {% if u %}<label class="switch-row"><span class="switch"><input type="checkbox" name="is_active" value="1" {{ 'checked' if u.is_active }}><span></span></span> الحساب نشط</label>{% else %}<input type="hidden" name="is_active" value="1">{% endif %}
+  </div>
+  <aside class="res-side">
+    <div class="card sticky stack">
+      <button class="btn btn-teal btn-block btn-lg" type="submit">{{ icon('save') }} حفظ</button>
+      <a class="btn btn-ghost btn-block" href="/admin/users">رجوع</a>
+      {% if u and u.id != me.id %}<button class="btn btn-danger-ghost btn-block" type="submit" form="del-user" data-confirm="حذف المستخدم {{ u.name }} نهائيًا؟">{{ icon('trash') }} حذف المستخدم</button>{% endif %}
+    </div>
+  </aside>
+</form>
+{% if u and u.id != me.id %}<form id="del-user" method="post" action="/admin/users/{{ u.id }}/delete" hidden><input type="hidden" name="_csrf" value="{{ csrf }}"></form>{% endif %}
+{% endblock %}

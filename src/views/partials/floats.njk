@@ -1,0 +1,18 @@
+{% set waNumber = (page.settings.whatsapp if page and page.settings and page.settings.whatsapp else S.whatsapp) %}
+{% set waMsg = (page.settings.whatsapp_message if page and page.settings and page.settings.whatsapp_message else S.whatsapp_message) %}
+{% set callNumber = (page.settings.phone if page and page.settings and page.settings.phone else S.phone) %}
+{% if S.show_mobile_callbar %}
+<div class="callbar">
+  <a class="btn btn-white" href="{{ callNumber | tel }}">{{ icon('phone') }} اتصل الآن</a>
+  <a class="btn btn-wa" href="{{ waNumber | wa(waMsg) }}" target="_blank" rel="noopener">{{ icon('whatsapp') }} واتساب</a>
+</div>
+{% endif %}
+{% if S.show_whatsapp_float %}
+<a class="wa-float" href="{{ waNumber | wa(waMsg) }}" target="_blank" rel="noopener" aria-label="تواصل عبر واتساب">{{ icon('whatsapp') }}</a>
+{% endif %}
+{% if S.cookie_notice %}
+<div class="cookie" id="cookie" role="region" aria-label="تنبيه ملفات الارتباط">
+  <p>{{ S.cookie_text }} <a href="/privacy">سياسة الخصوصية</a></p>
+  <button class="btn btn-white btn-sm" type="button">موافق</button>
+</div>
+{% endif %}

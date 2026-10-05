@@ -1,0 +1,38 @@
+{% extends "admin/layout.njk" %}
+{% block content %}
+<form class="dropzone card" method="post" action="/admin/media/upload?_csrf={{ csrf }}" enctype="multipart/form-data" data-dropzone>
+  {{ icon('upload') }}
+  <b>اسحب الصور هنا أو اضغط للاختيار</b>
+  <span class="muted">JPG · PNG · WebP · AVIF · PDF — حتى 12 ميجابايت للملف. يُفضّل WebP بعرض 1600–2400 بكسل.</span>
+  <input type="file" name="files" multiple accept="image/jpeg,image/png,image/webp,image/avif,image/gif,application/pdf" aria-label="اختيار ملفات">
+</form>
+
+<form class="filters card" method="get">
+  <label class="fld grow"><span>بحث</span><input type="search" name="q" value="{{ q.q }}" placeholder="اسم الملف أو الوصف"></label>
+  <label class="fld"><span>النوع</span><select name="type" onchange="this.form.submit()"><option value="">الكل</option><option value="image" {{ 'selected' if q.type == 'image' }}>صور</option><option value="pdf" {{ 'selected' if q.type == 'pdf' }}>PDF</option></select></label>
+  <div class="filters-actions"><span class="muted">المساحة المستخدمة: {{ totalSize | bytes | ar }}</span></div>
+</form>
+
+{% if items.length %}
+<div class="media-grid">
+  {% for m in items %}
+  <figure class="media-item">
+    <a href="{{ m.url }}" target="_blank" rel="noopener" class="media-thumb">{% if m.mime and m.mime.startsWith('image/') %}<img src="{{ m.url }}" alt="{{ m.alt or '' }}" loading="lazy">{% else %}{{ icon('file-text') }}<span>PDF</span>{% endif %}</a>
+    <figcaption>
+      <b title="{{ m.original_name }}">{{ m.original_name | truncate_ar(28) }}</b>
+      <small class="muted">{{ (m.width + '×' + m.height + ' · ') if m.width }}{{ m.size | bytes | ar }}</small>
+      <input class="sm" value="{{ m.alt or '' }}" placeholder="وصف الصورة (Alt) لمحركات البحث" data-alt-url="/admin/media/{{ m.id }}/alt" aria-label="وصف الصورة">
+      <div class="media-acts">
+        <button class="btn btn-ghost btn-xs" type="button" data-copy="{{ m.url }}">{{ icon('link') }} نسخ الرابط</button>
+        <form method="post" action="/admin/media/{{ m.id }}/delete"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="btn btn-danger-ghost btn-xs" type="submit" data-confirm="حذف الملف؟ إذا كان مستخدمًا في صفحة ستختفي الصورة منها.">{{ icon('trash') }}</button></form>
+      </div>
+    </figcaption>
+  </figure>
+  {% endfor %}
+</div>
+{% set qs = ('q=' + q.q if q.q else '') %}
+{% include "admin/partials/pager.njk" %}
+{% else %}
+<div class="card empty big">{{ icon('image') }}<h3>المكتبة فارغة</h3><p>ارفع صورك هنا، أو من صفحة «صور الموقع» لكل خانة مباشرة.</p></div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% import "partials/macros.njk" as m %}
+{% set types = d.case_types if (d.case_types and d.case_types.length) else caseTypes %}
+{% set lImg = imgFor(d.image, 'consultation_call') %}
+<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap lform">
+    <div class="rv">
+      {% if d.tag %}<span class="tag">{{ d.tag }}</span>{% endif %}
+      <h2 style="font-size:clamp(1.65rem,3.4vw,2.35rem)">{{ d.title | markup }}</h2>
+      {% if d.intro %}<p class="muted" style="margin-top:10px">{{ d.intro }}</p>{% endif %}
+      {% if d.points | length %}<ul class="points">{% for p in d.points %}<li>{{ icon('check-circle') }}<span>{{ p }}</span></li>{% endfor %}</ul>{% endif %}
+      {% if lImg %}{{ m.pic(lImg, 'استشارة قانونية', 'arch-soft') }}{% endif %}
+    </div>
+    <div>{{ m.mform(d, S, types, ts) }}</div>
+  </div>
+</section>

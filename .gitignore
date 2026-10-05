@@ -1,0 +1,14 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.local/
+storage/
+tmp/
+*.log
+.DS_Store
+Thumbs.db
+isgha-mahlul-style.html
+
+# الصور الأصلية قبل الضغط (النسخ المحسّنة في public/img/site)
+Images/

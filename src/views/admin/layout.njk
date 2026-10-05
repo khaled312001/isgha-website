@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="csrf" content="{{ csrf }}">
+<title>{{ title }} — لوحة تحكم إصغاء</title>
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/ThmanyahText-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{ asset('/css/admin.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body class="adm {{ bodyClass }}">
+<a class="skip" href="#adm-main">تخطَّ إلى المحتوى</a>
+<aside class="side" id="side" aria-label="القائمة الرئيسية">
+  <div class="side-top">
+    <a class="side-logo" href="/admin" aria-label="لوحة التحكم"><img src="/img/logo-white.svg" alt="إصغاء" width="132" height="40"></a>
+    <button class="icon-btn side-close" type="button" data-side-close aria-label="إغلاق القائمة">{{ icon('x') }}</button>
+  </div>
+  <nav class="side-nav">
+    {% for g in nav %}
+    <div class="side-group">
+      {% if g.title %}<p class="side-title">{{ g.title }}</p>{% endif %}
+      {% for it in g.items %}
+        {% if it.children %}
+        {% set open = it.children | some('key', active) %}
+        <details class="side-sub" {% if open %}open{% endif %}>
+          <summary class="side-link {% if open %}on{% endif %}">{{ icon(it.icon) }}<span>{{ it.label }}</span>{{ icon('chevron-down', 'chev') }}</summary>
+          {% for c in it.children %}<a class="side-link child {% if c.key == active %}on{% endif %}" href="{{ c.url }}">{{ icon(c.icon) }}<span>{{ c.label }}</span></a>{% endfor %}
+        </details>
+        {% else %}
+        <a class="side-link {% if it.key == active %}on{% endif %}" href="{{ it.url }}" {% if it.key == active %}aria-current="page"{% endif %}>{{ icon(it.icon) }}<span>{{ it.label }}</span>{% if it.badge and badges[it.badge] %}<b class="side-badge">{{ badges[it.badge] }}</b>{% endif %}</a>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </nav>
+  <div class="side-user">
+    <span class="avatar">{{ me.name | first }}</span>
+    <div><b>{{ me.name }}</b><small>{{ roleLabel(me.role) }}</small></div>
+    <a class="icon-btn" href="/admin/users/me" title="حسابي" aria-label="حسابي">{{ icon('settings') }}</a>
+    <form method="post" action="/admin/logout"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="icon-btn" type="submit" title="تسجيل الخروج" aria-label="تسجيل الخروج">{{ icon('logout') }}</button></form>
+  </div>
+</aside>
+<div class="side-scrim" data-side-close></div>
+
+<div class="main">
+  <header class="topbar">
+    <button class="icon-btn menu-btn" type="button" data-side-open aria-label="فتح القائمة">{{ icon('menu') }}</button>
+    <div class="top-title">
+      {% if crumbs %}<ol class="top-crumbs">{% for c in crumbs %}<li>{% if c.url %}<a href="{{ c.url }}">{{ c.label }}</a>{% else %}{{ c.label }}{% endif %}</li>{% endfor %}</ol>{% endif %}
+      <h1>{{ title }}</h1>
+    </div>
+    <div class="top-actions">
+      {% block actions %}{% endblock %}
+      <a class="btn btn-line btn-sm hide-sm" href="/" target="_blank" rel="noopener">{{ icon('external-link') }} عرض الموقع</a>
+    </div>
+  </header>
+  <main id="adm-main" class="content">
+    {% if flash %}<div class="alert alert-{{ flash.type }}" role="status">{{ icon('check-circle' if flash.type == 'success' else 'triangle-alert') }}<span>{{ flash.text }}</span></div>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+{% block foot %}{% endblock %}
+<script src="{{ asset('/js/admin.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

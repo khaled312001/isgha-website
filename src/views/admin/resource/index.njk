@@ -1,0 +1,60 @@
+{% extends "admin/layout.njk" %}
+{% block actions %}<a class="btn btn-teal btn-sm" href="/admin/r/{{ def.key }}/new{{ '?' + qs if qs }}">{{ icon('plus') }} إضافة {{ def.singular }}</a>{% endblock %}
+{% block content %}
+{% if def.hint %}<div class="note-box">{{ icon('info') }}<div>{{ def.hint }}</div></div>{% endif %}
+
+{% if filters.length or rows.length > 8 or search %}
+<form class="filters card" method="get">
+  <label class="fld grow"><span>بحث</span><input type="search" name="q" value="{{ search }}" placeholder="ابحث…"></label>
+  {% for f in filters %}
+  <label class="fld"><span>{{ f.label }}</span><select name="{{ f.name }}" onchange="this.form.submit()"><option value="">الكل</option>{% for o in f.options %}<option value="{{ o[0] }}" {{ 'selected' if f.value == o[0] | string }}>{{ o[1] }}</option>{% endfor %}</select></label>
+  {% endfor %}
+  <div class="filters-actions"><button class="btn btn-ink btn-sm" type="submit">{{ icon('filter') }} تطبيق</button>{% if qs %}<a class="btn btn-ghost btn-sm" href="/admin/r/{{ def.key }}">مسح</a>{% endif %}</div>
+</form>
+{% endif %}
+
+{% if rows.length %}
+<div class="card flush">
+  <div class="table-wrap"><table class="tbl" {% if canSort %}data-sortable="/admin/r/{{ def.key }}/reorder"{% endif %}>
+    <thead><tr>{% if canSort %}<th class="w-grip"><span class="sr-only">ترتيب</span></th>{% endif %}
+      {% for c in def.columns %}<th>{{ c[1] }}</th>{% endfor %}
+      {% if hasActive %}<th>الظهور</th>{% endif %}<th class="w-act"></th></tr></thead>
+    <tbody>
+    {% for r in rows %}
+    <tr data-id="{{ r.id }}">
+      {% if canSort %}<td class="w-grip"><span class="grip" title="اسحب لتغيير الترتيب">{{ icon('grip') }}</span></td>{% endif %}
+      {% for c in def.columns %}
+      {% set v = r[c[0]] %}
+      <td class="{{ 'ltr' if c[2] == 'ltr' }}">
+        {% if loop.first %}<a class="strong" href="/admin/r/{{ def.key }}/{{ r.id }}">{{ (v | plain | truncate_ar(90)) or '—' }}</a>
+        {% elif c[0] == 'status' %}{% if v == 'published' %}<span class="pill green">منشور</span>{% else %}<span class="pill gray">مسودة</span>{% endif %}
+        {% elif c[0] in ['has_page', 'is_featured'] %}{% if v %}<span class="pill teal">نعم</span>{% else %}<span class="muted">—</span>{% endif %}
+        {% elif c[0] == 'published_at' %}<span class="muted">{{ v | date | ar if v else '—' }}</span>
+        {% elif c[0] == 'code' %}<span class="pill sm">{{ v }}</span>
+        {% else %}<span class="muted">{{ (v | string | truncate_ar(70)) if (v or v === 0) else '—' }}</span>{% endif %}
+      </td>
+      {% endfor %}
+      {% if hasActive %}<td><label class="switch sm" title="إظهار/إخفاء"><input type="checkbox" data-toggle-url="/admin/r/{{ def.key }}/{{ r.id }}/toggle" {{ 'checked' if r.is_active }}><span></span></label></td>{% endif %}
+      <td class="w-act nowrap">
+        <a class="icon-btn" href="/admin/r/{{ def.key }}/{{ r.id }}" title="تعديل" aria-label="تعديل">{{ icon('pencil') }}</a>
+        {% if r._view %}<a class="icon-btn" href="{{ r._view }}" target="_blank" rel="noopener" title="عرض في الموقع" aria-label="عرض">{{ icon('external-link') }}</a>{% endif %}
+        <details class="menu">
+          <summary class="icon-btn" aria-label="المزيد">{{ icon('sliders') }}</summary>
+          <div class="menu-pop">
+            <form method="post" action="/admin/r/{{ def.key }}/{{ r.id }}/duplicate"><input type="hidden" name="_csrf" value="{{ csrf }}"><button type="submit">{{ icon('copy') }} نسخ</button></form>
+            <form method="post" action="/admin/r/{{ def.key }}/{{ r.id }}/delete"><input type="hidden" name="_csrf" value="{{ csrf }}"><button type="submit" class="danger" data-confirm="حذف «{{ r._title | plain | truncate_ar(60) }}» نهائيًا؟">{{ icon('trash') }} حذف</button></form>
+          </div>
+        </details>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</div>
+{% if canSort and rows.length > 1 %}<p class="hint center">اسحب الصفوف من {{ icon('grip') }} لتغيير ترتيب الظهور في الموقع — يُحفظ تلقائيًا.</p>{% endif %}
+{% include "admin/partials/pager.njk" %}
+{% else %}
+<div class="card empty big">{{ icon(def.icon) }}<h3>لا يوجد {{ def.label }} {{ 'مطابقة' if qs }}</h3><a class="btn btn-teal" href="/admin/r/{{ def.key }}/new">{{ icon('plus') }} إضافة {{ def.singular }}</a></div>
+{% endif %}
+{% endblock %}
+{% block scripts %}{% if canSort and rows.length > 1 %}<script src="/vendor/sortable.min.js"></script>{% endif %}{% endblock %}

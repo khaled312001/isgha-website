@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>الدخول — لوحة تحكم إصغاء</title>
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="{{ asset('/css/admin.css') }}">
+</head>
+<body class="login-page">
+<main class="login">
+  <section class="login-card">
+    <img class="login-logo" src="/img/logo.svg" alt="إصغاء للمحاماة والاستشارات القانونية" width="190" height="58">
+    <h1>الدخول إلى لوحة التحكم</h1>
+    <p class="muted">أدخل بيانات حسابك لإدارة المحتوى والطلبات والإعلانات.</p>
+    {% if error %}<div class="alert alert-error" role="alert">{{ icon('triangle-alert') }}<span>{{ error }}</span></div>{% endif %}
+    <form method="post" action="/admin/login" class="stack" autocomplete="on">
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+      <input type="hidden" name="next" value="{{ next or '/admin' }}">
+      <label class="fld"><span>البريد الإلكتروني</span><input type="email" name="email" value="{{ email }}" required autocomplete="username" dir="ltr" autofocus></label>
+      <label class="fld"><span>كلمة المرور</span>
+        <span class="pw"><input type="password" name="password" required autocomplete="current-password" dir="ltr"><button type="button" class="icon-btn" data-pw-toggle aria-label="إظهار كلمة المرور">{{ icon('eye') }}</button></span>
+      </label>
+      <button class="btn btn-teal btn-block btn-lg" type="submit">دخول {{ icon('arrow-left') }}</button>
+    </form>
+  </section>
+  <aside class="login-side" aria-hidden="true">
+    <img src="/img/mark.svg" alt="" width="70" height="80">
+    <p>نُصغي أولًا..<br>ثم نصنع <mark>الحل القانوني</mark></p>
+  </aside>
+</main>
+<script>
+document.querySelectorAll('[data-pw-toggle]').forEach(function (b) {
+  b.addEventListener('click', function () { var i = b.parentNode.querySelector('input'); i.type = i.type === 'password' ? 'text' : 'password'; });
+});
+</script>
+</body>
+</html>

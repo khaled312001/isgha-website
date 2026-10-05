@@ -1,0 +1,137 @@
+{% import "partials/macros.njk" as m %}
+{% if D.packages.length %}
+{% set total = D.packages.length %}
+{% set nf = D.packages | rejectattr('is_featured') | length %}
+{% set cols = nf if nf <= 4 else (3 if nf % 3 == 0 else 4) %}
+<section class="sec sx-pk {{ m.bgclass(d) }}" data-sxc="packages" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap">
+    {{ m.sechead(d) }}
+
+    {% if d.cards %}
+    <div class="pkc-grid" style="--cols:{{ cols or 1 }}" data-sx-rail>
+      {% for p in D.packages %}
+      {% set lvl = total - loop.index0 %}
+      {% set claim = (p.max_claim or '') | string | trim %}
+      {% set num = claim.split(' ')[0] %}
+      <article class="pkc{% if p.is_featured %} is-feat{% endif %} rv" style="--i:{{ loop.index0 }}">
+        <div class="pkc-id">
+          <span class="pkc-ic">{{ icon(p.icon or 'gem') }}</span>
+          <div class="pkc-nm">
+            {% if p.badge %}<span class="pkc-badge">{{ icon('crown') }}<span>{{ p.badge }}</span></span>{% endif %}
+            <h3>{{ p.name }}</h3>
+            {% if p.tagline %}<p class="pkc-tl">{{ p.tagline }}</p>{% endif %}
+          </div>
+        </div>
+        <div class="pkc-claim">
+          {% if claim %}
+          <div class="pkc-amt">
+            {% if d.claim_label %}<small>{{ d.claim_label }}</small>{% endif %}
+            {% if r/^[0-9٠-٩.,]+$/.test(num) and claim.length > num.length %}
+            <b><span class="n">{{ num }}</span><span class="u">{{ claim.slice(num.length) | trim }}</span></b>
+            {% else %}<b><span class="n sm">{{ claim }}</span></b>{% endif %}
+          </div>
+          {% endif %}
+          <span class="pkc-tier" aria-hidden="true">{% for k in range(0, total) %}<i{% if k < lvl %} class="on"{% endif %}></i>{% endfor %}</span>
+        </div>
+        <div class="pkc-act">
+          {% if p.highlights.length %}
+          <ul class="pkc-list">
+            {% for h in p.highlights %}<li><span class="ck">{{ icon('check') }}</span><span>{{ h }}</span></li>{% endfor %}
+          </ul>
+          {% endif %}
+          <a class="pkc-cta" href="{{ '#pk-' + p.slug if d.show_details else '/packages#pk-' + p.slug }}" aria-label="{{ d.card_cta }} — {{ p.name }}"><span>{{ d.card_cta }}</span>{{ icon('arrow-left') }}</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if d.show_compare %}
+    {% set rowIcons = { 'max_claim': 'scale', 'training_hours': 'graduation', 'case_management': 'gavel', 'workshops': 'presentation', 'pause_switch': 'refresh' } %}
+    <div class="cmp rv" data-cmp>
+      <div class="cmp-bar">
+        <span class="cmp-bar-ic">{{ icon('list-checks') }}</span>
+        <h3>{{ d.compare_title }}</h3>
+      </div>
+      <div class="cmp-scroll" tabindex="0" role="region" aria-label="{{ d.compare_title }}">
+        <table>
+          <caption class="sr-only">{{ d.compare_title }}</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="cmp-corner">{{ d.compare_head }}</th>
+              {% for p in D.packages | reverse %}
+              <th scope="col" class="cmp-pk{% if p.is_featured %} hl{% endif %}">
+                {% if p.is_featured and p.badge %}<span class="cmp-badge">{{ p.badge }}</span>{% endif %}
+                <span class="cmp-pk-ic">{{ icon(p.icon or 'gem') }}</span>
+                <span class="cmp-pk-n">{{ p.name | replace('الباقة ', '') }}</span>
+              </th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in D.compareRows %}
+            <tr>
+              <th scope="row"><span class="cmp-row"><span class="cmp-row-ic">{{ icon(rowIcons[row.key] or 'circle-dot') }}</span><span>{{ row.label }}</span></span></th>
+              {% for p in D.packages | reverse %}
+              {% set v = p[row.field] if row.field else p.compare[row.key] %}
+              <td{% if p.is_featured %} class="hl"{% endif %}>{% if v === true or v == 'yes' %}<span class="cmp-yes">{{ icon('check') }}<span class="sr-only">{{ d.yes_label }}</span></span>{% elif v === false or v == 'no' %}<span class="cmp-no">{{ icon('minus') }}<span class="sr-only">{{ d.no_label }}</span></span>{% else %}<span class="cmp-val">{{ v }}</span>{% endif %}</td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if d.show_details %}
+    <div class="pkx rv" data-pkx>
+      <div class="pkx-tabs" role="tablist" aria-label="{{ d.title | plain if d.title else d.core_title }}">
+        {% for p in D.packages %}
+        <button type="button" role="tab" class="pkx-tab{% if p.is_featured %} is-feat{% endif %}" id="pkt-{{ p.slug }}" aria-controls="pk-{{ p.slug }}" aria-selected="{{ 'true' if loop.first else 'false' }}" {% if not loop.first %}tabindex="-1"{% endif %}>
+          <span class="pkx-tic">{{ icon(p.icon or 'gem') }}</span>
+          <span class="pkx-tx"><b>{{ p.name }}</b>{% if p.max_claim %}<small>{{ p.max_claim }}</small>{% endif %}</span>
+          {{ icon('chevron-left', 'pkx-chev') }}
+        </button>
+        {% endfor %}
+      </div>
+      <div class="pkx-panels">
+        {% for p in D.packages %}
+        <article class="pkx-panel{% if p.is_featured %} is-feat{% endif %}{% if loop.first %} on{% endif %}" id="pk-{{ p.slug }}" role="tabpanel" aria-labelledby="pkt-{{ p.slug }}" tabindex="0">
+          <header class="pkx-head">
+            <span class="pkx-ic">{{ icon(p.icon or 'gem') }}</span>
+            <div class="pkx-title">
+              {% if p.badge %}<span class="pkc-badge">{{ icon('crown') }}<span>{{ p.badge }}</span></span>{% endif %}
+              <h3>{{ p.name }}</h3>
+              {% if p.tagline %}<p>{{ p.tagline }}</p>{% endif %}
+            </div>
+            <dl class="pkx-facts">
+              {% if p.max_claim %}<div><dt>{{ icon('scale') }}{{ d.fact_claim }}</dt><dd>{{ p.max_claim }}</dd></div>{% endif %}
+              {% if p.training_hours %}<div><dt>{{ icon('graduation') }}{{ d.fact_training }}</dt><dd>{{ p.training_hours }}</dd></div>{% endif %}
+            </dl>
+          </header>
+          <div class="pkx-cols">
+            {% if p.core_features.length %}
+            <div class="pkx-col">
+              <h4>{{ d.core_title }}</h4>
+              <ul class="pkx-list">{% for f in p.core_features %}<li><span class="ck">{{ icon('check') }}</span><span>{{ f }}</span></li>{% endfor %}</ul>
+            </div>
+            {% endif %}
+            {% if p.extra_features.length %}
+            <div class="pkx-col">
+              <h4>{{ p.extra_title or d.extra_default }}</h4>
+              <ul class="pkx-list alt">{% for f in p.extra_features %}<li><span class="ck">{{ icon('plus') }}</span><span>{{ f }}</span></li>{% endfor %}</ul>
+            </div>
+            {% endif %}
+          </div>
+          <footer class="pkx-foot">
+            <a class="pkx-cta" href="/consultation?package={{ p.slug }}"><span>{{ p.cta_text or (d.cta_prefix + ' ' + p.name) }}</span>{{ icon('arrow-left') }}</a>
+          </footer>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}

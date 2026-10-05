@@ -1,0 +1,31 @@
+{% extends "admin/layout.njk" %}
+{% block head %}<link rel="stylesheet" href="/vendor/quill.snow.css">{% endblock %}
+{% block content %}
+<nav class="tabs-line" aria-label="أقسام الإعدادات">
+  {% for t in tabs %}<a href="/admin/settings/{{ t.key }}" class="{{ 'on' if t.key == group.key }}">{{ icon(t.icon) }} {{ t.title }}</a>{% endfor %}
+</nav>
+<form class="res-form" id="set-form" novalidate>
+  <div class="res-main card" id="ff-main"></div>
+  <aside class="res-side">
+    <div class="card sticky stack">
+      <button class="btn btn-teal btn-block btn-lg" type="submit">{{ icon('save') }} حفظ الإعدادات</button>
+      {% if group.key == 'smtp' %}
+      <hr>
+      <label class="fld"><span>إرسال رسالة تجريبية إلى</span><input type="email" id="test-to" dir="ltr" value="{{ (S.notify_emails or me.email).split(',')[0] | trim }}"></label>
+      <button class="btn btn-line btn-block" type="button" data-post="/admin/settings/test-email" data-post-field="to:#test-to">{{ icon('send') }} اختبار البريد</button>
+      <p class="hint">بيانات بريد Hostinger: الخادم smtp.hostinger.com · المنفذ 465 · SSL مفعّل · اسم المستخدم هو البريد كاملًا.</p>
+      {% endif %}
+      {% if group.key == 'leads' %}
+      <hr>
+      <button class="btn btn-line btn-block" type="button" data-post="/admin/settings/test-webhook">{{ icon('send') }} اختبار الـ Webhook</button>
+      <p class="hint">يُرسل كل طلب جديد كـ JSON (POST) إلى الرابط. عند إضافة مفتاح سري يُرسل التوقيع في الترويسة <code>X-Isgha-Signature</code> (HMAC-SHA256).</p>
+      {% endif %}
+    </div>
+  </aside>
+</form>
+{% endblock %}
+{% block scripts %}
+<script src="/vendor/sortable.min.js"></script>
+<script src="/vendor/quill.js"></script>
+<script>ADM.mountForm(document.getElementById('set-form'), {{ boot | json }});</script>
+{% endblock %}

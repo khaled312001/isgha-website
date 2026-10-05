@@ -1,0 +1,10 @@
+{% import "partials/macros.njk" as m %}
+<article class="post-card rv">
+  <a href="/insights/{{ p.slug }}" tabindex="-1" aria-hidden="true">{{ m.pic(imgFor(p.cover, 'insights_cover'), p.title, '', false, '', 'alt') }}</a>
+  <div class="body">
+    <div class="meta">{% if p.category_name %}<span class="cat">{{ p.category_name }}</span>{% endif %}<time datetime="{{ p.published_at.toISOString() if p.published_at else '' }}">{{ p.published_at | date }}</time></div>
+    <h3><a href="/insights/{{ p.slug }}">{{ p.title }}</a></h3>
+    {% if p.excerpt %}<p>{{ p.excerpt | truncate_ar(150) }}</p>{% endif %}
+    <a class="link-arrow" href="/insights/{{ p.slug }}">اقرأ المقال {{ icon('arrow-left') }}</a>
+  </div>
+</article>

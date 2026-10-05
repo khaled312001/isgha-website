@@ -1,0 +1,91 @@
+{% extends "admin/layout.njk" %}
+{% block actions %}
+<nav class="seg" aria-label="الفترة">
+  {% for o in [[7, '٧ أيام'], [30, '٣٠ يومًا'], [90, '٩٠ يومًا'], [365, 'سنة']] %}<a href="?d={{ o[0] }}" class="{{ 'on' if range == o[0] }}">{{ o[1] }}</a>{% endfor %}
+</nav>
+{% endblock %}
+{% block content %}
+<div class="kpis six">
+  <div class="kpi"><span class="kpi-ic">{{ icon('users') }}</span><small>الزوار</small><b>{{ totals.uniques | ar }}</b><em>{{ totals.views | ar }} مشاهدة</em></div>
+  <div class="kpi"><span class="kpi-ic teal">{{ icon('inbox') }}</span><small>الطلبات</small><b>{{ totals.leads | ar }}</b><em>{{ totals.won | ar }} تم التعاقد</em></div>
+  <div class="kpi"><span class="kpi-ic yellow">{{ icon('percent') }}</span><small>معدل التحويل</small><b>{{ totals.conv | ar }}٪</b><em>طلبات ÷ زوار</em></div>
+  <div class="kpi"><span class="kpi-ic">{{ icon('phone') }}</span><small>نقرات الاتصال</small><b>{{ totals.calls | ar }}</b></div>
+  <div class="kpi"><span class="kpi-ic">{{ icon('whatsapp') }}</span><small>نقرات واتساب</small><b>{{ totals.whatsapp | ar }}</b></div>
+  <div class="kpi"><span class="kpi-ic">{{ icon('clipboard') }}</span><small>بدأوا تعبئة النموذج</small><b>{{ totals.formStarts | ar }}</b></div>
+</div>
+
+<section class="card">
+  <header class="card-head"><h3>الزيارات والطلبات يوميًا</h3></header>
+  <div class="chart-box"><canvas id="ch-a" height="280" aria-label="رسم بياني يومي"></canvas></div>
+</section>
+
+<div class="grid-2">
+  <section class="card">
+    <header class="card-head"><h3>مصادر الزيارات</h3></header>
+    {% if sources.length %}
+    <ul class="bars">{% set mx = sources[0].v %}{% for s in sources %}<li><span class="ltr">{{ s.source }}</span><i style="--w:{{ (s.v / mx * 100) | round }}%"></i><b>{{ s.u | ar }}</b></li>{% endfor %}</ul>
+    {% else %}<p class="muted">لا توجد بيانات في هذه الفترة.</p>{% endif %}
+  </section>
+  <section class="card">
+    <header class="card-head"><h3>مصادر الطلبات</h3></header>
+    {% if leadSources.length %}
+    <ul class="bars teal">{% set mx2 = leadSources[0][1] %}{% for s in leadSources %}<li><span>{{ s[0] }}</span><i style="--w:{{ (s[1] / mx2 * 100) | round }}%"></i><b>{{ s[1] | ar }}</b></li>{% endfor %}</ul>
+    {% else %}<p class="muted">لا توجد طلبات في هذه الفترة.</p>{% endif %}
+    {% if devices.length %}
+    <h4 class="mini-title">الأجهزة</h4>
+    <ul class="status-row">{% for d in devices %}<li><span>{{ icon({'mobile': 'smartphone', 'tablet': 'tablet'}[d.device] or 'monitor') }} {{ {'mobile': 'جوال', 'tablet': 'تابلت'}[d.device] or 'كمبيوتر' }} <b>{{ d.v | ar }}</b></span></li>{% endfor %}</ul>
+    {% endif %}
+  </section>
+</div>
+
+{% if landing.length %}
+<section class="card flush">
+  <header class="card-head pad"><h3>أداء صفحات الهبوط</h3></header>
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>الصفحة</th><th>الزوار</th><th>الطلبات</th><th>التحويل</th><th></th></tr></thead>
+    <tbody>{% for p in landing %}<tr><td><a class="strong" href="/admin/pages/{{ p.id }}">{{ p.title }}</a><small class="ltr muted">/{{ p.slug }}</small></td><td>{{ p.uniques | ar }}</td><td><a href="/admin/leads?page_id={{ p.id }}">{{ p.leads | ar }}</a></td><td><b>{{ p.conv | ar }}٪</b></td><td>{% if p.status != 'published' %}<span class="pill gray">مسودة</span>{% endif %}</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% endif %}
+
+{% if campaigns.length %}
+<section class="card flush">
+  <header class="card-head pad"><h3>الحملات الإعلانية (UTM)</h3></header>
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>الحملة</th><th>المصدر</th><th>الطلبات</th><th>تم التعاقد</th></tr></thead>
+    <tbody>{% for c in campaigns %}<tr><td class="ltr"><a href="/admin/leads?campaign={{ c.campaign | urlencode }}">{{ c.campaign }}</a></td><td class="ltr muted">{{ c.source }}</td><td>{{ c.leads | ar }}</td><td>{{ c.won | ar }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% endif %}
+
+<section class="card flush">
+  <header class="card-head pad"><h3>أكثر الصفحات زيارة</h3></header>
+  {% if pages.length %}
+  <div class="table-wrap"><table class="tbl">
+    <thead><tr><th>الرابط</th><th>المشاهدات</th><th>الزوار</th><th>بدء النموذج</th><th>الطلبات</th><th>التحويل</th></tr></thead>
+    <tbody>{% for p in pages %}<tr><td class="ltr"><a href="{{ p.path }}" target="_blank" rel="noopener">{{ p.path }}</a></td><td>{{ p.v | ar }}</td><td>{{ p.u | ar }}</td><td>{{ p.starts | ar }}</td><td>{{ p.leads | ar }}</td><td>{{ p.conv | ar }}٪</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% else %}<p class="muted pad">لا توجد زيارات مسجّلة في هذه الفترة.</p>{% endif %}
+</section>
+
+{% if notFound.length %}
+<section class="card">
+  <header class="card-head"><h3>روابط مفقودة (404)</h3><a class="link" href="/admin/r/redirects/new">إضافة تحويل {{ icon('arrow-left') }}</a></header>
+  <ul class="mini-list">{% for n in notFound %}<li><span class="ltr">{{ n.path }}</span><small>{{ n.n | ar }} مرة</small></li>{% endfor %}</ul>
+</section>
+{% endif %}
+<p class="hint center">الإحصاءات من الموقع نفسه بدون كوكيز طرف ثالث (تستبعد الزواحف والروبوتات). للتحليل المتقدم اربط Google Analytics من «الإعلانات والتتبع».</p>
+{% endblock %}
+{% block scripts %}
+<script src="/vendor/chart.umd.min.js"></script>
+<script>
+ADM.chart('ch-a', {
+  labels: {{ days | json }},
+  sets: [
+    { label: 'الطلبات', data: {{ series.leads | json }}, color: '#0e6e62', axis: 'y1', type: 'bar' },
+    { label: 'الزوار', data: {{ series.uniques | json }}, color: '#dead34', axis: 'y', type: 'line' },
+    { label: 'المشاهدات', data: {{ series.views | json }}, color: '#9ba39e', axis: 'y', type: 'line', dashed: true }
+  ]
+});
+</script>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% import "partials/macros.njk" as m %}
+{% set cat = D.catBySlug[d.category or 'specialized'] %}
+{% if cat and cat.services.length %}
+{% set catImg = imgFor(d.image or cat.image, 'service_' + cat.slug) %}
+<section class="sec sxt {{ m.bgclass(d) }}" data-sx="specializations" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap">
+    {{ m.sechead(d, 'split') }}
+    <div class="sxt-box rv" data-sx-tabs>
+      <div class="sxt-side">
+        <div class="sxt-list" role="tablist" aria-label="{{ d.title | plain }}">
+          <span class="sxt-ind" aria-hidden="true"></span>
+          {% for s in cat.services %}
+          <button class="sxt-tab" type="button" role="tab" id="tab-{{ sec.id }}-{{ loop.index }}" aria-controls="panel-{{ sec.id }}-{{ loop.index }}" aria-selected="{{ 'true' if loop.first else 'false' }}" {% if not loop.first %}tabindex="-1"{% endif %}>
+            <span class="sxt-n">{{ loop.index | pad2 }}</span>
+            <span class="sxt-ti">{{ icon(s.icon or cat.icon or 'layers') }}</span>
+            <span class="sxt-tt">{{ s.title }}</span>
+            {{ icon('arrow-left', 'sxt-arr') }}
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="sxt-panels">
+        {% for s in cat.services %}
+        <div class="sxt-panel" role="tabpanel" tabindex="0" id="panel-{{ sec.id }}-{{ loop.index }}" aria-labelledby="tab-{{ sec.id }}-{{ loop.index }}" {% if not loop.first %}hidden{% endif %}>
+          <div class="sxt-ph">
+            <div class="sxt-ph-txt">
+              <span class="sxt-eye"><b>{{ loop.index | pad2 }}</b><i></i>{{ cat.title }}</span>
+              <h3>{{ s.title }}</h3>
+              {% if s.summary %}<p class="sxt-sum">{{ s.summary }}</p>{% elif s.body %}<p class="sxt-sum">{{ s.body | striptags | truncate_ar(220) }}</p>{% endif %}
+            </div>
+            {% if d.show_image !== false %}<div class="sxt-thumb">{{ m.pic(imgFor(s.image) or catImg, s.title, 'sxt-media', false, '', 'alt') }}<span class="sxt-pic-ic">{{ icon(s.icon or cat.icon or 'layers') }}</span></div>{% endif %}
+          </div>
+          {% if s.bullets.length %}
+          {% if s.bullets_title %}<p class="sxt-bt">{{ s.bullets_title }}</p>{% endif %}
+          <ul class="sxt-bul">
+            {% for b in s.bullets.slice(0, 6) %}{% set L = b | lead %}<li><span>{{ L.title or L.text }}</span></li>{% endfor %}
+          </ul>
+          {% endif %}
+          {% if s.url %}<a class="sxt-more" href="{{ s.url }}"><span>{{ d.more_label or 'اقرأ المزيد عن' }} {{ s.title }}</span><span class="sxt-more-ic">{{ icon('arrow-left') }}</span></a>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}

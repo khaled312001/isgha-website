@@ -1,0 +1,47 @@
+{% import "partials/macros.njk" as m %}
+{% set list = d.items if d.source == 'items' else D.faqs[d.group or 'general'] %}
+{% if list and list.length %}
+{% set uid = (sec.id if sec and sec.id else ts) %}
+{% set shown = (d.visible_count or 5) | int %}
+{% if shown < 1 %}{% set shown = 5 %}{% endif %}
+<section class="sec cx-faq {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap cx-faq-grid">
+    <div class="cx-faq-side">
+      <div class="cx-faq-head rv">
+        {% if d.tag %}<span class="tag">{{ d.tag }}</span>{% endif %}
+        {% if d.title %}<h2>{{ d.title | markup }}</h2>{% endif %}
+        {% if d.intro %}<p>{{ d.intro }}</p>{% endif %}
+      </div>
+      {% if S.whatsapp and d.ask_label %}
+      <aside class="cx-faq-ask rv d2">
+        <span class="cx-faq-ask-ic" aria-hidden="true">{{ icon('whatsapp') }}</span>
+        {% if d.ask_title %}<b>{{ d.ask_title }}</b>{% endif %}
+        {% if d.ask_text %}<p>{{ d.ask_text }}</p>{% endif %}
+        <a class="cx-faq-ask-btn" href="{{ S.whatsapp | wa(d.ask_message or S.whatsapp_message) }}" target="_blank" rel="noopener">{{ icon('whatsapp') }}<span>{{ d.ask_label }}</span>{{ icon('arrow-left', 'cx-arr') }}</a>
+      </aside>
+      {% endif %}
+    </div>
+    <div class="cx-faq-list rv d1" data-cx-acc>
+      {% for f in list %}
+      <div class="cx-qa {% if loop.first %}is-open{% endif %} {% if loop.index > shown %}is-extra{% endif %}">
+        <h3 class="cx-qa-h">
+          <button type="button" class="cx-qa-q" id="fq-{{ uid }}-{{ loop.index }}" aria-expanded="{{ 'true' if loop.first else 'false' }}" aria-controls="fa-{{ uid }}-{{ loop.index }}">
+            <span class="cx-qa-n" aria-hidden="true">{{ loop.index | ar }}</span>
+            <span class="cx-qa-t">{{ f.q or f.question }}</span>
+            <span class="cx-qa-pm" aria-hidden="true">{{ icon('plus') }}</span>
+          </button>
+        </h3>
+        <div class="cx-qa-a" id="fa-{{ uid }}-{{ loop.index }}" role="region" aria-labelledby="fq-{{ uid }}-{{ loop.index }}">
+          <div class="cx-qa-in"><div class="cx-qa-txt">{{ (f.a or f.answer) | markup }}</div></div>
+        </div>
+      </div>
+      {% endfor %}
+      {% if list.length > shown %}
+      <button type="button" class="cx-faq-more" data-cx-more aria-expanded="false">
+        <span>{{ d.more_label or 'عرض المزيد' }}</span><small>+{{ (list.length - shown) | ar }}</small>{{ icon('chevron-down') }}
+      </button>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}

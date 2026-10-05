@@ -1,0 +1,46 @@
+{% import "partials/macros.njk" as m %}
+{# بطاقات مدمجة: ٣ بنود كحد أقصى، وإن بقي بند واحد فقط يُعرض بدل شارة «+١» #}
+{% set maxb = d.max_bullets or 3 %}{% if maxb > 3 %}{% set maxb = 3 %}{% endif %}
+{% set callL = d.call_label or 'اتصل' %}
+{% set waL = d.wa_label or 'واتساب' %}
+<section class="sec sxs {{ m.bgclass(d) }}" data-sx="services_overview" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap">
+    {{ m.sechead(d) }}
+    <div class="sxs-grid">
+      {% for c in D.categories %}
+      {% set list = c.services if c.services.length else c.bullets %}
+      {% set shown = list.length if list.length <= maxb + 1 else maxb %}
+      <article class="sxs-card rv" style="--i:{{ loop.index0 }}">
+        <div class="sxs-thumb">
+          {{ m.pic(imgFor(c.image, 'service_' + c.slug), c.title, 'sxs-media', false, '', 'alt') }}
+          <span class="sxs-ic">{{ icon(c.icon or 'scale') }}</span>
+        </div>
+        <div class="sxs-head">
+          <span class="sxs-eye" aria-hidden="true"><b>{{ loop.index | pad2 }}</b><i></i></span>
+          <h3 class="sxs-title"><a href="{{ c.url }}">{{ c.title }}</a></h3>
+          {% if c.tagline %}<p class="sxs-tagline">{{ c.tagline }}</p>{% endif %}
+        </div>
+        <ul class="sxs-list">
+          {% for it in list.slice(0, shown) %}
+          {% if c.services.length %}
+          <li>{% if it.url %}<a href="{{ it.url }}">{% else %}<span>{% endif %}<span class="sxs-sic">{{ icon(it.icon or c.icon or 'check') }}</span><span class="sxs-st">{{ it.title }}</span>{% if it.url %}</a>{% else %}</span>{% endif %}</li>
+          {% else %}
+          {% set L = it | lead %}<li><span><span class="sxs-dot"></span><span class="sxs-st">{{ L.title or L.text }}</span></span></li>
+          {% endif %}
+          {% endfor %}
+          {% if list.length > shown %}<li class="more"><a href="{{ c.url }}">{{ icon('plus') }}<span>{{ (list.length - shown) | ar }} {{ d.more_label or 'خدمات أخرى' }}</span></a></li>{% endif %}
+        </ul>
+        <div class="sxs-foot">
+          <a class="sxs-go" href="{{ c.url }}"><span>{{ d.link_label or 'تفاصيل الخدمة' }}</span><span class="sxs-go-ic">{{ icon('arrow-left') }}</span></a>
+          {% if d.show_contact %}
+          <div class="sxs-quick">
+            <a class="sxs-q call" href="{{ S.phone | tel }}" aria-label="{{ callL }}: {{ c.title }}">{{ icon('phone') }}<span>{{ callL }}</span></a>
+            <a class="sxs-q wa" href="{{ S.whatsapp | wa((d.wa_text or 'السلام عليكم، أستفسر عن') + ' ' + c.title) }}" target="_blank" rel="noopener" aria-label="{{ waL }}: {{ c.title }}">{{ icon('whatsapp') }}<span>{{ waL }}</span></a>
+          </div>
+          {% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>

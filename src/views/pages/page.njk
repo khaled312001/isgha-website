@@ -1,0 +1,10 @@
+{% extends "layouts/site.njk" %}
+{% block main %}
+{% for sec in sections %}
+{% if not sec.hidden %}
+{% set d = sec.data %}
+{% if isPreview %}<div class="sid" id="sid-{{ sec.id }}" data-sid="{{ sec.id }}"></div>{% endif %}
+{% include "sections/" + sec.type + ".njk" ignore missing %}
+{% endif %}
+{% endfor %}
+{% endblock %}

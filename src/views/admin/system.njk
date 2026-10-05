@@ -1,0 +1,57 @@
+{% extends "admin/layout.njk" %}
+{% block actions %}<a class="btn btn-line btn-sm" href="/admin/system/activity">{{ icon('history') }} سجل النشاط</a>{% endblock %}
+{% block content %}
+<div class="kpis six">
+  <div class="kpi"><span class="kpi-ic">{{ icon('server') }}</span><small>Node.js</small><b class="small-b ltr">{{ info.node }}</b></div>
+  <div class="kpi"><span class="kpi-ic">{{ icon('database') }}</span><small>MySQL</small><b class="small-b ltr">{{ info.mysql }}</b></div>
+  <div class="kpi"><span class="kpi-ic">{{ icon('activity') }}</span><small>البيئة</small><b class="small-b">{{ info.env }}</b><em>يعمل منذ {{ info.uptime | ar }} دقيقة</em></div>
+  <div class="kpi"><span class="kpi-ic">{{ icon('zap') }}</span><small>الذاكرة</small><b class="small-b">{{ info.memory | ar }} MB</b></div>
+  <div class="kpi"><span class="kpi-ic {{ 'teal' if info.indexing else 'yellow' }}">{{ icon('globe') }}</span><small>الأرشفة</small><b class="small-b">{{ 'مفتوحة' if info.indexing else 'مغلقة (تجريبي)' }}</b></div>
+  <div class="kpi"><span class="kpi-ic">{{ icon('inbox') }}</span><small>الطلبات</small><b class="small-b">{{ counts.leads | ar }}</b><em>{{ counts.pages | ar }} صفحة · {{ counts.posts | ar }} مقال</em></div>
+</div>
+
+<div class="grid-2">
+  <section class="card stack">
+    <header class="card-head"><h3>{{ icon('save') }} النسخ الاحتياطي</h3>
+      <form method="post" action="/admin/system/backup"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="btn btn-teal btn-sm" type="submit">{{ icon('plus') }} إنشاء نسخة الآن</button></form>
+    </header>
+    <p class="hint">النسخة تشمل كل المحتوى والإعدادات والطلبات والمستخدمين (بدون الصور — الصور محفوظة في مجلد الرفع). يُحتفظ بآخر ١٥ نسخة. ويوفر Hostinger نسخًا يومية للملفات وقاعدة البيانات أيضًا.{% if me.role != 'owner' %} تنزيل النسخ وحذفها متاح لمالك الحساب فقط لأنها تحتوي بيانات حساسة.{% endif %}</p>
+    {% if backups.length %}
+    <ul class="mini-list">
+      {% for b in backups %}
+      <li><span class="ltr">{{ b.name }}</span><small>{{ b.size | bytes | ar }} · {{ b.time | rel | ar }}</small>
+        {% if me.role == 'owner' %}<span class="row-acts"><a class="btn btn-line btn-xs" href="/admin/system/backup/{{ b.name }}">{{ icon('download') }} تنزيل</a>
+        <form method="post" action="/admin/system/backup/{{ b.name }}/delete"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="btn btn-danger-ghost btn-xs" type="submit" data-confirm="حذف النسخة؟" aria-label="حذف النسخة" title="حذف النسخة">{{ icon('trash') }}</button></form></span>{% endif %}</li>
+      {% endfor %}
+    </ul>
+    {% else %}<p class="muted">لا توجد نسخ بعد.</p>{% endif %}
+  </section>
+
+  <section class="card stack">
+    <h3>{{ icon('undo') }} الاستعادة من نسخة</h3>
+    {% if me.role == 'owner' %}
+    <div class="alert alert-warn">{{ icon('triangle-alert') }}<span>الاستعادة تستبدل المحتوى الحالي بالكامل بمحتوى النسخة. أنشئ نسخة احتياطية قبلها.</span></div>
+    <form method="post" action="/admin/system/restore?_csrf={{ csrf }}" enctype="multipart/form-data" class="stack">
+      <label class="fld"><span>اختر نسخة محفوظة</span><select name="name"><option value="">— أو ارفع ملفًا بالأسفل —</option>{% for b in backups %}<option value="{{ b.name }}">{{ b.name }}</option>{% endfor %}</select></label>
+      <label class="fld"><span>ملف نسخة (.json)</span><input type="file" name="file" accept="application/json,.json"></label>
+      <label class="chk"><input type="checkbox" name="include_users" value="1"><span>استعادة المستخدمين أيضًا (وإلا تبقى الحسابات الحالية)</span></label>
+      <label class="fld"><span>اكتب «استعادة» للتأكيد</span><input name="confirm" autocomplete="off"></label>
+      <button class="btn btn-danger btn-sm" type="submit">{{ icon('undo') }} استعادة</button>
+    </form>
+    {% else %}<p class="muted">الاستعادة متاحة لمالك الحساب فقط.</p>{% endif %}
+  </section>
+</div>
+
+<div class="grid-2">
+  <section class="card stack">
+    <h3>{{ icon('refresh') }} الذاكرة المؤقتة</h3>
+    <p class="hint">الموقع يحفظ المحتوى مؤقتًا لثوانٍ لسرعة التصفح، وتُحدَّث تلقائيًا مع كل تعديل. استخدم هذا الزر فقط إذا لم يظهر تعديل ما.</p>
+    <form method="post" action="/admin/system/cache"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="btn btn-line btn-sm" type="submit">{{ icon('refresh') }} تحديث الذاكرة المؤقتة</button></form>
+  </section>
+  <section class="card">
+    <h3>{{ icon('database') }} آخر تحديثات قاعدة البيانات</h3>
+    <ul class="mini-list">{% for m in migrations %}<li><span class="ltr small">{{ m.name }}</span><small>{{ m.migration_time | rel | ar }}</small></li>{% endfor %}</ul>
+    <p class="hint ltr">Uploads: {{ info.uploadsDir }}</p>
+  </section>
+</div>
+{% endblock %}

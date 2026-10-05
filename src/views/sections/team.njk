@@ -1,0 +1,16 @@
+{% import "partials/macros.njk" as m %}
+{% if D.team.length %}
+<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap">
+    {{ m.sechead(d) }}
+    <div class="team">
+      {% for t in D.team %}
+      <figure class="member rv d{{ loop.index0 % 4 }}">
+        {{ m.pic(t.photo, t.name, '', false, '', 'alt') }}
+        <figcaption><b>{{ t.name }}</b><span>{{ t.title }}</span></figcaption>
+      </figure>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}

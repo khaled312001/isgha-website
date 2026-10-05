@@ -1,0 +1,60 @@
+{% import "partials/macros.njk" as m %}
+{% set valueIcons = ['message-square', 'scale', 'award', 'handshake', 'shield', 'star', 'compass', 'heart'] %}
+{% set stmtIcons = ['eye', 'target', 'gem'] %}
+{% set hasValues = ((d.items | join('', 'list')) + (d.items | join('', 'values'))) | length > 0 %}
+<section class="sec px {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap">
+    <div class="px-panel rv {% if hasValues %}has-values{% endif %}">
+      <span class="px-wm" aria-hidden="true"></span>
+      <div class="px-main">
+        {% if d.tag or d.title or d.intro %}
+        <div class="px-head">
+          {% if d.tag %}<span class="tag">{{ d.tag }}</span>{% endif %}
+          {% if d.title %}<h2>{{ d.title | markup }}</h2>{% endif %}
+          {% if d.intro %}<p>{{ d.intro }}</p>{% endif %}
+        </div>
+        {% endif %}
+        <div class="px-stmts">
+          {% for it in d.items %}
+          {% if not ((it.values and it.values.length) or (it.list and it.list.length)) %}
+          <article class="px-stmt" style="--i:{{ loop.index0 }}">
+            <div class="px-stmt-top">
+              <span class="px-ic">{{ icon(it.icon or stmtIcons[loop.index0 % 3]) }}</span>
+              <span class="px-n" aria-hidden="true">{{ loop.index | pad2 }}</span>
+            </div>
+            <h3>{{ it.title }}</h3>
+            {% if it.text %}<p>{{ it.text }}</p>{% endif %}
+          </article>
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      {% for it in d.items %}
+      {% if (it.values and it.values.length) or (it.list and it.list.length) %}
+      <aside class="px-vals" style="--i:{{ loop.index0 }}">
+        <div class="px-vals-head">
+          <span class="px-ic">{{ icon(it.icon or 'gem') }}</span>
+          <div>
+            <h3>{{ it.title }}</h3>
+            {% if it.text %}<p>{{ it.text }}</p>{% endif %}
+          </div>
+          <span class="px-n" aria-hidden="true">{{ loop.index | pad2 }}</span>
+        </div>
+        <ul class="px-vlist">
+          {% if it.values and it.values.length %}
+          {% for v in it.values %}
+          <li style="--j:{{ loop.index0 }}"><span class="px-vic">{{ icon(v.icon or valueIcons[loop.index0 % 8]) }}</span><span class="px-vt"><b>{{ v.title }}</b>{% if v.text %}<small>{{ v.text }}</small>{% endif %}</span></li>
+          {% endfor %}
+          {% else %}
+          {% for raw in it.list %}
+          {% set v = raw | lead %}
+          <li style="--j:{{ loop.index0 }}"><span class="px-vic">{{ icon(valueIcons[loop.index0 % 8]) }}</span><span class="px-vt"><b>{{ v.title or v.text }}</b>{% if v.title and v.text %}<small>{{ v.text }}</small>{% endif %}</span></li>
+          {% endfor %}
+          {% endif %}
+        </ul>
+      </aside>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>

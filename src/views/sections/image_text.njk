@@ -1,0 +1,14 @@
+{% import "partials/macros.njk" as m %}
+<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap split {% if d.image_side == 'end' %}img-end{% endif %}">
+    <div class="split-media rv">{{ m.pic(imgFor(d.image, d.image_slot), d.image_alt or d.title | plain) }}</div>
+    <div class="rv d1">
+      {% if d.tag %}<span class="tag">{{ d.tag }}</span>{% endif %}
+      {% if d.title %}<h2 style="font-size:clamp(1.6rem,3.2vw,2.2rem);margin-bottom:14px">{{ d.title | markup }}</h2>{% endif %}
+      {% if d.intro %}<p class="muted">{{ d.intro }}</p>{% endif %}
+      {% if d.body %}<div class="prose" style="margin-top:12px">{{ d.body | safe }}</div>{% endif %}
+      {% if d.bullets | length %}<ul class="bullets">{% for b in d.bullets %}<li>{{ b }}</li>{% endfor %}</ul>{% endif %}
+      {% if d.cta_label %}<a class="btn btn-teal" style="margin-top:22px" href="{{ d.cta_url }}">{{ d.cta_label }} {{ icon('arrow-left') }}</a>{% endif %}
+    </div>
+  </div>
+</section>

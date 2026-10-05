@@ -1,0 +1,12 @@
+{% import "partials/macros.njk" as m %}
+{% if D.posts.length %}
+<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap">
+    {{ m.sechead(d) }}
+    <div class="posts">
+      {% for p in D.posts %}{% include "partials/post-card.njk" %}{% endfor %}
+    </div>
+    <p style="text-align:center;margin-top:32px"><a class="btn btn-line" href="/insights">كل المقالات {{ icon('arrow-left') }}</a></p>
+  </div>
+</section>
+{% endif %}

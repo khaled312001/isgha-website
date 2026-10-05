@@ -1,0 +1,48 @@
+{% extends "layouts/site.njk" %}
+{% import "partials/macros.njk" as m %}
+{% block main %}
+<section class="phero no-img">
+  <div class="wrap">
+    <ol class="crumbs" aria-label="مسار التنقل">{% for c in crumbs %}<li>{% if not loop.last %}<a href="{{ c.url }}">{{ c.label }}</a>{% else %}<span aria-current="page">{{ c.label | truncate_ar(60) }}</span>{% endif %}</li>{% endfor %}</ol>
+    {% if post.category_name %}<a class="tag" href="/insights/category/{{ post.category_slug }}">{{ post.category_name }}</a>{% endif %}
+    <h1 style="max-width:26ch">{{ post.title }}</h1>
+    <div class="post-meta">
+      <span>{{ icon('calendar') }}<time datetime="{{ post.published_at.toISOString() if post.published_at else '' }}">{{ post.published_at | date }}</time></span>
+      <span>{{ icon('clock') }}{{ readMin | ar }} دقائق قراءة</span>
+      {% if post.author_name %}<span>{{ icon('user') }}{{ post.author_name }}</span>{% endif %}
+    </div>
+    <div class="phero-line"></div>
+  </div>
+</section>
+<section class="sec" style="padding-top:20px">
+  <div class="wrap article">
+    <article>
+      {% if post.cover %}{{ m.pic(post.cover, post.title, 'cover', true) }}{% endif %}
+      {% if toc.length > 2 %}<nav class="toc" aria-label="محتويات المقال"><b>محتويات المقال</b><ol>{% for h in toc %}<li><a href="#{{ h.id }}">{{ h.text }}</a></li>{% endfor %}</ol></nav>{% endif %}
+      <div class="prose">{{ body | safe }}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line);flex-wrap:wrap">
+        <span class="muted" style="font-size:.9rem">شارك المقال:</span>
+        <div class="share">
+          <a href="https://wa.me/?text={{ (post.title + ' ' + meta.canonical) | urlencode }}" target="_blank" rel="noopener" aria-label="واتساب">{{ icon('whatsapp') }}</a>
+          <a href="https://twitter.com/intent/tweet?url={{ meta.canonical | urlencode }}&text={{ post.title | urlencode }}" target="_blank" rel="noopener" aria-label="X">{{ icon('x-brand') }}</a>
+          <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ meta.canonical | urlencode }}" target="_blank" rel="noopener" aria-label="LinkedIn">{{ icon('linkedin') }}</a>
+        </div>
+      </div>
+      <p class="muted" style="font-size:.82rem;margin-top:22px">تنبيه: المحتوى للتوعية العامة ولا يُعد استشارة قانونية لحالتك. للحصول على رأي قانوني دقيق تواصل مع محامٍ مختص.</p>
+    </article>
+    <aside>
+      <div class="side-card ink">
+        <h4>لديك حالة مشابهة؟</h4>
+        <p>احصل على تقييم أولي من محامٍ مختص خلال ساعات العمل.</p>
+        <a class="btn btn-white btn-block" href="/consultation">اطلب تقييمًا أوليًا</a>
+      </div>
+      {% if related.length %}
+      <div class="side-card">
+        <h4>مقالات ذات صلة</h4>
+        {% for r in related %}<a class="link-arrow" style="display:flex;color:var(--ink);font-weight:400;font-size:.92rem;padding:8px 0;border-bottom:1px dashed var(--line-2)" href="/insights/{{ r.slug }}">{{ r.title }}</a>{% endfor %}
+      </div>
+      {% endif %}
+    </aside>
+  </div>
+</section>
+{% endblock %}

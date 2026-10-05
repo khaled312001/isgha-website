@@ -1,0 +1,36 @@
+{% extends "admin/layout.njk" %}
+{% block content %}
+<div class="note-box">{{ icon('wand') }}<div>
+  <b>كل صورة في الموقع لها خانة هنا مع برومبت جاهز لتوليدها بالذكاء الاصطناعي</b> (Midjourney / DALL·E / Gemini / Firefly).
+  الموقع يعمل بالصور الأساسية المرفقة معه. لتغيير أي صورة: ارفع صورة جديدة في خانتها فتظهر في الموقع فورًا، وزر «استعادة الأساسية» يرجعها كما كانت. لتوليد صورة جديدة انسخ البرومبت (الدليل الكامل في <code>docs/IMAGE-PROMPTS.md</code>).
+  <div class="progress-line" style="--p:{{ (done / slots.length * 100) | round }}%"><span></span></div>
+  <small class="muted">{{ done | ar }} من {{ slots.length | ar }} خانة فيها صورة</small>
+</div></div>
+
+<details class="card neg">
+  <summary><b>{{ icon('triangle-alert') }} البرومبت السلبي (Negative prompt) — استخدمه مع كل الصور</b></summary>
+  <div class="prompt-box"><p class="ltr" dir="ltr">{{ negative }}</p><button class="btn btn-ghost btn-xs" type="button" data-copy="{{ negative }}">{{ icon('copy') }} نسخ</button></div>
+</details>
+
+<div class="slots">
+  {% for s in slots %}
+  <article class="slot card {{ 'has' if s.url }}" data-slot="{{ s.key }}">
+    <div class="slot-img" style="aspect-ratio:{{ s.ratio | replace(':', '/') }}">
+      {% if s.url %}<img src="{{ s.url }}" alt="{{ s.label }}" loading="lazy">{% else %}<div class="ph-admin">{{ icon('image') }}<span>{{ s.ratio }} · {{ s.size }}</span></div>{% endif %}
+    </div>
+    <div class="slot-body">
+      <header><h3>{{ s.label }}</h3><span class="pill {{ ('green' if s.custom else 'teal') if s.url else 'gray' }}" data-slot-state>{{ ('صورة مخصّصة' if s.custom else 'الصورة الأساسية') if s.url else 'بانتظار الصورة' }}</span></header>
+      <p class="muted small">{{ icon('map-pin') }} {{ s.page }} · المقاس: <b class="ltr">{{ s.size }}</b> ({{ s.ratio }})</p>
+      <p class="small">{{ s.scene }}</p>
+      {% if s.notes %}<p class="hint">{{ icon('info') }} {{ s.notes }}</p>{% endif %}
+      <div class="prompt-box"><p class="ltr" dir="ltr">{{ s.prompt }}</p><button class="btn btn-ghost btn-xs" type="button" data-copy="{{ s.prompt }}">{{ icon('copy') }} نسخ البرومبت</button> <button class="btn btn-ghost btn-xs" type="button" data-copy="{{ s.prompt }} {{ s.mj }} --no {{ negative }}">{{ icon('copy') }} نسخ لـ Midjourney</button></div>
+      <div class="slot-acts">
+        <label class="btn btn-teal btn-sm">{{ icon('upload') }} {{ 'استبدال' if s.url else 'رفع الصورة' }}<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" hidden data-slot-upload="{{ s.key }}"></label>
+        <button class="btn btn-line btn-sm" type="button" data-slot-pick="{{ s.key }}">{{ icon('folder') }} من المكتبة</button>
+        <button class="btn btn-danger-ghost btn-sm" type="button" data-slot-clear="{{ s.key }}" data-has-default="{{ '1' if s.default }}" {{ 'hidden' if not s.custom }}>{{ icon('undo') }} {{ 'استعادة الأساسية' if s.default else 'إزالة' }}</button>
+      </div>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% import "partials/macros.njk" as m %}
+{% set wImg = imgFor(d.image, d.image_slot) %}
+<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap why">
+    <div class="why-head rv">
+      {% if d.tag %}<span class="tag">{{ d.tag }}</span>{% endif %}
+      <h2>{{ d.title | markup }}</h2>
+      {% if d.intro %}<p>{{ d.intro }}</p>{% endif %}
+      {% if wImg %}{{ m.pic(wImg, d.title | plain) }}{% endif %}
+    </div>
+    <ol class="why-list">
+      {% for it in d.items %}
+      <li class="rv"><div><h3>{{ it.title }}</h3><p>{{ it.text }}</p></div></li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>

@@ -1,0 +1,48 @@
+{% extends "layouts/site.njk" %}
+{% import "partials/macros.njk" as m %}
+{% block main %}
+{% set sImg = imgFor(svc.image) or imgFor(cat.image, 'service_' + cat.slug) %}
+<section class="phero no-img">
+  <img class="phero-deco" src="/img/mark-teal.svg" alt="" aria-hidden="true">
+  <div class="wrap">
+    <ol class="crumbs" aria-label="مسار التنقل">{% for c in crumbs %}<li>{% if not loop.last %}<a href="{{ c.url }}">{{ c.label }}</a>{% else %}<span aria-current="page">{{ c.label }}</span>{% endif %}</li>{% endfor %}</ol>
+    <span class="tag">{{ cat.title }}</span>
+    <h1>{{ svc.title }}</h1>
+    {% if svc.summary %}<p class="lead">{{ svc.summary }}</p>{% endif %}
+    <div class="phero-line"></div>
+  </div>
+</section>
+<section class="sec" style="padding-top:20px">
+  <div class="wrap svc-layout">
+    <article>
+      {{ m.pic(sImg, svc.title, 'svc-hero-media', true) }}
+      {% if svc.body %}<div class="prose">{{ svc.body | safe }}</div>{% endif %}
+      {% if svc.bullets.length %}
+      <h2 class="block-title">{{ svc.bullets_title or 'تشمل الخدمة' }}</h2>
+      <div class="leads-grid">
+        {% for b in svc.bullets %}{% set L = b | lead %}<div class="lead-item" style="background:#fff;border-color:var(--line)">{% if L.title %}<b>{{ L.title }}</b>{% endif %}<span>{{ L.text }}</span></div>{% endfor %}
+      </div>
+      {% endif %}
+      <div class="cta-band" style="margin-top:48px;padding:44px 28px">
+        <h2 style="font-size:1.6rem">ناقش {{ svc.title }} مع محامٍ مختص</h2>
+        <p>نستمع لتفاصيلك ونوضح لك الخيارات والتكلفة بوضوح قبل أي التزام.</p>
+        <div class="cta-actions">
+          <a class="btn btn-white" href="/consultation?service={{ cat.slug }}">احجز استشارة {{ icon('arrow-left') }}</a>
+          <a class="btn btn-wa" href="{{ S.whatsapp | wa('السلام عليكم، أستفسر عن ' + svc.title) }}" target="_blank" rel="noopener">{{ icon('whatsapp') }} واتساب</a>
+        </div>
+      </div>
+    </article>
+    <aside>
+      <nav class="svc-nav" aria-label="خدمات {{ cat.title }}">
+        <h4>{{ cat.title }}</h4>
+        {% for s in cat.services %}{% if s.url %}<a href="{{ s.url }}" {% if s.id == svc.id %}class="on" aria-current="page"{% endif %}>{{ s.title }}{{ icon('arrow-left') }}</a>{% endif %}{% endfor %}
+      </nav>
+      <div class="side-card">
+        <h4>تواصل مباشرة</h4>
+        <p>{{ S.working_hours }}</p>
+        <a class="btn btn-ink btn-block" href="{{ S.phone | tel }}">{{ icon('phone') }} <span dir="ltr">{{ S.phone }}</span></a>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

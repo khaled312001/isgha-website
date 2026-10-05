@@ -1,0 +1,178 @@
+// تعريف أقسام المحتوى التي تُدار بنظام موحّد في لوحة التحكم (إضافة / تعديل / حذف / ترتيب)
+import { FAQ_GROUPS } from '../lib/content.js';
+
+const MT = { name: 'meta_title', label: 'عنوان SEO', type: 'text', max: 190, counter: 60, group: 'seo', hint: 'اتركه فارغًا لاستخدام العنوان تلقائيًا' };
+const MD = { name: 'meta_description', label: 'وصف SEO', type: 'textarea', rows: 3, max: 320, counter: 160, group: 'seo' };
+const ACTIVE = { name: 'is_active', label: 'ظاهر في الموقع', type: 'toggle', default: true };
+
+export const RESOURCES = {
+  categories: {
+    table: 'service_categories', label: 'أقسام الخدمات', singular: 'قسم خدمات', icon: 'layers', perm: 'content', sortable: true,
+    titleField: 'title', slugFrom: 'title', hint: 'الأقسام الرئيسية الأربعة تظهر في القائمة والرئيسية. كل قسم له صفحة /services/الرابط.',
+    columns: [['title', 'القسم'], ['slug', 'الرابط', 'ltr'], ['_count', 'خدمات']],
+    viewUrl: (r) => `/services/${r.slug}`,
+    fields: [
+      { name: 'title', label: 'اسم القسم', type: 'text', required: true },
+      { name: 'slug', label: 'الرابط', type: 'slug', dir: 'ltr', hint: 'مثال: judicial — يظهر في الرابط /services/judicial' },
+      { name: 'nav_title', label: 'الاسم في القائمة (اختياري)', type: 'text' },
+      { name: 'icon', label: 'الأيقونة', type: 'icon', default: 'scale' },
+      { name: 'tagline', label: 'سطر تعريفي قصير', type: 'text' },
+      { name: 'summary', label: 'ملخص (يظهر في البطاقات)', type: 'textarea', rows: 2 },
+      { name: 'intro', label: 'مقدمة الصفحة', type: 'textarea', rows: 3 },
+      { name: 'bullets', label: 'الخدمات المختصرة (سطر لكل خدمة)', type: 'list', hint: 'تظهر في بطاقة القسم بالرئيسية وفي صفحة القسم' },
+      { name: 'body', label: 'محتوى إضافي للصفحة', type: 'richtext' },
+      { name: 'image', label: 'صورة الصفحة', type: 'image', slotFrom: 'slug', slotPrefix: 'service_' },
+      ACTIVE, MT, MD,
+    ],
+  },
+  services: {
+    table: 'services', label: 'الخدمات الفرعية', singular: 'خدمة', icon: 'briefcase', perm: 'content', sortable: true,
+    titleField: 'title', slugFrom: 'title', uniqueWith: 'category_id',
+    hint: 'خدمات تفصيلية داخل كل قسم — يمكن أن يكون لكل خدمة صفحة مستقلة مفيدة للظهور في جوجل.',
+    filters: [{ name: 'category_id', label: 'القسم', source: 'categories' }],
+    columns: [['title', 'الخدمة'], ['_category', 'القسم'], ['has_page', 'صفحة مستقلة']],
+    viewUrl: (r) => (r.has_page && r._cat_slug ? `/services/${r._cat_slug}/${r.slug}` : null),
+    fields: [
+      { name: 'category_id', label: 'القسم', type: 'select', source: 'categories', required: true },
+      { name: 'title', label: 'اسم الخدمة', type: 'text', required: true },
+      { name: 'slug', label: 'الرابط', type: 'slug', dir: 'ltr' },
+      { name: 'icon', label: 'الأيقونة', type: 'icon' },
+      { name: 'summary', label: 'ملخص', type: 'textarea', rows: 3 },
+      { name: 'body', label: 'الوصف التفصيلي', type: 'richtext' },
+      { name: 'bullets_title', label: 'عنوان قائمة البنود', type: 'text' },
+      { name: 'bullets', label: 'البنود (سطر لكل بند — «العنوان: الوصف»)', type: 'list' },
+      { name: 'image', label: 'صورة الخدمة', type: 'image' },
+      { name: 'has_page', label: 'لها صفحة مستقلة', type: 'toggle', default: true },
+      ACTIVE, MT, MD,
+    ],
+  },
+  areas: {
+    table: 'practice_areas', label: 'مجالات العمل القضائي', singular: 'مجال', icon: 'gavel', perm: 'content', sortable: true,
+    titleField: 'title', columns: [['title', 'المجال'], ['description', 'الوصف']],
+    fields: [
+      { name: 'title', label: 'المجال', type: 'text', required: true },
+      { name: 'description', label: 'وصف مختصر', type: 'text', max: 500 },
+      { name: 'icon', label: 'الأيقونة', type: 'icon' },
+      ACTIVE,
+    ],
+  },
+  packages: {
+    table: 'packages', label: 'الباقات', singular: 'باقة', icon: 'gem', perm: 'content', sortable: true,
+    titleField: 'name', slugFrom: 'name', columns: [['name', 'الباقة'], ['max_claim', 'حد المطالبة'], ['training_hours', 'ساعات التدريب'], ['is_featured', 'مميزة']],
+    viewUrl: (r) => `/packages#pk-${r.slug}`,
+    fields: [
+      { name: 'name', label: 'اسم الباقة', type: 'text', required: true },
+      { name: 'slug', label: 'المعرّف', type: 'slug', dir: 'ltr' },
+      { name: 'tagline', label: 'لمن هذه الباقة', type: 'text' },
+      { name: 'icon', label: 'الأيقونة', type: 'icon', default: 'gem' },
+      { name: 'badge', label: 'شارة (مثل: الأكثر طلبًا)', type: 'text' },
+      { name: 'is_featured', label: 'باقة مميزة (تظهر بلون مختلف)', type: 'toggle' },
+      { name: 'max_claim', label: 'الحد الأقصى لقيمة المطالبة', type: 'text' },
+      { name: 'training_hours', label: 'ساعات التدريب السنوية', type: 'text' },
+      { name: 'highlights', label: 'أبرز المميزات (تظهر في البطاقة)', type: 'list' },
+      { name: 'core_features', label: 'المميزات الأساسية', type: 'list' },
+      { name: 'extra_title', label: 'عنوان الخدمات الإضافية', type: 'text', default: 'الخدمات الإضافية' },
+      { name: 'extra_features', label: 'الخدمات الإضافية', type: 'list' },
+      { name: 'compare', label: 'جدول المقارنة', type: 'checks', options: [['case_management', 'إدارة القضايا'], ['workshops', 'ورش العمل المتخصصة'], ['pause_switch', 'إمكانية الإيقاف/الاستبدال']] },
+      { name: 'price_note', label: 'ملاحظة السعر (اختياري)', type: 'text' },
+      { name: 'cta_text', label: 'نص زر الطلب', type: 'text' },
+      ACTIVE,
+    ],
+  },
+  beneficiaries: {
+    table: 'beneficiaries', label: 'المستفيدون', singular: 'فئة', icon: 'users', perm: 'content', sortable: true,
+    titleField: 'title', slugFrom: 'title', columns: [['title', 'الفئة'], ['summary', 'الوصف']],
+    viewUrl: () => '/beneficiaries',
+    fields: [
+      { name: 'title', label: 'الفئة', type: 'text', required: true },
+      { name: 'slug', label: 'المعرّف', type: 'slug', dir: 'ltr', hint: 'government / companies / nonprofit / individuals تربط الصورة بخانة صور الموقع تلقائيًا' },
+      { name: 'icon', label: 'الأيقونة', type: 'icon' },
+      { name: 'summary', label: 'وصف مختصر', type: 'textarea', rows: 2 },
+      { name: 'items', label: 'الخدمات المقدمة لهذه الفئة', type: 'list' },
+      { name: 'image', label: 'الصورة', type: 'image', slotFrom: 'slug', slotPrefix: 'ben_' },
+      ACTIVE,
+    ],
+  },
+  faqs: {
+    table: 'faqs', label: 'الأسئلة الشائعة', singular: 'سؤال', icon: 'circle-help', perm: 'content', sortable: true,
+    titleField: 'question', columns: [['question', 'السؤال'], ['_group', 'المجموعة']],
+    filters: [{ name: 'group_key', label: 'المجموعة', options: FAQ_GROUPS }],
+    fields: [
+      { name: 'group_key', label: 'المجموعة', type: 'select', options: FAQ_GROUPS, default: 'general' },
+      { name: 'question', label: 'السؤال', type: 'text', required: true, max: 400 },
+      { name: 'answer', label: 'الجواب', type: 'textarea', rows: 5, required: true },
+      ACTIVE,
+    ],
+  },
+  testimonials: {
+    table: 'testimonials', label: 'آراء العملاء', singular: 'رأي', icon: 'quote', perm: 'content', sortable: true,
+    titleField: 'name', columns: [['name', 'الاسم'], ['context', 'القضية'], ['quote', 'الرأي']],
+    hint: 'أضف آراء حقيقية وموثّقة فقط وبموافقة أصحابها. النماذج الأولية مخفية حتى تستبدلها.',
+    fields: [
+      { name: 'quote', label: 'الرأي', type: 'textarea', rows: 4, required: true },
+      { name: 'name', label: 'الاسم (يمكن اختصاره مثل: م. الحربي)', type: 'text', required: true },
+      { name: 'context', label: 'نوع القضية والمدينة', type: 'text' },
+      { name: 'rating', label: 'التقييم (1-5)', type: 'number', default: 5, min: 1, max: 5 },
+      { ...ACTIVE, default: false },
+    ],
+  },
+  team: {
+    table: 'team_members', label: 'فريق العمل', singular: 'عضو', icon: 'user-tie', perm: 'content', sortable: true,
+    titleField: 'name', columns: [['name', 'الاسم'], ['title', 'المسمى']],
+    fields: [
+      { name: 'name', label: 'الاسم', type: 'text', required: true },
+      { name: 'title', label: 'المسمى الوظيفي', type: 'text' },
+      { name: 'bio', label: 'نبذة', type: 'textarea', rows: 4 },
+      { name: 'photo', label: 'الصورة', type: 'image' },
+      { name: 'linkedin', label: 'رابط لينكدإن', type: 'url', dir: 'ltr' },
+      ACTIVE,
+    ],
+  },
+  posts: {
+    table: 'posts', label: 'المقالات', singular: 'مقال', icon: 'newspaper', perm: 'posts', sortable: false,
+    titleField: 'title', slugFrom: 'title', orderBy: [['published_at', 'desc'], ['id', 'desc']],
+    columns: [['title', 'العنوان'], ['_category', 'التصنيف'], ['status', 'الحالة'], ['published_at', 'تاريخ النشر'], ['views', 'المشاهدات']],
+    filters: [{ name: 'status', label: 'الحالة', options: [['published', 'منشور'], ['draft', 'مسودة']] }, { name: 'category_id', label: 'التصنيف', source: 'post_categories' }],
+    viewUrl: (r) => `/insights/${r.slug}${r.status !== 'published' ? '?preview=1' : ''}`,
+    fields: [
+      { name: 'title', label: 'العنوان', type: 'text', required: true, max: 255 },
+      { name: 'slug', label: 'الرابط', type: 'slug', dir: 'ltr', hint: 'يُفضَّل رابط قصير بالإنجليزية أو العربية بدون رموز' },
+      { name: 'excerpt', label: 'مقتطف', type: 'textarea', rows: 3 },
+      { name: 'body', label: 'المحتوى', type: 'richtext' },
+      { name: 'cover', label: 'صورة الغلاف', type: 'image' },
+      { name: 'category_id', label: 'التصنيف', type: 'select', source: 'post_categories' },
+      { name: 'author_name', label: 'الكاتب', type: 'text', default: 'فريق إصغاء القانوني' },
+      { name: 'status', label: 'الحالة', type: 'select', options: [['draft', 'مسودة'], ['published', 'منشور']], default: 'draft' },
+      { name: 'published_at', label: 'تاريخ النشر', type: 'datetime', hint: 'اتركه فارغًا ليُنشر الآن، أو حدّد تاريخًا مستقبليًا للجدولة' },
+      { name: 'noindex', label: 'إخفاء من محركات البحث', type: 'toggle', group: 'seo' },
+      MT, MD,
+      { name: 'og_image', label: 'صورة المشاركة (اختياري)', type: 'image', group: 'seo' },
+    ],
+  },
+  post_categories: {
+    table: 'post_categories', label: 'تصنيفات المقالات', singular: 'تصنيف', icon: 'folder', perm: 'posts', sortable: true,
+    titleField: 'name', slugFrom: 'name', columns: [['name', 'التصنيف'], ['slug', 'الرابط', 'ltr']],
+    viewUrl: (r) => `/insights/category/${r.slug}`,
+    fields: [
+      { name: 'name', label: 'الاسم', type: 'text', required: true },
+      { name: 'slug', label: 'الرابط', type: 'slug', dir: 'ltr' },
+      { name: 'description', label: 'الوصف', type: 'text', max: 320 },
+    ],
+  },
+  redirects: {
+    table: 'redirects', label: 'التحويلات (301)', singular: 'تحويل', icon: 'route', perm: 'seo', sortable: false,
+    titleField: 'from_path', orderBy: [['id', 'desc']], columns: [['from_path', 'من', 'ltr'], ['to_url', 'إلى', 'ltr'], ['code', 'النوع'], ['hits', 'مرات الاستخدام']],
+    hint: 'استخدم التحويلات للحفاظ على ترتيب الروابط القديمة في جوجل عند تغيير الروابط.',
+    fields: [
+      { name: 'from_path', label: 'الرابط القديم', type: 'text', dir: 'ltr', required: true, hint: 'يبدأ بـ / مثل /old-page' },
+      { name: 'to_url', label: 'الرابط الجديد', type: 'url', dir: 'ltr', required: true, hint: '/new-page أو رابط كامل' },
+      { name: 'code', label: 'نوع التحويل', type: 'select', options: [['301', '301 دائم (موصى به)'], ['302', '302 مؤقت']], default: '301' },
+      { name: 'is_active', label: 'مفعّل', type: 'toggle', default: true },
+    ],
+  },
+};
+
+export const RESOURCE_GROUPS = [
+  ['المحتوى', ['categories', 'services', 'areas', 'packages', 'beneficiaries', 'faqs', 'testimonials', 'team']],
+  ['المقالات', ['posts', 'post_categories']],
+];

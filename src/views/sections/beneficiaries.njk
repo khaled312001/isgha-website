@@ -1,0 +1,35 @@
+{% import "partials/macros.njk" as m %}
+{% if D.beneficiaries.length %}
+<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap">
+    {{ m.sechead(d) }}
+    {% if d.style == 'detailed' %}
+    {% for b in D.beneficiaries %}
+    <article class="bd rv" id="{{ b.slug }}">
+      {{ m.pic(imgFor(b.image, 'ben_' + b.slug), b.title) }}
+      <div class="bd-body">
+        <span class="ic">{{ icon(b.icon or 'users') }}</span>
+        <h2>{{ b.title }}</h2>
+        <p>{{ b.summary }}</p>
+        <ul class="bd-list">{% for it in b.items %}<li>{{ it }}</li>{% endfor %}</ul>
+      </div>
+    </article>
+    {% endfor %}
+    {% else %}
+    <div class="ben-grid">
+      {% for b in D.beneficiaries %}
+      <article class="ben rv d{{ loop.index0 % 4 }}">
+        {{ m.pic(imgFor(b.image, 'ben_' + b.slug), b.title) }}
+        <div class="ben-body">
+          <span class="ic">{{ icon(b.icon or 'users') }}</span>
+          <h3>{{ b.title }}</h3>
+          <p>{{ b.summary }}</p>
+          <a class="link-arrow" href="/beneficiaries#{{ b.slug }}">الخدمات المقدمة {{ icon('arrow-left') }}</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}

@@ -1,0 +1,103 @@
+{% extends "admin/layout.njk" %}
+{% block actions %}{% if can('landing') %}<a class="btn btn-teal btn-sm" href="/admin/pages?kind=landing">{{ icon('plus') }} صفحة هبوط</a>{% endif %}{% endblock %}
+{% block content %}
+<section class="hello">
+  <div>
+    <p class="muted">أهلًا {{ me.name }} 👋</p>
+    <h2>{{ "طلبات اليوم: " + (data.leads.today | ar) if data.leads else "لوحة تحكم موقع إصغاء" }}</h2>
+  </div>
+  {% if data.leads and data.leads.statuses[0].n %}<a class="btn btn-ink" href="/admin/leads?status=new">{{ icon('inbox') }} {{ data.leads.statuses[0].n | ar }} طلب جديد بانتظار التواصل</a>{% endif %}
+</section>
+
+<div class="kpis">
+  {% if data.leads %}
+  <div class="kpi"><span class="kpi-ic teal">{{ icon('inbox') }}</span><small>طلبات آخر ٣٠ يومًا</small><b>{{ data.leads.month | ar }}</b>
+    {% if data.leads.trend !== null %}<em class="{{ 'up' if data.leads.trend >= 0 else 'down' }}">{{ icon('trending-up') }} {{ data.leads.trend | ar }}٪ عن الشهر السابق</em>{% endif %}</div>
+  <div class="kpi"><span class="kpi-ic">{{ icon('calendar') }}</span><small>آخر ٧ أيام</small><b>{{ data.leads.week | ar }}</b><em>اليوم: {{ data.leads.today | ar }}</em></div>
+  {% endif %}
+  {% if data.traffic %}
+  <div class="kpi"><span class="kpi-ic">{{ icon('users') }}</span><small>زوار آخر ٣٠ يومًا</small><b>{{ data.traffic.uniques | ar }}</b><em>{{ data.traffic.views | ar }} مشاهدة</em></div>
+  <div class="kpi"><span class="kpi-ic yellow">{{ icon('percent') }}</span><small>معدل التحويل</small><b>{{ (data.traffic.conv or '0') | ar }}٪</b><em>{{ data.traffic.calls | ar }} اتصال · {{ data.traffic.whatsapp | ar }} واتساب</em></div>
+  {% endif %}
+</div>
+
+<div class="grid-2-1">
+  <section class="card">
+    <header class="card-head"><h3>الطلبات والزيارات — آخر ٣٠ يومًا</h3>{% if can('analytics') %}<a class="link" href="/admin/analytics">التقارير الكاملة {{ icon('arrow-left') }}</a>{% endif %}</header>
+    <div class="chart-box"><canvas id="ch-main" height="260" aria-label="رسم بياني للطلبات والزيارات"></canvas></div>
+  </section>
+  <section class="card">
+    <header class="card-head"><h3>جاهزية الموقع</h3>{% set doneN = data.checklist | count_by('done') %}<span class="pill teal">{{ doneN | ar }} / {{ data.checklist.length | ar }}</span></header>
+    <ul class="checklist">
+      {% for c in data.checklist %}<li class="{{ 'done' if c.done }}"><a href="{{ c.url }}">{{ icon('check-circle' if c.done else 'circle-dot') }}<span>{{ c.label }}</span></a></li>{% endfor %}
+    </ul>
+  </section>
+</div>
+
+<div class="grid-2-1">
+  {% if data.leads %}
+  <section class="card">
+    <header class="card-head"><h3>أحدث الطلبات</h3><a class="link" href="/admin/leads">كل الطلبات {{ icon('arrow-left') }}</a></header>
+    {% if data.leads.recent.length %}
+    <div class="table-wrap"><table class="tbl">
+      <thead><tr><th>العميل</th><th>النوع</th><th>المصدر</th><th>الحالة</th><th>الوقت</th></tr></thead>
+      <tbody>
+      {% for l in data.leads.recent %}
+      <tr data-href="/admin/leads/{{ l.id }}">
+        <td><a href="/admin/leads/{{ l.id }}"><b>{{ l.name }}</b></a><small class="ltr muted">{{ l.phone | pretty_phone }}</small></td>
+        <td>{{ l.case_type or '—' }}</td>
+        <td><span class="src">{{ l.source }}</span></td>
+        <td><span class="pill {{ l.st.color }}">{{ l.st.label }}</span></td>
+        <td class="muted nowrap">{{ l.created_at | rel | ar }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}
+    <div class="empty">{{ icon('inbox') }}<p>لا توجد طلبات بعد. ستظهر هنا فور وصول أول طلب من الموقع.</p></div>
+    {% endif %}
+  </section>
+  <section class="card">
+    <header class="card-head"><h3>مصادر الطلبات</h3></header>
+    {% if data.leads.sources.length %}
+    <ul class="bars">{% set maxS = data.leads.sources[0][1] %}
+      {% for s in data.leads.sources %}<li><span>{{ s[0] }}</span><i style="--w:{{ (s[1] / maxS * 100) | round }}%"></i><b>{{ s[1] | ar }}</b></li>{% endfor %}
+    </ul>
+    {% else %}<p class="muted">لا توجد بيانات بعد.</p>{% endif %}
+    <h4 class="mini-title">حالة الطلبات</h4>
+    <ul class="status-row">{% for s in data.leads.statuses %}<li><a href="/admin/leads?status={{ s.key }}"><span class="dot {{ s.color }}"></span>{{ s.label }} <b>{{ s.n | ar }}</b></a></li>{% endfor %}</ul>
+  </section>
+  {% endif %}
+</div>
+
+{% if data.traffic %}
+<section class="card">
+  <header class="card-head"><h3>الصفحات الأكثر زيارة</h3></header>
+  {% if data.traffic.topPages.length %}
+  <ul class="bars">{% set maxP = data.traffic.topPages[0].v %}
+    {% for p in data.traffic.topPages %}<li><span class="ltr">{{ p.path }}</span><i style="--w:{{ (p.v / maxP * 100) | round }}%"></i><b>{{ p.v | ar }}</b></li>{% endfor %}
+  </ul>
+  {% else %}<p class="muted">ستظهر الإحصاءات بعد أول زيارات للموقع.</p>{% endif %}
+</section>
+{% endif %}
+
+<section class="quick">
+  {% if can('pages') %}<a class="quick-item" href="/admin/pages">{{ icon('layout-template') }}<b>تعديل صفحات الموقع</b><span>الرئيسية، من نحن، الخدمات…</span></a>{% endif %}
+  {% if can('media') %}<a class="quick-item" href="/admin/media/slots">{{ icon('image') }}<b>صور الموقع</b><span>ارفع الصور مع برومبت كل صورة</span></a>{% endif %}
+  {% if can('posts') %}<a class="quick-item" href="/admin/r/posts/new">{{ icon('newspaper') }}<b>مقال جديد</b><span>محتوى يرفع ظهورك في جوجل</span></a>{% endif %}
+  {% if can('marketing') %}<a class="quick-item" href="/admin/marketing">{{ icon('megaphone') }}<b>ربط الإعلانات</b><span>جوجل، ميتا، سناب، تيك توك</span></a>{% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/vendor/chart.umd.min.js"></script>
+<script>
+ADM.chart('ch-main', {
+  labels: {{ data.days | json }},
+  sets: [
+    {% if data.leads %}{ label: 'الطلبات', data: {{ data.leads.series | json }}, color: '#0e6e62', axis: 'y1', type: 'bar' },{% endif %}
+    {% if data.traffic %}{ label: 'الزيارات', data: {{ data.traffic.series | json }}, color: '#dead34', axis: 'y', type: 'line' }{% endif %}
+  ]
+});
+</script>
+{% endblock %}

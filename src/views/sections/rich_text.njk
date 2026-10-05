@@ -1,0 +1,10 @@
+{% import "partials/macros.njk" as m %}
+<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="{{ 'wrap-narrow' if d.width != 'wide' else 'wrap' }}">
+    {% if d.title %}<h2 style="font-size:clamp(1.5rem,3vw,2rem);margin-bottom:18px">{{ d.title | markup }}</h2>{% endif %}
+    {% if d.toc %}{% set heads = tocOf(d.body) %}{% if heads.length > 1 %}
+    <nav class="toc" aria-label="محتويات الصفحة"><b>المحتويات</b><ol>{% for h in heads %}<li><a href="#{{ h.id }}">{{ h.text }}</a></li>{% endfor %}</ol></nav>
+    {% endif %}{% endif %}
+    <div class="prose">{{ (withHeadingIds(d.body) if d.toc else d.body) | safe }}</div>
+  </div>
+</section>

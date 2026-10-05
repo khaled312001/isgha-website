@@ -1,0 +1,58 @@
+{% extends "admin/bare.njk" %}
+{% block content %}
+<div class="bld" id="bld">
+  <header class="bld-top">
+    <a class="icon-btn" href="{{ '/admin/pages?kind=landing' if page.kind == 'landing' else '/admin/pages' }}" title="رجوع للصفحات" aria-label="رجوع">{{ icon('arrow-right') }}</a>
+    <div class="bld-title">
+      <b data-bld-title>{{ page.title }}</b>
+      <small><span class="pill sm {{ 'green' if page.status == 'published' else 'gray' }}" data-bld-status>{{ 'منشورة' if page.status == 'published' else 'مسودة' }}</span> <span class="muted" data-bld-saved>{{ 'تعديلات غير منشورة' if page.hasDraft else 'لا توجد تعديلات' }}</span></small>
+    </div>
+    <div class="bld-devices" role="group" aria-label="حجم المعاينة">
+      <button type="button" class="on" data-device="desktop" title="كمبيوتر" aria-label="كمبيوتر">{{ icon('monitor') }}</button>
+      <button type="button" data-device="tablet" title="تابلت" aria-label="تابلت">{{ icon('tablet') }}</button>
+      <button type="button" data-device="mobile" title="جوال" aria-label="جوال">{{ icon('smartphone') }}</button>
+    </div>
+    <div class="bld-actions">
+      <button class="btn btn-line btn-sm" type="button" data-bld-settings>{{ icon('settings') }} <span class="hide-sm">إعدادات الصفحة وSEO</span></button>
+      <a class="btn btn-ghost btn-sm hide-sm" href="{{ boot.previewUrl }}" target="_blank" rel="noopener" data-bld-preview-link>{{ icon('eye') }} معاينة</a>
+      <button class="btn btn-ghost btn-sm" type="button" data-bld-discard {{ 'hidden' if not page.hasDraft }}>{{ icon('undo') }} <span class="hide-sm">تراجع عن المسودة</span></button>
+      {% if boot.canUnpublish %}<button class="btn btn-danger-ghost btn-sm" type="button" data-bld-unpublish title="إلغاء النشر" {{ 'hidden' if page.status != 'published' }}>{{ icon('eye-off') }} <span class="hide-sm">إلغاء النشر</span></button>{% endif %}
+      <button class="btn btn-teal btn-sm" type="button" data-bld-publish>{{ icon('send') }} نشر</button>
+    </div>
+  </header>
+  <div class="bld-body">
+    <aside class="bld-panel" id="bld-panel" aria-label="أقسام الصفحة"></aside>
+    <div class="bld-stage">
+      <div class="bld-frame" data-frame="desktop">
+        <iframe id="bld-iframe" src="{{ boot.previewUrl }}" title="معاينة الصفحة"></iframe>
+        <div class="bld-loading" hidden>{{ icon('refresh') }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<dialog class="modal wide" id="add-section" aria-labelledby="as-title">
+  <div class="modal-body">
+    <header class="modal-head"><h3 id="as-title">إضافة قسم</h3><button class="icon-btn" type="button" data-modal-close aria-label="إغلاق">{{ icon('x') }}</button></header>
+    <div class="sec-types" id="sec-types"></div>
+  </div>
+</dialog>
+
+<dialog class="modal" id="page-settings" aria-labelledby="ps-title">
+  <form class="modal-body stack" id="ps-form">
+    <header class="modal-head"><h3 id="ps-title">إعدادات الصفحة وSEO</h3><button class="icon-btn" type="button" data-modal-close aria-label="إغلاق">{{ icon('x') }}</button></header>
+    <div id="ps-fields"></div>
+    <div class="serp" aria-label="معاينة نتيجة جوجل">
+      <small class="muted">هكذا تقريبًا ستظهر في جوجل:</small>
+      <span class="serp-url ltr" data-serp-url></span>
+      <b class="serp-title" data-serp-title></b>
+      <span class="serp-desc" data-serp-desc></span>
+    </div>
+    <footer class="modal-foot"><button class="btn btn-ghost" type="button" data-modal-close>إلغاء</button><button class="btn btn-teal" type="submit">{{ icon('save') }} حفظ الإعدادات</button></footer>
+  </form>
+</dialog>
+{% endblock %}
+{% block scripts %}
+<script>window.BUILDER = {{ boot | json }};</script>
+<script src="{{ asset('/js/builder.js') }}"></script>
+{% endblock %}

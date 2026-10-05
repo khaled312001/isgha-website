@@ -1,0 +1,51 @@
+<header class="nav" role="banner">
+  <div class="nav-in">
+    <a class="nav-logo" href="/" aria-label="{{ S.site_name }} — الرئيسية"><img src="{{ S.logo_compact or '/img/logo-compact-white.svg' }}" alt="{{ S.brand_short }}" width="160" height="45"></a>
+    <nav aria-label="القائمة الرئيسية" style="display:contents">
+      <ul class="nav-links">
+        {% for item in S.nav_items %}
+        {% if item.dropdown == 'services' and navCats.length %}
+        <li class="has-dd">
+          <a href="{{ item.url }}" {% if currentPath.indexOf(item.url) == 0 and item.url != '/' %}aria-current="page"{% endif %}>{{ item.label }} {{ icon('chevron-down') }}</a>
+          <div class="dropdown">
+            {% for c in navCats %}
+            <a class="dd-item" href="{{ c.url }}">
+              <span class="dd-ic">{{ icon(c.icon or 'scale') }}</span>
+              <span><b>{{ c.title }}</b><span class="dd-tx">{{ c.tagline or (c.summary | truncate_ar(70)) }}</span></span>
+            </a>
+            {% endfor %}
+            <div class="dd-foot"><span>غير متأكد من الخدمة المناسبة؟</span><a class="link-arrow" href="/consultation">اطلب تقييمًا أوليًا {{ icon('arrow-left') }}</a></div>
+          </div>
+        </li>
+        {% else %}
+        <li><a href="{{ item.url }}" {% if (item.url == '/' and currentPath == '/') or (item.url != '/' and currentPath.indexOf(item.url) == 0) %}aria-current="page"{% endif %}>{{ item.label }}</a></li>
+        {% endif %}
+        {% endfor %}
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <a class="nav-call" href="{{ S.phone | tel }}" aria-label="اتصل بنا {{ S.phone }}">{{ icon('phone') }}</a>
+      {% if S.nav_cta_label %}<a class="btn btn-white" href="{{ S.nav_cta_url }}">{{ S.nav_cta_label }}</a>{% endif %}
+      <button class="nav-toggle" type="button" data-menu-open aria-controls="mnav" aria-label="فتح القائمة">{{ icon('menu') }}</button>
+    </div>
+  </div>
+</header>
+
+<div class="mnav" id="mnav" aria-hidden="true" role="dialog" aria-label="القائمة">
+  <div class="mnav-top">
+    <img src="{{ S.logo or '/img/logo.svg' }}" alt="{{ S.brand_short }}" width="150" height="60">
+    <button class="mnav-close" type="button" data-menu-close aria-label="إغلاق القائمة">{{ icon('x') }}</button>
+  </div>
+  <ul>
+    {% for item in S.nav_items %}
+    <li><a href="{{ item.url }}">{{ item.label }} {{ icon('arrow-left') }}</a></li>
+    {% if item.dropdown == 'services' %}
+    {% for c in navCats %}<li class="sub"><a href="{{ c.url }}">{{ c.title }}</a></li>{% endfor %}
+    {% endif %}
+    {% endfor %}
+  </ul>
+  <div class="mnav-cta">
+    <a class="btn btn-teal btn-lg" href="{{ S.nav_cta_url }}">{{ S.nav_cta_label }}</a>
+    <a class="btn btn-line btn-lg" href="{{ S.phone | tel }}">{{ icon('phone') }} {{ S.phone }}</a>
+  </div>
+</div>
