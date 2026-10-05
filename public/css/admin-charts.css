@@ -302,3 +302,7 @@ body.rpt{background:#e9e7df;padding:0 0 40px;-webkit-print-color-adjust:exact;pr
   .ch-empty{background:#faf9f5}
 }
 .ch-fnl-l .ch-flag{margin-inline-start:6px;vertical-align:1px}
+.ch-sr{inset-inline-start:0;top:0;clip-path:inset(50%)}
+.ch-kpi{min-width:0}
+.ch-kpi .ch-delta{white-space:normal;flex-wrap:wrap;column-gap:4px}
+@media screen and (max-width:820px){.rpt-card{overflow-x:auto}}

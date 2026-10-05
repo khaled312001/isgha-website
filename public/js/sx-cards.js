@@ -34,6 +34,61 @@
     upd();
   });
 
+  /* ── النص المنسق: فهرس ثابت يتتبع القسم الحالي + شريط تقدم القراءة + إبراز العنوان المستهدف ── */
+  $$('[data-rtx]').forEach(function (box) {
+    var paper = box.querySelector('.rtx-paper');
+    var toc = box.querySelector('[data-rtx-toc]');
+    function hit(h) {
+      if (!h) return;
+      h.classList.remove('is-hit');
+      void h.offsetWidth;
+      h.classList.add('is-hit');
+      setTimeout(function () { h.classList.remove('is-hit'); }, 2000);
+    }
+    if (location.hash) {
+      var t0 = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      if (t0 && paper && paper.contains(t0)) setTimeout(function () { hit(t0); }, 400);
+    }
+    if (!toc) return;
+    var mq = window.matchMedia('(max-width: 960px)');
+    if (mq.matches) toc.open = false;
+    var links = $$('ol a', toc);
+    var heads = links.map(function (a) { return document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))); });
+    var bar = toc.querySelector('.rtx-prog i');
+    function active(i) { links.forEach(function (a, j) { if (j === i) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); }); }
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        ticking = false;
+        var line = 140, cur = 0;
+        heads.forEach(function (h, j) { if (h && h.getBoundingClientRect().top - line <= 0) cur = j; });
+        active(cur);
+        if (bar && paper) {
+          var r = paper.getBoundingClientRect();
+          var total = r.height - window.innerHeight * 0.6;
+          var p = Math.min(1, Math.max(0, (line - r.top) / Math.max(1, total)));
+          bar.style.setProperty('--p', p.toFixed(3));
+        }
+      });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    links.forEach(function (a, j) {
+      a.addEventListener('click', function (e) {
+        var h = heads[j];
+        if (!h) return;
+        e.preventDefault();
+        h.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+        if (history.replaceState) history.replaceState(null, '', a.getAttribute('href'));
+        active(j);
+        setTimeout(function () { hit(h); }, reduce ? 0 : 450);
+        if (mq.matches) toc.open = false;
+      });
+    });
+  });
+
   /* ── آراء العملاء: شريحة بالتمرير الأصلي + أزرار ونقاط ── */
   var AR = '٠١٢٣٤٥٦٧٨٩';
   function pad2(n) { return String(n).padStart(2, '0').replace(/\d/g, function (x) { return AR[x]; }); }

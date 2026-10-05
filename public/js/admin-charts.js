@@ -366,7 +366,8 @@
   // جدول مخفي بصريًا لقارئ الشاشة (البديل النصي لكل رسم)
   function srTable(box, cfg) {
     var fig = box.closest('figure') || box.parentNode;
-    var tbl = el('table', 'sr-only');
+    var wrap = el('div', 'sr-only ch-sr');
+    var tbl = el('table');
     tbl.appendChild(el('caption', '', box.getAttribute('aria-label') || ''));
     var series = cfg.type === 'multiples' ? cfg.panels : cfg.series;
     var head = el('tr');
@@ -381,7 +382,8 @@
       tb.appendChild(tr);
     });
     tbl.appendChild(tb);
-    fig.appendChild(tbl);
+    wrap.appendChild(tbl);
+    fig.appendChild(wrap);
   }
 
   /* ── خطوط مصغّرة SVG (بلا مكتبة) ── */
