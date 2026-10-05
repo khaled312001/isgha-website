@@ -32,7 +32,9 @@ mark{background:linear-gradient(transparent 58%,var(--yellow) 58%,var(--yellow) 
 code,kbd{font-family:ui-monospace,Consolas,monospace;font-size:.85em;background:var(--soft);padding:1px 6px;border-radius:5px;direction:ltr;unicode-bidi:embed}
 hr{border:0;border-top:1px solid var(--line);margin:4px 0}
 .i{width:1.15em;height:1.15em;flex-shrink:0;display:inline-block;vertical-align:-.2em}
-.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+/* الجداول لا تلتزم بعرض 1px فتسبّب تمريرًا أفقيًا على الجوال */
+table.sr-only{display:block}
 .skip{position:absolute;inset-inline-start:12px;top:-60px;z-index:300;background:var(--ink);color:#fff;padding:8px 14px;border-radius:8px}
 .skip:focus{top:10px}
 :focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:6px}
@@ -510,7 +512,7 @@ body.is-builder{overflow:hidden}
 /* ─── الاستجابة ─── */
 @media (max-width:1280px){.kpis.six{grid-template-columns:repeat(3,1fr)}.quick{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:1100px){
-  .grid-2-1,.lead-layout{grid-template-columns:1fr}
+  .grid-2-1,.lead-layout{grid-template-columns:minmax(0,1fr)}
   .res-form{grid-template-columns:1fr}
   .res-side .sticky{position:static}
   .bld-body{grid-template-columns:340px 1fr}
@@ -601,3 +603,5 @@ select.status-select{width:auto;min-height:0;line-height:1.7;box-shadow:none}
 /* أزرار النسخ والحذف أسفل زر الحفظ في نموذج التعديل */
 .side-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .side-acts .btn{justify-content:center}
+.user-cell>div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.user-cell>div>*{overflow:hidden;text-overflow:ellipsis}

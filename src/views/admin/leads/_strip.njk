@@ -1,0 +1,24 @@
+{#- شريط رسوم مصغّر أعلى قائمة الطلبات (يتطلب admin-charts.css/js) -#}
+{% if strip and strip.valid %}
+<section class="card ch-strip" aria-label="ملخص الطلبات">
+  <div>
+    <small>طلبات آخر ٣٠ يومًا</small>
+    <div class="ch-strip-n">
+      <div><b>{{ strip.month | ar }}</b><em>اليوم: {{ strip.series[29] | ar }}</em></div>
+      <svg class="ch-spark" data-spark="{{ strip.series | join(',') }}" data-color="teal" role="img" aria-label="الطلبات اليومية خلال آخر ٣٠ يومًا"></svg>
+    </div>
+  </div>
+  <div>
+    <small>كل الطلبات حسب الحالة ({{ strip.valid | ar }})</small>
+    <div class="ch-pipe" role="img" aria-label="{% for s in strip.segs %}{{ s.label }} {{ s.n | ar }}{{ '، ' if not loop.last }}{% endfor %}">
+      {% for s in strip.segs %}{% if s.n %}<a class="ch-pipe-s" data-c="st-{{ s.key }}" style="flex-grow:{{ s.n }}" href="/admin/leads?status={{ s.key }}" tabindex="-1" data-tip-t="{{ s.label }}" data-tip-c="st-{{ s.key }}" data-tip="الطلبات::{{ s.n | ar }}||الحصة::{{ s.share | ar }}٪"></a>{% endif %}{% endfor %}
+    </div>
+    <ul class="ch-strip-legend">{% for s in strip.segs %}<li><i class="ch-key rect" data-c="st-{{ s.key }}"></i>{{ s.label }} {{ s.share | ar }}٪</li>{% endfor %}</ul>
+  </div>
+  <div class="ch-strip-wait {{ 'is-late' if strip.late }}">
+    <small>بانتظار التواصل</small>
+    <b>{{ (strip.segs[0].n) | ar }}</b>
+    {% if strip.oldestNew %}<small>أقدمها {{ strip.oldestNew | rel | ar }}</small>{% else %}<small>لا شيء متأخر</small>{% endif %}
+  </div>
+</section>
+{% endif %}

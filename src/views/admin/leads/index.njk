@@ -1,6 +1,8 @@
 {% extends "admin/layout.njk" %}
 {% block actions %}<a class="btn btn-line btn-sm" href="/admin/leads/export.csv?{{ qs }}">{{ icon('download') }} تصدير Excel (CSV)</a>{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ asset('/css/admin-charts.css') }}">{% endblock %}
 {% block content %}
+{% include "admin/leads/_strip.njk" %}
 <nav class="tabs-line" aria-label="حالات الطلبات">
   <a href="/admin/leads" class="{{ 'on' if not q.status }}">الكل <b>{{ ((counts.new or 0) + (counts.contacted or 0) + (counts.qualified or 0) + (counts.won or 0) + (counts.lost or 0)) | ar }}</b></a>
   {% for s in statuses %}<a href="/admin/leads?status={{ s[0] }}" class="{{ 'on' if q.status == s[0] }}"><span class="dot {{ s[2] }}"></span>{{ s[1] }} <b>{{ (counts[s[0]] or 0) | ar }}</b></a>{% endfor %}
@@ -62,3 +64,4 @@
 <div class="card empty big">{{ icon('inbox') }}<h3>لا توجد طلبات {{ 'مطابقة للفلاتر' if qs else 'بعد' }}</h3><p>عندما يرسل زائر نموذج الاستشارة أو التواصل سيظهر هنا فورًا، ويصلك إشعار على البريد.</p></div>
 {% endif %}
 {% endblock %}
+{% block scripts %}<script src="{{ asset('/js/admin-charts.js') }}"></script>{% endblock %}

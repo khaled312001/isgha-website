@@ -472,8 +472,6 @@
     if (c && !confirm(c.getAttribute('data-confirm'))) { e.preventDefault(); e.stopImmediatePropagation(); return; }
     var cp = t.closest('[data-copy]');
     if (cp) { e.preventDefault(); copyText(cp.getAttribute('data-copy')); return; }
-    if (t.closest('[data-side-open]')) document.body.classList.add('side-open');
-    if (t.closest('[data-side-close]')) document.body.classList.remove('side-open');
     var mo = t.closest('[data-modal-open]');
     if (mo) { var d = document.getElementById(mo.getAttribute('data-modal-open')); if (d) d.showModal(); }
     var mc = t.closest('[data-modal-close]');

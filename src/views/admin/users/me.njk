@@ -2,7 +2,7 @@
 {% block content %}
 <form method="post" action="/admin/users/me" class="card stack narrow" autocomplete="off">
   <input type="hidden" name="_csrf" value="{{ csrf }}">
-  <div class="user-cell big"><span class="avatar lg">{{ me.name | first }}</span><div><b>{{ me.email }}</b><small class="muted">{{ roleLabel(me.role) }}</small></div></div>
+  <div class="user-cell big"><span class="avatar lg">{{ me.name | first }}</span><div><b>{{ me.name }}</b><small class="muted"><span class="ltr" dir="ltr">{{ me.email }}</span> · {{ roleLabel(me.role) }}</small></div></div>
   <label class="fld"><span>الاسم</span><input name="name" value="{{ me.name }}" maxlength="120"></label>
   <hr>
   <h3>تغيير كلمة المرور</h3>

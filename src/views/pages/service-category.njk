@@ -61,12 +61,12 @@
     </div>
     <aside>
       <nav class="svc-nav" aria-label="أقسام الخدمات">
-        <h4>خدماتنا</h4>
+        <h3>خدماتنا</h3>
         {% for c in navCats %}<a href="{{ c.url }}" {% if c.slug == cat.slug %}class="on" aria-current="page"{% endif %}>{{ c.title }}{{ icon('arrow-left') }}</a>{% endfor %}
         <a href="/packages">الباقات القانونية{{ icon('arrow-left') }}</a>
       </nav>
       <div class="side-card ink">
-        <h4>هل تحتاج رأيًا قانونيًا الآن؟</h4>
+        <h3>هل تحتاج رأيًا قانونيًا الآن؟</h3>
         <p>تواصل مع محامٍ مختص يوضح لك موقفك وخياراتك قبل أي التزام.</p>
         <a class="btn btn-white btn-block" href="/consultation?service={{ cat.slug }}">اطلب تقييمًا أوليًا</a>
       </div>

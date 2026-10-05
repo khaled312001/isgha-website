@@ -5,6 +5,7 @@ import { requirePerm } from '../../lib/auth.js';
 import { logActivity } from '../../lib/activity.js';
 import { prettyPhone } from '../../lib/phone.js';
 import { cleanText } from '../../lib/sanitize.js';
+import { riyadhDay } from '../../lib/text.js';
 import { wrap, paginate, flash, wantsJson, csvCell, leadSource, LEAD_STATUSES, LEAD_STATUS_MAP, FORM_LABELS } from './util.js';
 
 const router = Router();
@@ -42,18 +43,32 @@ function filtered(q) {
 router.get('/', wrap(async (req, res) => {
   const q = { ...req.query, _uid: req.user.id };
   const result = await paginate(filtered(q).orderBy('l.id', 'desc'), req.query.page, 30);
-  const [pages, users, statusCounts, campaigns] = await Promise.all([
+  // شريط الرسوم المصغّر: طلبات آخر ٣٠ يومًا يوميًا (بتوقيت الرياض) + أقدم طلب جديد
+  const today = new Date(`${riyadhDay()}T00:00:00Z`);
+  const stripDays = Array.from({ length: 30 }, (_, i) => new Date(today.getTime() - (29 - i) * 86400000).toISOString().slice(0, 10));
+  const RD = "DATE(CONVERT_TZ(created_at, '+00:00', '+03:00'))";
+  const [pages, users, statusCounts, campaigns, daily, oldestNew] = await Promise.all([
     db('pages').select('id', 'title', 'kind').orderBy('kind').orderBy('title'),
     db('users').select('id', 'name').where({ is_active: true }),
     db('leads').select('status').count({ n: '*' }).groupBy('status'),
     db('leads').distinct('utm_campaign').whereNotNull('utm_campaign').limit(100),
+    db('leads').select(db.raw(`${RD} as d`)).count({ n: '*' }).where('created_at', '>=', new Date(`${stripDays[0]}T00:00:00+03:00`)).whereNot('status', 'spam').groupByRaw(RD),
+    db('leads').where({ status: 'new' }).min({ t: 'created_at' }).first(),
   ]);
   const counts = Object.fromEntries(statusCounts.map((r) => [r.status, Number(r.n)]));
+  const dmap = Object.fromEntries(daily.map((r) => [(r.d instanceof Date ? r.d.toISOString() : String(r.d)).slice(0, 10), Number(r.n)]));
+  const series = stripDays.map((d) => dmap[d] || 0);
+  const valid = LEAD_STATUSES.filter(([k]) => k !== 'spam').reduce((a, [k]) => a + (counts[k] || 0), 0);
+  const strip = {
+    series, month: series.reduce((a, b) => a + b, 0), valid, oldestNew: oldestNew?.t || null,
+    late: Boolean(oldestNew?.t && Date.now() - new Date(oldestNew.t).getTime() > 86400000),
+    segs: LEAD_STATUSES.filter(([k]) => k !== 'spam').map(([k, label]) => ({ key: k, label, n: counts[k] || 0, share: valid ? Math.round(((counts[k] || 0) / valid) * 100) : 0 })),
+  };
   res.render('admin/leads/index.njk', {
     title: 'طلبات العملاء', active: 'leads',
     leads: result.rows.map((l) => ({ ...l, source: leadSource(l), st: LEAD_STATUS_MAP[l.status] || LEAD_STATUS_MAP.new, phonePretty: prettyPhone(l.phone) })),
     pager: result, q: req.query, pages, users, counts, campaigns: campaigns.map((c) => c.utm_campaign),
-    statuses: LEAD_STATUSES, formLabels: FORM_LABELS,
+    statuses: LEAD_STATUSES, formLabels: FORM_LABELS, strip,
     qs: new URLSearchParams(Object.entries(req.query).filter(([k, v]) => k !== 'page' && v)).toString(),
   });
 }));

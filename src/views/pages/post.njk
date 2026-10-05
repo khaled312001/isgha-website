@@ -32,13 +32,13 @@
     </article>
     <aside>
       <div class="side-card ink">
-        <h4>لديك حالة مشابهة؟</h4>
+        <h3>لديك حالة مشابهة؟</h3>
         <p>احصل على تقييم أولي من محامٍ مختص خلال ساعات العمل.</p>
         <a class="btn btn-white btn-block" href="/consultation">اطلب تقييمًا أوليًا</a>
       </div>
       {% if related.length %}
       <div class="side-card">
-        <h4>مقالات ذات صلة</h4>
+        <h3>مقالات ذات صلة</h3>
         {% for r in related %}<a class="link-arrow" style="display:flex;color:var(--ink);font-weight:400;font-size:.92rem;padding:8px 0;border-bottom:1px dashed var(--line-2)" href="/insights/{{ r.slug }}">{{ r.title }}</a>{% endfor %}
       </div>
       {% endif %}

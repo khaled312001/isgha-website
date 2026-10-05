@@ -596,7 +596,7 @@ mark{background:linear-gradient(transparent 58%,var(--yellow) 58%,var(--yellow) 
 .article .prose{font-size:1.08rem;line-height:2}
 .article aside{position:sticky;top:110px;display:grid;gap:16px}
 .side-card{background:var(--card);border-radius:var(--r-lg);padding:24px}
-.side-card h4{font-family:var(--disp);font-size:1.05rem;margin-bottom:10px}
+.side-card h3,.side-card h4{font-family:var(--disp);font-size:1.05rem;margin-bottom:10px}
 .side-card p{font-size:.9rem;color:var(--muted);margin-bottom:14px}
 .side-card.ink{background:var(--ink);color:#fff}
 .side-card.ink p{color:rgba(255,255,255,.7)}
@@ -619,7 +619,7 @@ mark{background:linear-gradient(transparent 58%,var(--yellow) 58%,var(--yellow) 
 .svc-nav a:hover{background:var(--bg)}
 .svc-nav a.on{background:var(--ink);color:#fff}
 .svc-nav a .i{width:15px;height:15px;opacity:.6}
-.svc-nav h4{font-family:var(--disp);font-size:.95rem;padding:10px 14px 6px;color:var(--muted)}
+.svc-nav h3,.svc-nav h4{font-family:var(--disp);font-size:.95rem;padding:10px 14px 6px;color:var(--muted)}
 .sub-svcs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px}
 .sub-svc{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);padding:28px}
 .sub-svc .ic{width:46px;height:46px;border-radius:12px;background:var(--teal-soft);color:var(--teal);display:grid;place-items:center;margin-bottom:14px}

@@ -34,11 +34,11 @@
     </article>
     <aside>
       <nav class="svc-nav" aria-label="خدمات {{ cat.title }}">
-        <h4>{{ cat.title }}</h4>
+        <h3>{{ cat.title }}</h3>
         {% for s in cat.services %}{% if s.url %}<a href="{{ s.url }}" {% if s.id == svc.id %}class="on" aria-current="page"{% endif %}>{{ s.title }}{{ icon('arrow-left') }}</a>{% endif %}{% endfor %}
       </nav>
       <div class="side-card">
-        <h4>تواصل مباشرة</h4>
+        <h3>تواصل مباشرة</h3>
         <p>{{ S.working_hours }}</p>
         <a class="btn btn-ink btn-block" href="{{ S.phone | tel }}">{{ icon('phone') }} <span dir="ltr">{{ S.phone }}</span></a>
       </div>

@@ -405,6 +405,7 @@ export const SECTION_TYPES = {
       { name: 'body', label: 'المحتوى', type: 'richtext', default: '<p>اكتب المحتوى هنا…</p>' },
       { name: 'width', label: 'العرض', type: 'select', options: [['narrow', 'ضيّق (مقروء)'], ['wide', 'عريض']], default: 'narrow' },
       { name: 'toc', label: 'فهرس تلقائي للعناوين', type: 'toggle', default: false },
+      { name: 'toc_title', label: 'عنوان الفهرس', type: 'text', default: 'المحتويات' },
       bg, anchor,
     ],
   },

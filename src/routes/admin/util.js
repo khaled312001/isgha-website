@@ -7,6 +7,13 @@ export const wantsJson = (req) => req.xhr || req.is('application/json') || (req.
 
 export function flash(req, type, text) {
   req.session.flash = { type, text };
+  // نضمن حفظ الجلسة قبل التحويل، وإلا قد يصل طلب الصفحة التالية قبل الحفظ فتضيع الرسالة
+  const res = req.res;
+  if (res && !res.flashSaveWrapped) {
+    res.flashSaveWrapped = true;
+    const redirect = res.redirect.bind(res);
+    res.redirect = (...args) => req.session.save(() => redirect(...args));
+  }
 }
 
 export function wrap(fn) {
