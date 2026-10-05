@@ -73,7 +73,7 @@
       <h3>إدارة الطلب</h3>
       <label class="fld"><span>الحالة</span><select name="status">{% for s in statuses %}<option value="{{ s[0] }}" {{ 'selected' if lead.status == s[0] }}>{{ s[1] }}</option>{% endfor %}</select></label>
       <label class="fld"><span>المسؤول عن المتابعة</span><select name="assigned_to"><option value="">— غير مسند —</option>{% for u in users %}<option value="{{ u.id }}" {{ 'selected' if lead.assigned_to == u.id }}>{{ u.name }}</option>{% endfor %}</select></label>
-      <label class="fld"><span>قيمة التعاقد (ريال) — اختياري</span><input name="value" inputmode="decimal" value="{{ lead.value or '' }}" dir="ltr"></label>
+      <label class="fld"><span>قيمة التعاقد (ريال) — اختياري</span><input name="value" inputmode="decimal" value="{{ (lead.value | float) if lead.value else '' }}" dir="ltr"></label>
       <button class="btn btn-teal btn-block" type="submit">{{ icon('save') }} حفظ</button>
     </form>
 

@@ -1,31 +1,66 @@
 {% import "partials/macros.njk" as m %}
 {% if D.beneficiaries.length %}
-<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+{% set lbl = d.services_label %}
+<section class="sec sx-ben {{ m.bgclass(d) }}" data-sxc="beneficiaries" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
   <div class="wrap">
     {{ m.sechead(d) }}
     {% if d.style == 'detailed' %}
-    {% for b in D.beneficiaries %}
-    <article class="bd rv" id="{{ b.slug }}">
-      {{ m.pic(imgFor(b.image, 'ben_' + b.slug), b.title) }}
-      <div class="bd-body">
-        <span class="ic">{{ icon(b.icon or 'users') }}</span>
-        <h2>{{ b.title }}</h2>
-        <p>{{ b.summary }}</p>
-        <ul class="bd-list">{% for it in b.items %}<li>{{ it }}</li>{% endfor %}</ul>
-      </div>
-    </article>
-    {% endfor %}
-    {% else %}
-    <div class="ben-grid">
+    <div class="bnd-list-wrap">
       {% for b in D.beneficiaries %}
-      <article class="ben rv d{{ loop.index0 % 4 }}">
-        {{ m.pic(imgFor(b.image, 'ben_' + b.slug), b.title) }}
-        <div class="ben-body">
-          <span class="ic">{{ icon(b.icon or 'users') }}</span>
-          <h3>{{ b.title }}</h3>
-          <p>{{ b.summary }}</p>
-          <a class="link-arrow" href="/beneficiaries#{{ b.slug }}">الخدمات المقدمة {{ icon('arrow-left') }}</a>
+      {% set cut = 6 if b.items.length > 8 else b.items.length %}
+      {% set first = b.items.slice(0, cut) %}
+      {% set rest = b.items.slice(cut) %}
+      <article class="bnd rv" id="{{ b.slug }}">
+        <div class="bnd-media">
+          {{ m.pic(imgFor(b.image, 'ben_' + b.slug), b.title, 'bnd-pic') }}
+          <span class="bnd-num" aria-hidden="true">{{ loop.index | pad2 }}</span>
         </div>
+        <div class="bnd-body">
+          <header class="bnd-head">
+            <span class="bnd-ic">{{ icon(b.icon or 'users') }}</span>
+            <div>
+              <h2>{{ b.title }}</h2>
+              {% if b.summary %}<p>{{ b.summary }}</p>{% endif %}
+            </div>
+          </header>
+          {% if b.items.length %}
+          <h3 class="bnd-lt"><span>{{ lbl }}</span><b>{{ b.items.length | ar }}</b></h3>
+          <ul class="bnd-items">
+            {% for it in first %}<li>{{ it }}</li>{% endfor %}
+          </ul>
+          {% if rest.length %}
+          <div class="bnd-x" id="bnx-{{ b.slug }}">
+            <div><ul class="bnd-items">{% for it in rest %}<li>{{ it }}</li>{% endfor %}</ul></div>
+          </div>
+          <button type="button" class="bnd-more" aria-expanded="true" aria-controls="bnx-{{ b.slug }}" data-more="{{ d.more_label }}" data-less="{{ d.less_label }}" hidden>
+            <span class="t">{{ d.less_label }}</span><span class="c">+{{ rest.length | ar }}</span>{{ icon('chevron-down') }}
+          </button>
+          {% endif %}
+          {% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="bnc-grid" data-sx-rail>
+      {% for b in D.beneficiaries %}
+      <article class="bnc rv" style="--i:{{ loop.index0 }}">
+        {{ m.pic(imgFor(b.image, 'ben_' + b.slug), b.title, 'bnc-pic') }}
+        <div class="bnc-face">
+          <span class="bnc-ic">{{ icon(b.icon or 'users') }}</span>
+          <h3>{{ b.title }}</h3>
+          {% if b.summary %}<p>{{ b.summary }}</p>{% endif %}
+        </div>
+        {% if b.items.length %}
+        <div class="bnc-more">
+          <span class="bnc-lt">{{ lbl }}</span>
+          <ul>
+            {% for it in b.items.slice(0, 5) %}<li>{{ it }}</li>{% endfor %}
+          </ul>
+          {% if b.items.length > 5 %}<span class="bnc-cnt">+{{ (b.items.length - 5) | ar }}</span>{% endif %}
+        </div>
+        {% endif %}
+        <a class="bnc-link" href="/beneficiaries#{{ b.slug }}"><span>{{ lbl }}</span><span class="sr-only"> — {{ b.title }}</span>{{ icon('arrow-left') }}</a>
       </article>
       {% endfor %}
     </div>

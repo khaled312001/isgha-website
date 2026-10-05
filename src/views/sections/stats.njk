@@ -1,10 +1,18 @@
 {% import "partials/macros.njk" as m %}
 {% if d.items.length %}
-<section class="sec tight {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+<section class="sec tight sxn {{ m.bgclass(d) }}" data-sx="stats" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
   <div class="wrap">
     {{ m.sechead(d, 'split') }}
-    <div class="stats">
-      {% for s in d.items %}<div class="stat rv d{{ loop.index0 % 4 }}"><b>{{ s.value }}</b><span>{{ s.label }}</span></div>{% endfor %}
+    <div class="sxn-panel rv">
+      <ul class="sxn-grid" style="--n:{{ d.items.length }}">
+        {% for s in d.items %}
+        <li class="sxn-item rv" style="--i:{{ loop.index0 + 1 }}">
+          {% if s.icon %}<span class="sxn-ic">{{ icon(s.icon) }}</span>{% endif %}
+          <b class="sxn-num" data-count="{{ s.value | ar }}"><span class="sxn-v">{{ s.value | ar }}</span></b>
+          {% if s.label %}<span class="sxn-l">{{ s.label }}</span>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
     </div>
   </div>
 </section>

@@ -3,31 +3,27 @@
     <div class="foot-top">
       <div class="foot-brand">
         <img src="{{ S.logo_white or '/img/logo-white.svg' }}" alt="{{ S.site_name }}" width="200" height="80" loading="lazy">
-        <h3>{{ S.footer_heading }}</h3>
-        <p>{{ S.site_description }}</p>
+        {% if S.footer_heading %}<p class="foot-h">{{ S.footer_heading }}</p>{% endif %}
+        {% if S.site_description %}<p>{{ S.site_description }}</p>{% endif %}
         {% if S.footer_cta_label %}<a class="btn btn-white" href="{{ S.footer_cta_url }}">{{ S.footer_cta_label }} {{ icon('arrow-left') }}</a>{% endif %}
       </div>
       <div class="foot-cols">
-        <div class="fl">
-          <b>خدماتنا</b>
+        <nav class="fl" aria-label="{{ S.footer_services_title }}">
+          <b>{{ S.footer_services_title }}</b>
           {% for c in navCats %}<a href="{{ c.url }}">{{ c.title }}</a>{% endfor %}
-          <a href="/packages">الباقات القانونية</a>
-        </div>
-        <div class="fl">
-          <b>روابط سريعة</b>
-          <a href="/about">من نحن</a>
-          <a href="/beneficiaries">المستفيدون</a>
-          <a href="/insights">المعرفة القانونية</a>
-          <a href="/consultation">طلب استشارة</a>
-          <a href="/contact">اتصل بنا</a>
-        </div>
-        <div class="fl">
-          <b>تواصل معنا</b>
+          {% for l in S.footer_services_links | links %}<a href="{{ l.url }}">{{ l.label }}</a>{% endfor %}
+        </nav>
+        <nav class="fl" aria-label="{{ S.footer_links_title }}">
+          <b>{{ S.footer_links_title }}</b>
+          {% for l in S.footer_links | links %}<a href="{{ l.url }}">{{ l.label }}</a>{% endfor %}
+        </nav>
+        <div class="fl fl-contact">
+          <b>{{ S.footer_contact_title }}</b>
           <a class="ci" href="{{ S.phone | tel }}">{{ icon('phone') }}<span dir="ltr">{{ S.phone }}</span></a>
           <a class="ci" href="mailto:{{ S.email }}">{{ icon('mail') }}<span>{{ S.email }}</span></a>
           <span class="ci">{{ icon('map-pin') }}<span>{{ S.address }}</span></span>
           {% if S.working_hours %}<span class="ci">{{ icon('clock') }}<span>{{ S.working_hours }}</span></span>{% endif %}
-          {% set socials = [['social_x','x-brand','X'],['social_linkedin','linkedin','LinkedIn'],['social_instagram','instagram','Instagram'],['social_snapchat','ghost','Snapchat'],['social_tiktok','tiktok','TikTok'],['social_youtube','youtube','YouTube']] %}
+          {% set socials = [['social_x','x-brand','X'],['social_linkedin','linkedin','LinkedIn'],['social_instagram','instagram','Instagram'],['social_snapchat','snapchat','Snapchat'],['social_tiktok','tiktok','TikTok'],['social_youtube','youtube','YouTube']] %}
           <div class="social">
             {% for s in socials %}{% if S[s[0]] %}<a href="{{ S[s[0]] }}" target="_blank" rel="noopener" aria-label="{{ s[2] }}">{{ icon(s[1]) }}</a>{% endif %}{% endfor %}
           </div>
@@ -38,6 +34,7 @@
   <div class="mega" aria-hidden="true">{{ S.mega_word }}</div>
   <div class="foot-bottom">
     <span>{{ S.copyright | year }}</span>
-    <nav aria-label="روابط قانونية"><a href="/privacy">سياسة الخصوصية</a><a href="/terms">شروط الاستخدام</a><a href="/sitemap.xml">خريطة الموقع</a></nav>
+    {% set legal = S.footer_legal_links | links %}
+    {% if legal.length %}<nav aria-label="روابط قانونية">{% for l in legal %}<a href="{{ l.url }}">{{ l.label }}</a>{% endfor %}</nav>{% endif %}
   </div>
 </footer>

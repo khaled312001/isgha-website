@@ -24,41 +24,44 @@
 
 {% macro bgclass(d) %}{% if d.bg %}bg-{{ d.bg }}{% endif %}{% endmacro %}
 
-{# النموذج متعدد الخطوات #}
+{# النموذج متعدد الخطوات — كل النصوص قابلة للتعديل من بيانات القسم مع نصوص افتراضية #}
 {% macro mform(d, S, caseTypes, ts) %}
-<div class="frame rv d2" id="form">
+<div class="frame cx-frame rv d2" id="form">
+  <span class="cx-frame-pat" aria-hidden="true"></span>
   <div class="frame-head">
     <b><img src="/img/mark.svg" alt="" width="15" height="17">{{ d.frame_title or 'طلب تقييم قضية' }}</b>
-    <span>{{ d.frame_note or 'آمن وسرّي' }} {{ icon('lock') }}</span>
+    <span>{{ icon('lock') }}{{ d.frame_note or 'آمن وسرّي' }}</span>
   </div>
-  <form class="form-card" data-mform data-ts="{{ ts }}" novalidate>
+  <form class="form-card cx-mf" data-mform data-ts="{{ ts }}" novalidate>
     <div class="form-steps">
-      <h3>{{ d.form_title or 'ابدأ تقييم قضيتك مجانًا' }}</h3>
-      {% if d.form_sub %}<p class="sub">{{ d.form_sub }}</p>{% endif %}
-      <div class="progress" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+      <div class="cx-mf-head">
+        <h2 class="cx-form-title">{{ d.form_title or 'ابدأ تقييم قضيتك مجانًا' }}</h2>
+        {% if d.form_sub %}<p class="sub">{{ d.form_sub }}</p>{% endif %}
+      </div>
+      <div class="progress cx-prog" aria-hidden="true"><i class="on"><b></b></i><i><b></b></i><i><b></b></i></div>
       <div class="form-error" role="alert"></div>
       <div class="mstep active" data-step="1">
         <p class="step-label">{{ d.step1_label or 'ما نوع قضيتك؟' }}</p>
         <div class="choice">
-          {% for t in caseTypes %}<button type="button" data-value="{{ t }}" aria-pressed="false">{{ t }}</button>{% endfor %}
+          {% for t in caseTypes %}<button type="button" data-value="{{ t }}" aria-pressed="false"><span class="cx-radio" aria-hidden="true">{{ icon('check') }}</span><span class="cx-choice-t">{{ t }}</span></button>{% endfor %}
         </div>
       </div>
       <div class="mstep" data-step="2">
         <p class="step-label">{{ d.step2_label or 'اشرح موقفك باختصار (اختياري)' }}</p>
-        <div class="field"><label class="sr-only" for="m-msg-{{ ts }}">التفاصيل</label><textarea id="m-msg-{{ ts }}" name="message" rows="4" maxlength="2000" placeholder="{{ d.message_placeholder or 'اكتب تفاصيل قضيتك باختصار…' }}"></textarea></div>
+        <div class="field"><label class="sr-only" for="m-msg-{{ ts }}">{{ d.message_label or 'التفاصيل' }}</label><div class="cx-in is-area">{{ icon('message-square') }}<textarea id="m-msg-{{ ts }}" name="message" rows="4" maxlength="2000" placeholder="{{ d.message_placeholder or 'اكتب تفاصيل قضيتك باختصار…' }}"></textarea></div></div>
         <div class="step-nav">
-          <button type="button" class="btn btn-back" data-back>رجوع</button>
-          <button type="button" class="btn btn-teal" data-next>التالي</button>
+          <button type="button" class="btn btn-back" data-back>{{ icon('arrow-right') }}<span>{{ d.back_label or 'رجوع' }}</span></button>
+          <button type="button" class="btn btn-teal" data-next><span>{{ d.next_label or 'التالي' }}</span>{{ icon('arrow-left') }}</button>
         </div>
       </div>
       <div class="mstep" data-step="3">
         <p class="step-label">{{ d.step3_label or 'إلى من نتحدث؟' }}</p>
-        <div class="field"><label for="m-name-{{ ts }}">الاسم</label><input id="m-name-{{ ts }}" name="name" autocomplete="name" placeholder="اسمك الكريم" maxlength="120"><span class="msg">اكتب اسمك من فضلك</span></div>
-        <div class="field"><label for="m-phone-{{ ts }}">رقم الجوال</label><input id="m-phone-{{ ts }}" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xxxxxxxx" dir="ltr" style="text-align:right" maxlength="20"><span class="msg">أدخل رقم جوال صحيح مثل 0555555555</span></div>
-        {% if d.ask_email %}<div class="field"><label for="m-email-{{ ts }}">البريد الإلكتروني (اختياري)</label><input id="m-email-{{ ts }}" name="email" type="email" autocomplete="email" dir="ltr" style="text-align:right" maxlength="190"></div>{% endif %}
+        <div class="field"><label for="m-name-{{ ts }}">{{ d.name_label or 'الاسم' }}</label><div class="cx-in">{{ icon('user') }}<input id="m-name-{{ ts }}" name="name" autocomplete="name" placeholder="{{ d.name_placeholder or 'اسمك الكريم' }}" maxlength="120"></div><span class="msg">{{ icon('info') }}{{ d.name_error or 'اكتب اسمك من فضلك' }}</span></div>
+        <div class="field"><label for="m-phone-{{ ts }}">{{ d.phone_label or 'رقم الجوال' }}</label><div class="cx-in">{{ icon('phone') }}<input id="m-phone-{{ ts }}" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="{{ d.phone_placeholder or '05xxxxxxxx' }}" dir="ltr" maxlength="20"></div><span class="msg">{{ icon('info') }}{{ d.phone_error or 'أدخل رقم جوال صحيح مثل 0555555555' }}</span></div>
+        {% if d.ask_email %}<div class="field"><label for="m-email-{{ ts }}">{{ d.email_label or 'البريد الإلكتروني (اختياري)' }}</label><div class="cx-in">{{ icon('mail') }}<input id="m-email-{{ ts }}" name="email" type="email" autocomplete="email" dir="ltr" maxlength="190"></div></div>{% endif %}
         <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="step-nav">
-          <button type="button" class="btn btn-back" data-back>رجوع</button>
+          <button type="button" class="btn btn-back" data-back>{{ icon('arrow-right') }}<span>{{ d.back_label or 'رجوع' }}</span></button>
           <button type="submit" class="btn btn-teal">{{ d.submit_label or 'أرسل الطلب' }}</button>
         </div>
         <p class="form-note">{{ icon('lock') }}<span>{{ d.privacy_note or 'بياناتك سرية ولا تُستخدم إلا للتواصل معك.' }}</span></p>
@@ -66,7 +69,7 @@
     </div>
     <div class="form-done" role="status">
       <div class="ok">{{ icon('check') }}</div>
-      <h4>{{ d.done_title or 'وصلنا طلبك' }}</h4>
+      <h3>{{ d.done_title or 'وصلنا طلبك' }}</h3>
       <p>{{ d.done_text or 'سيتواصل معك محامٍ مختص خلال ساعات العمل. إذا كان أمرك عاجلًا:' }}</p>
       <a class="btn btn-teal" href="{{ S.phone | tel }}">{{ icon('phone') }} <span dir="ltr">{{ S.phone }}</span></a>
     </div>

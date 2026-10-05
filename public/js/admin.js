@@ -160,6 +160,7 @@
     var type = { email: 'email', url: 'url', number: 'number', datetime: 'datetime-local' }[f.type] || 'text';
     var input = h('input', { type: type === 'url' ? 'text' : type, dir: f.dir || (f.type === 'slug' || f.type === 'url' || f.type === 'email' ? 'ltr' : null), maxlength: f.max || null, placeholder: f.placeholder || null, min: f.min != null ? f.min : null, max: f.type === 'number' && f.max != null ? f.max : null, required: f.required || null });
     input.value = f.type === 'datetime' ? toLocalInput(v) : (v == null ? '' : v);
+    if (f.type === 'datetime') input.classList.toggle('is-empty', !input.value);
     input.addEventListener('input', ctx.changed);
     return { el: input, input: input, get: function () {
       if (f.type === 'number') return input.value === '' ? '' : Number(input.value);
@@ -509,6 +510,11 @@
     }
     if (t.matches('[data-copy-select]')) { var r = t.closest('.tpl'); if (r) r.querySelector('input[type=radio]').checked = true; }
   });
+
+  // حقول التاريخ الفارغة (لإخفاء نص «يوم/شهر» المشوّه في كروم بالعربية)
+  function markEmptyDate(i) { i.classList.toggle('is-empty', !i.value); }
+  $$('input[type=date],input[type=datetime-local]').forEach(markEmptyDate);
+  ['input', 'change'].forEach(function (ev) { document.addEventListener(ev, function (e) { if (e.target.matches && e.target.matches('input[type=date],input[type=datetime-local]')) markEmptyDate(e.target); }); });
 
   // التحديد الجماعي في جدول الطلبات
   $$('[data-bulk]').forEach(function (form) {

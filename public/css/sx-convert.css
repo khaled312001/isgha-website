@@ -8,7 +8,12 @@
 /* ارتفاع مضغوط لأقسامنا (طلب العميل): ٨٤ بكسل على الشاشات الكبيرة و٥٦ على الجوال */
 .cx-steps,.cx-flow,.cx-show,.cx-faq,.cx-contact,.cx-lform{padding:84px 0}
 .cx-steps .sec-head,.cx-flow .sec-head,.cx-show .sec-head,.cx-contact .sec-head,.cx-lform .sec-head{margin-bottom:44px}
+/* site.css يلغي المسافة العلوية لأي قسم كريمي يلي قسمًا آخر، حتى لو كان السابق ملوّنًا؛ نعيدها عند تغيّر الخلفية */
+.sec[class*="bg-"] + :is(.cx-steps,.cx-flow,.cx-show,.cx-faq,.cx-contact,.cx-lform):not([class*="bg-"]){padding-top:84px}
+.sec[class*="bg-"] + .cx-cta-sec{padding-top:56px}
 @media (max-width:640px){
+  .sec[class*="bg-"] + :is(.cx-steps,.cx-flow,.cx-show,.cx-faq,.cx-contact,.cx-lform):not([class*="bg-"]){padding-top:56px}
+  .sec[class*="bg-"] + .cx-cta-sec{padding-top:40px}
   .cx-steps,.cx-flow,.cx-show,.cx-faq,.cx-contact,.cx-lform{padding:56px 0}
   .cx-steps .sec-head,.cx-flow .sec-head,.cx-show .sec-head,.cx-contact .sec-head,.cx-lform .sec-head{margin-bottom:32px}
 }
@@ -363,4 +368,213 @@ html.js:not(.no-js) .cx-faq-list:not(.is-all) .cx-qa.is-extra{display:none}
   .cx-cta-btn{justify-content:center;padding:13px 12px}
   .cx-cta-btn.is-main{grid-column:1/-1}
   .cta-band::before{width:190px}
+}
+
+/* ═══════════════ النماذج: حقول، تحقق، تحميل، نجاح (التواصل + متعدد الخطوات) ═══════════════ */
+.field{margin-bottom:14px;position:relative}
+.field label{display:block;font-size:.84rem;font-weight:500;color:var(--ink-2);margin-bottom:7px;line-height:1.5}
+.field input,.field textarea,.field select{width:100%;padding:13px 15px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);font-size:.97rem;line-height:1.55;color:var(--ink);
+  transition:border-color .2s,background .2s,box-shadow .25s var(--ease)}
+.field select{padding-inline-end:38px;cursor:pointer}
+.field input[dir=ltr]{text-align:right}
+.field input::placeholder,.field textarea::placeholder{color:var(--muted-2);opacity:1}
+.field input:hover,.field textarea:hover,.field select:hover{border-color:var(--line-2)}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--teal);background:#fff;box-shadow:0 0 0 4px rgba(14,110,98,.12)}
+.cx-in{position:relative}
+.cx-in > .i{position:absolute;z-index:1;inset-inline-start:15px;top:50%;width:18px;height:18px;margin-top:-9px;color:var(--muted-2);pointer-events:none;transition:color .2s}
+.cx-in.is-area > .i{top:16px;margin-top:0}
+.cx-in input,.cx-in select,.cx-in textarea{padding-inline-start:44px}
+/* الحقول ذات الاتجاه ltr داخل صفحة rtl: الأيقونة يمينًا دائمًا */
+.cx-in input[dir=ltr]{padding-left:15px;padding-right:44px}
+.cx-in:focus-within > .i{color:var(--teal)}
+.field.is-ok input,.field.is-ok textarea{border-color:rgba(14,110,98,.45)}
+.field.err input,.field.err textarea,.field.err select{border-color:#c0392b;background:#fff8f7;box-shadow:0 0 0 4px rgba(192,57,43,.1)}
+.field.err .cx-in > .i{color:#c0392b}
+.field.err .cx-in,.field.err > input{animation:cxShake .42s var(--ease)}
+.field .msg{display:none;align-items:center;gap:6px;font-size:.8rem;line-height:1.5;color:#b03a2e;margin-top:7px}
+.field .msg .i{width:15px;height:15px;flex-shrink:0}
+.field.err .msg{display:flex;animation:cxIn .3s var(--ease)}
+@keyframes cxShake{0%,100%{transform:none}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+.form-error.show{display:flex;align-items:flex-start;gap:9px;border:1px solid #f3c9c3;border-radius:12px;padding:11px 14px;line-height:1.6;animation:cxIn .3s var(--ease)}
+.form-error.show::before{content:"!";width:20px;height:20px;border-radius:50%;background:#c0392b;color:#fff;font-weight:700;font-size:.8rem;line-height:20px;text-align:center;flex-shrink:0;margin-top:1px}
+.form-note{color:var(--muted)}
+.form-note .i{color:var(--teal)}
+/* زر الإرسال أثناء التحميل: site.js يعطّل الزر ويغيّر نصه */
+[data-mform] [type=submit],[data-cform] [type=submit]{position:relative}
+[data-mform] [type=submit]:disabled,[data-cform] [type=submit]:disabled{cursor:progress;opacity:.94;transform:none}
+[data-mform] [type=submit]:disabled::before,[data-cform] [type=submit]:disabled::before{content:"";width:17px;height:17px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;flex-shrink:0;animation:cxSpin .7s linear infinite}
+@keyframes cxSpin{to{transform:rotate(360deg)}}
+/* حالة النجاح */
+/* site.css يحتوي قاعدة قديمة عامة .show (بطاقات الواجهات السابقة) — نُلغي أثرها هنا */
+.form-done.show{animation:cxIn .5s var(--ease);background:none;border-radius:0}
+.form-done .ok{width:74px;height:74px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;margin:4px auto 18px;position:relative;box-shadow:0 0 0 8px var(--teal-soft),0 18px 34px -14px rgba(10,84,73,.6)}
+.form-done .ok::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid var(--gold);opacity:0}
+.form-done .ok .i{width:32px;height:32px}
+.form-done.show .ok{animation:cxPopIn .6s var(--ease) both}
+.form-done.show .ok .i{animation:cxPopIn .45s var(--ease) .3s both}
+.form-done.show .ok::after{animation:cxPulse 1.2s var(--ease) .5s 2}
+.form-done h3,.form-done h4{font-family:var(--disp);font-weight:900;font-size:1.4rem;line-height:1.5;margin-bottom:6px}
+.form-done p{color:var(--muted);font-size:.94rem;max-width:40ch;margin:0 auto 16px}
+@keyframes cxPopIn{0%{opacity:0;transform:scale(.4)}60%{opacity:1;transform:scale(1.08)}100%{opacity:1;transform:none}}
+
+/* ═══════════════ التواصل: نموذج + بطاقات + خريطة ═══════════════ */
+.cx-ct-grid{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
+.cx-cform{position:relative;overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:28px;padding:30px 32px 24px;box-shadow:var(--shadow-sm)}
+.cx-cform::before{content:"";position:absolute;top:0;inset-inline:32px;height:3px;border-radius:0 0 3px 3px;background:linear-gradient(to left,var(--teal),var(--teal) 55%,var(--gold))}
+.cx-cform-head{display:flex;gap:14px;align-items:center;margin-bottom:20px}
+.cx-cform-ic{width:50px;height:50px;border-radius:15px;background:var(--teal-soft);color:var(--teal);display:grid;place-items:center;flex-shrink:0}
+.cx-cform-ic .i{width:22px;height:22px}
+.cx-form-title{font-family:var(--disp);font-weight:700;font-size:1.35rem;line-height:1.45;margin:0}
+.cx-cform-head p{color:var(--muted);font-size:.88rem;line-height:1.6;margin-top:2px}
+.cx-cform .row2{gap:14px}
+.cx-cform textarea{min-height:120px}
+.cx-cform .cx-submit{margin-top:4px;border-radius:14px}
+.cx-cform .cx-submit .i{transition:transform .3s var(--ease)}
+.cx-cform .cx-submit:hover .i,.cx-cform .cx-submit:focus-visible .i{transform:translate(-4px,-2px)}
+.cx-cform .form-done,.cx-cform .form-done.show{padding:56px 10px}
+.cx-ct-side{display:flex;flex-direction:column;gap:12px}
+.cx-ct-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cx-cc{position:relative;display:flex;align-items:flex-start;gap:13px;padding:18px 18px 18px 40px;border-radius:20px;background:var(--cx-card);border:1px solid var(--line);color:var(--ink)}
+.cx-cc.rv{transition-property:opacity,transform,translate,box-shadow,border-color,background;transition-duration:.75s,.75s,.4s,.4s,.3s,.3s;transition-timing-function:var(--ease);transition-delay:calc(var(--i,0) * 80ms),calc(var(--i,0) * 80ms),0s,0s,0s,0s}
+.cx-cc.is-mail,.cx-cc.is-addr{grid-column:1/-1}
+.cx-cc-ic{width:44px;height:44px;border-radius:13px;background:var(--teal-soft);color:var(--teal);display:grid;place-items:center;flex-shrink:0;transition:background .3s,color .3s,transform .4s var(--ease)}
+.cx-cc-ic .i{width:21px;height:21px}
+.cx-cc-tx{min-width:0}
+.cx-cc-tx small{display:block;font-size:.78rem;color:var(--muted);line-height:1.6}
+.cx-cc-tx b{display:block;font-weight:500;font-size:1.02rem;line-height:1.6;overflow-wrap:anywhere}
+.cx-cc.is-addr b{font-size:.93rem;line-height:1.75}
+.cx-cc-tx em{font-style:normal;display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted);margin-top:6px}
+.cx-cc-tx em .i{width:14px;height:14px;color:var(--gold)}
+.cx-cc-go{position:absolute;top:18px;inset-inline-end:16px;width:16px;height:16px;color:var(--muted-2);transition:transform .35s var(--ease),color .3s}
+.cx-cc.is-call{background:radial-gradient(120% 120% at 100% 0%,#13806e,var(--teal-dark) 55%,var(--teal-deep));border-color:transparent;color:#fff}
+.cx-cc.is-call small{color:rgba(255,255,255,.7)}
+.cx-cc.is-call .cx-cc-ic{background:rgba(255,255,255,.12);color:#fff}
+.cx-cc.is-call .cx-cc-go{color:rgba(255,255,255,.6)}
+.cx-cc.is-wa .cx-cc-ic{background:#e0f2e8;color:var(--wa)}
+a.cx-cc:hover,a.cx-cc:focus-visible{translate:0 -4px;box-shadow:var(--shadow);border-color:transparent}
+a.cx-cc:hover .cx-cc-ic,a.cx-cc:focus-visible .cx-cc-ic{background:var(--teal);color:#fff;transform:rotate(-6deg)}
+a.cx-cc.is-wa:hover .cx-cc-ic,a.cx-cc.is-wa:focus-visible .cx-cc-ic{background:var(--wa)}
+a.cx-cc.is-call:hover .cx-cc-ic,a.cx-cc.is-call:focus-visible .cx-cc-ic{background:var(--gold);color:var(--ink)}
+a.cx-cc:hover .cx-cc-go,a.cx-cc:focus-visible .cx-cc-go{transform:translate(-3px,-3px);color:var(--teal)}
+a.cx-cc.is-call:hover .cx-cc-go,a.cx-cc.is-call:focus-visible .cx-cc-go{color:var(--yellow)}
+.cx-map{position:relative;height:300px;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:var(--card)}
+.cx-map iframe{position:absolute;inset:0;width:100%;height:100%;border:0;filter:grayscale(.4) contrast(1.04);transition:filter .5s var(--ease)}
+.cx-map:hover iframe{filter:none}
+.cx-map-go{position:absolute;bottom:14px;inset-inline-start:14px;display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--ink);font-size:.86rem;font-weight:500;padding:9px 14px;border-radius:12px;box-shadow:0 10px 26px -10px rgba(20,24,23,.4);transition:transform .25s var(--ease),box-shadow .25s}
+.cx-map-go .i{width:16px;height:16px;color:var(--teal)}
+.cx-map-go .cx-arr{width:14px;height:14px;color:var(--muted);transition:transform .3s var(--ease)}
+.cx-map-go:hover,.cx-map-go:focus-visible{transform:translateY(-2px);box-shadow:0 16px 30px -10px rgba(20,24,23,.45)}
+.cx-map-go:hover .cx-arr,.cx-map-go:focus-visible .cx-arr{transform:translate(-2px,-2px)}
+
+@media (max-width:960px){
+  .cx-ct-grid{grid-template-columns:1fr;gap:14px}
+  .cx-ct-side{display:contents}
+  .cx-ct-cards{order:1}
+  .cx-cform{order:2;margin-top:6px}
+  .cx-map{order:3;height:260px}
+}
+@media (max-width:640px){
+  .cx-cform{padding:24px 18px 20px;border-radius:24px}
+  .cx-cform-ic{width:44px;height:44px}
+  .cx-form-title{font-size:1.2rem}
+  .cx-cform .row2{gap:0}
+  .cx-ct-cards{gap:10px}
+  .cx-cc{padding:15px 15px 15px 34px;gap:11px;border-radius:18px}
+  .cx-cc.is-call,.cx-cc.is-wa{flex-direction:column;gap:10px}
+  .cx-cc-ic{width:40px;height:40px}
+  .cx-cc-go{top:16px;inset-inline-end:14px}
+  .cx-map{height:240px}
+}
+
+/* ═══════════════ النموذج متعدد الخطوات ═══════════════ */
+.cx-frame{position:relative;isolation:isolate;overflow:hidden;border-radius:28px;padding:12px;
+  background:radial-gradient(80% 60% at 100% 0%,rgba(31,150,128,.55),transparent 70%),linear-gradient(160deg,var(--teal) 0%,var(--teal-dark) 55%,var(--teal-deep) 100%);
+  box-shadow:0 30px 70px -30px rgba(8,63,55,.6),0 0 0 1px rgba(8,63,55,.12)}
+.cx-frame-pat{position:absolute;z-index:-1;inset:0;pointer-events:none;opacity:.9;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='32'%3E%3Cpath d='M18 6 29.5 26h-23z' fill='none' stroke='%23fff' stroke-opacity='.07'/%3E%3C/svg%3E") 0 0/36px 32px;
+  -webkit-mask-image:linear-gradient(to bottom,#000,transparent 160px);mask-image:linear-gradient(to bottom,#000,transparent 160px)}
+.cx-frame .frame-head{padding:6px 12px 12px}
+.cx-frame .frame-head b{font-size:1.02rem;letter-spacing:0}
+.cx-frame .frame-head b img{width:16px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.25))}
+.cx-frame .frame-head span{opacity:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);padding:3px 11px 3px 12px;border-radius:99px;font-size:.74rem;gap:6px;color:rgba(255,255,255,.9)}
+.cx-frame .frame-head span .i{color:var(--yellow)}
+.cx-mf{border-radius:19px;padding:26px 26px 22px;box-shadow:0 1px 0 rgba(255,255,255,.6) inset}
+.cx-mf-head{margin-bottom:16px}
+.cx-mf .cx-form-title{font-size:1.32rem}
+.cx-mf .sub{color:var(--muted);font-size:.88rem;margin:2px 0 0}
+/* مؤشر التقدم: ثلاث عقد متصلة */
+.cx-prog{display:flex;align-items:center;gap:0;margin:0 0 20px;counter-reset:cxst}
+.cx-prog i{position:relative;flex:1;height:30px;background:none;border-radius:0;counter-increment:cxst}
+.cx-prog i:last-child{flex:0 0 30px}
+.cx-prog i b{position:absolute;inset-inline-start:0;top:0;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#fff;border:1.5px solid var(--line-2);color:var(--muted);font-family:var(--disp);font-weight:700;font-size:.86rem;line-height:1;
+  transition:background .35s var(--ease),border-color .35s,color .35s,transform .35s var(--ease);z-index:1}
+.cx-prog i b::before{content:counter(cxst,arabic-indic)}
+.cx-prog i::before,.cx-prog i::after{content:"";position:absolute;top:14px;inset-inline-start:38px;inset-inline-end:8px;height:2px;border-radius:2px;background:var(--line)}
+.cx-prog i::after{background:var(--teal);transform:scaleX(0);transform-origin:100% 50%;transition:transform .5s var(--ease)}
+.cx-prog i:last-child::before,.cx-prog i:last-child::after{display:none}
+.cx-prog i.on{background:none}
+.cx-prog i.on b{background:var(--teal);border-color:var(--teal);color:#fff}
+.cx-prog i.on:has(+ i.on)::after{transform:scaleX(1)}
+.cx-prog i.on:not(:has(+ i.on)) b{box-shadow:0 0 0 5px rgba(14,110,98,.14);transform:scale(1.06)}
+.cx-mf .step-label{font-family:var(--disp);font-weight:700;font-size:1.04rem;margin-bottom:12px}
+/* الانتقال بين الخطوات (الاتجاه يضبطه sx-convert.js) */
+.cx-mf .mstep.active{animation:cxStepFwd .45s var(--ease)}
+.cx-mf[data-dir=back] .mstep.active{animation-name:cxStepBack}
+@keyframes cxStepFwd{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+@keyframes cxStepBack{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
+/* خيارات نوع القضية */
+.cx-mf .choice{gap:9px}
+.cx-mf .choice button{display:flex;align-items:center;gap:10px;text-align:start;padding:12px 13px;border-radius:13px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:.93rem;line-height:1.45;
+  transition:border-color .2s,background .2s,transform .25s var(--ease),box-shadow .25s}
+.cx-radio{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--line-2);background:#fff;display:grid;place-items:center;flex-shrink:0;color:#fff;transition:background .2s,border-color .2s}
+.cx-radio .i{width:12px;height:12px;opacity:0;transform:scale(.4);transition:opacity .2s,transform .3s var(--ease)}
+.cx-mf .choice button:hover,.cx-mf .choice button:focus-visible{border-color:var(--teal);background:#fff;transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.cx-mf .choice button:hover .cx-radio{border-color:var(--teal)}
+.cx-mf .choice button.sel{border-color:var(--teal);background:var(--teal-soft);color:var(--teal-dark);font-weight:500}
+.cx-mf .choice button.sel .cx-radio{background:var(--teal);border-color:var(--teal)}
+.cx-mf .choice button.sel .cx-radio .i{opacity:1;transform:none}
+/* أزرار التنقل */
+.cx-mf .step-nav{gap:10px;margin-top:16px}
+.cx-mf .step-nav .btn{border-radius:13px;gap:8px}
+.cx-mf .step-nav .btn .i{width:17px;height:17px;transition:transform .3s var(--ease)}
+.cx-mf .btn-back{background:transparent;border:1.5px solid var(--line-2);color:var(--ink-2)}
+.cx-mf .btn-back:hover,.cx-mf .btn-back:focus-visible{border-color:var(--ink);background:var(--bg)}
+.cx-mf .btn-back:hover .i{transform:translateX(3px)}
+.cx-mf [data-next]:hover .i,.cx-mf [data-next]:focus-visible .i{transform:translateX(-4px)}
+.cx-mf textarea{min-height:118px}
+.cx-mf .form-note{margin-top:12px}
+.cx-mf .form-done,.cx-mf .form-done.show{padding:28px 6px 14px}
+
+/* ═══════════════ قسم النموذج داخل الصفحة ═══════════════ */
+.cx-lf-grid{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:56px;align-items:center}
+.cx-lf-title{font-size:clamp(1.65rem,3.3vw,2.35rem);line-height:1.45}
+.cx-lf-intro{color:var(--muted);margin-top:10px;font-size:1.02rem;max-width:50ch}
+.bg-teal .cx-lf-intro,.bg-ink .cx-lf-intro{color:rgba(255,255,255,.75)}
+.cx-lf-points{list-style:none;margin:22px 0 0;display:grid;gap:10px}
+.cx-lf-points li{display:flex;align-items:center;gap:13px;padding:12px 16px 12px 14px;border-radius:14px;background:var(--cx-card);border:1px solid var(--line);font-weight:500;font-size:.97rem;line-height:1.6;color:var(--ink)}
+.cx-lf-points li.rv{transition-property:opacity,transform,translate,box-shadow,border-color;transition-duration:.75s,.75s,.35s,.35s,.3s;transition-timing-function:var(--ease);transition-delay:calc(var(--i,0) * 80ms),calc(var(--i,0) * 80ms),0s,0s,0s}
+.cx-lf-ic{width:30px;height:30px;border-radius:50%;background:var(--teal-soft);color:var(--teal);display:grid;place-items:center;flex-shrink:0;transition:background .3s,color .3s}
+.cx-lf-ic .i{width:15px;height:15px}
+.cx-lf-points li:hover{translate:-4px 0;border-color:rgba(14,110,98,.35);box-shadow:var(--shadow-sm)}
+.cx-lf-points li:hover .cx-lf-ic{background:var(--teal);color:#fff}
+.cx-lf-media{position:relative;margin-top:26px;max-width:440px}
+.cx-lf-media::before{content:"";position:absolute;inset:-9px -9px 9px 9px;border:1.5px solid var(--gold);border-radius:220px 220px var(--r-lg) var(--r-lg);opacity:.55;pointer-events:none}
+.cx-lf-media .media{aspect-ratio:16/10;border-radius:220px 220px var(--r-lg) var(--r-lg)}
+.cx-lf-media img{transition:transform .8s var(--ease)}
+.cx-lf-media:hover img{transform:scale(1.04)}
+.cx-lf-form .frame{margin:0;max-width:none}
+
+@media (max-width:960px){
+  .cx-lf-grid{grid-template-columns:1fr;gap:32px}
+  .cx-lf-media{display:none}
+}
+@media (max-width:640px){
+  .cx-frame{border-radius:24px;padding:9px}
+  .cx-mf{padding:22px 16px 18px;border-radius:17px}
+  .cx-mf .choice{grid-template-columns:1fr 1fr}
+  .cx-mf .choice button{padding:11px 10px;font-size:.88rem;gap:8px}
+  .cx-radio{width:18px;height:18px}
+}
+@media (max-width:360px){
+  .cx-mf .choice{grid-template-columns:1fr}
 }

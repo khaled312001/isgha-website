@@ -1,19 +1,28 @@
 {% import "partials/macros.njk" as m %}
-{% set side = imgFor(d.side_image, d.image_slot) %}
+{% set side = imgFor(d.side_image, d.image_slot or 'consultation_call') if d.show_side else '' %}
 {% set types = d.case_types if (d.case_types and d.case_types.length) else caseTypes %}
-<header class="lhero {% if side %}has-side{% endif %}">
-  <div class="wrap">
-    {% if side %}<div class="lhero-grid"><div>{% endif %}
-    <h1>{{ d.title | markup }}</h1>
-    {% if d.lead %}<p class="lead">{{ d.lead }}</p>{% endif %}
-    {% if d.badges | length %}
-    <ul class="trust">
-      {% set ics = ['shield', 'clock', 'lock', 'check-circle'] %}
-      {% for b in d.badges %}<li>{{ icon(ics[loop.index0 % 4]) }}{{ b }}</li>{% endfor %}
-    </ul>
-    {% endif %}
-    {% if side %}{{ m.pic(side, 'محامٍ من إصغاء', 'arch-soft', true) }}</div><div>{% endif %}
-    {{ m.mform(d, S, types, ts) }}
-    {% if side %}</div></div>{% endif %}
+<header class="lhero lh {% if side %}has-side{% endif %}">
+  <div class="lh-bg" aria-hidden="true"></div>
+  <div class="wrap lh-grid">
+    <div class="lh-copy">
+      <h1 class="lh-in" style="--d:0">{{ d.title | markup }}</h1>
+      {% if d.lead %}<p class="lead lh-in" style="--d:1">{{ d.lead }}</p>{% endif %}
+      {% if d.badges | length %}
+      <ul class="lh-trust lh-in" style="--d:2">
+        {% set ics = ['shield', 'clock', 'lock', 'check-circle'] %}
+        {% for b in d.badges %}<li><span class="lh-tic">{{ icon(ics[loop.index0 % 4]) }}</span>{{ b }}</li>{% endfor %}
+      </ul>
+      {% endif %}
+      {% if side %}
+      <div class="lh-media lh-in" style="--d:3">
+        <span class="lh-frame" aria-hidden="true"></span>
+        {{ m.pic(side, d.image_alt or 'محامٍ من إصغاء', '', false, '(max-width: 960px) 1px, 520px') }}
+        <span class="lh-key" aria-hidden="true"><img src="/img/mark.svg" alt="" width="19" height="21"></span>
+      </div>
+      {% endif %}
+    </div>
+    <div class="lh-form">
+      {{ m.mform(d, S, types, ts) }}
+    </div>
   </div>
 </header>

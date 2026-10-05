@@ -579,8 +579,12 @@ body.is-builder{overflow:hidden}
 /* نماذج تُرسم داخل حاويات عادية (التسويق، SEO، إعدادات الصفحة) */
 #ff-main:not(.res-main),#ps-fields{display:flex;flex-direction:column;gap:18px}
 .card>.card-head+#ff-main{margin-top:2px}
-/* حقول التاريخ والوقت: اتجاه LTR يمنع تشوّه «yyyy/شه/موع» */
-input[type=date],input[type=datetime-local],input[type=time]{direction:ltr;text-align:right}
+/* حقول التاريخ: متصفحات كروم/إيدج بالعربية تعرض «يوم/شهر» معكوسة الحروف — نخفيها والحقل فارغ */
+input[type=date],input[type=datetime-local]{text-align:right;cursor:pointer}
+input[type=date].is-empty:not(:focus)::-webkit-datetime-edit,input[type=datetime-local].is-empty:not(:focus)::-webkit-datetime-edit{opacity:0}
+/* قائمة الحالة داخل الجداول: شارة مدمجة لا حقل بعرض كامل */
+select.status-select{width:auto;min-height:0;line-height:1.7;box-shadow:none}
+.pills{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center}
 /* مقابض السحب أوضح */
 .grip{color:var(--muted);opacity:.75;transition:opacity .15s,color .15s;touch-action:none}
 .grip:hover{opacity:1;color:var(--ink)}

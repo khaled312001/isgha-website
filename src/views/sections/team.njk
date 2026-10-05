@@ -1,16 +1,23 @@
 {% import "partials/macros.njk" as m %}
 {% if D.team.length %}
-<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+<section class="sec sxm {{ m.bgclass(d) }}" data-sx="team" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
   <div class="wrap">
     {{ m.sechead(d) }}
-    <div class="team">
+    <ul class="sxm-grid">
       {% for t in D.team %}
-      <figure class="member rv d{{ loop.index0 % 4 }}">
-        {{ m.pic(t.photo, t.name, '', false, '', 'alt') }}
-        <figcaption><b>{{ t.name }}</b><span>{{ t.title }}</span></figcaption>
-      </figure>
+      <li class="sxm-card rv" style="--i:{{ loop.index0 % 8 }}">
+        <figure class="sxm-fig">
+          {{ m.pic(t.photo, t.name, 'sxm-media', false, '', 'alt') }}
+          {% if t.bio %}<figcaption class="sxm-bio"><p>{{ t.bio }}</p></figcaption>{% endif %}
+          {% if t.linkedin %}<a class="sxm-in" href="{{ t.linkedin }}" target="_blank" rel="noopener" aria-label="LinkedIn: {{ t.name }}">{{ icon('linkedin') }}</a>{% endif %}
+        </figure>
+        <div class="sxm-txt">
+          <b>{{ t.name }}</b>
+          {% if t.title %}<span>{{ t.title }}</span>{% endif %}
+        </div>
+      </li>
       {% endfor %}
-    </div>
+    </ul>
   </div>
 </section>
 {% endif %}

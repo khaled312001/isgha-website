@@ -3,20 +3,22 @@
     <div class="foot-top lp">
       <div class="foot-brand">
         <img src="{{ S.logo_white or '/img/logo-white.svg' }}" alt="{{ S.site_name }}" width="200" height="80" loading="lazy">
-        <h3>{{ page.settings.footer_heading or S.footer_heading }}</h3>
-        <a class="btn btn-white" href="#form">{{ page.settings.footer_cta or 'ابدأ تقييم قضيتك' }} {{ icon('arrow-left') }}</a>
+        {% set fh = page.settings.footer_heading or S.footer_heading %}
+        {% if fh %}<p class="foot-h">{{ fh }}</p>{% endif %}
+        <a class="btn btn-white" href="#form">{{ page.settings.footer_cta or S.txt_assess }} {{ icon('arrow-left') }}</a>
       </div>
-      <div class="fl">
-        <b>تواصل</b>
+      <div class="fl fl-contact">
+        <b>{{ S.footer_contact_title }}</b>
         <a class="ci" href="{{ (page.settings.phone or S.phone) | tel }}">{{ icon('phone') }}<span dir="ltr">{{ page.settings.phone or S.phone }}</span></a>
         <a class="ci" href="mailto:{{ S.email }}">{{ icon('mail') }}<span>{{ S.email }}</span></a>
-        <span class="ci">{{ icon('map-pin') }}<span>{{ S.address_short }}</span></span>
+        <span class="ci">{{ icon('map-pin') }}<span>{{ S.address_short or S.address }}</span></span>
       </div>
     </div>
   </div>
   <div class="mega" aria-hidden="true">{{ S.mega_word }}</div>
   <div class="foot-bottom">
     <span>{{ S.copyright | year }}</span>
-    <nav aria-label="روابط قانونية"><a href="/privacy">سياسة الخصوصية</a><a href="/terms">شروط الاستخدام</a></nav>
+    {% set legal = S.footer_legal_links | links %}
+    {% if legal.length %}<nav aria-label="روابط قانونية">{% for l in legal %}{% if l.url != '/sitemap.xml' %}<a href="{{ l.url }}">{{ l.label }}</a>{% endif %}{% endfor %}</nav>{% endif %}
   </div>
 </footer>

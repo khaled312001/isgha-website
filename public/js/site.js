@@ -85,11 +85,45 @@
 
   /* ── قائمة الجوال ── */
   var mnav = $('#mnav');
-  $$('[data-menu-open]').forEach(function (b) { b.addEventListener('click', function () { mnav.classList.add('open'); mnav.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; }); });
+  var menuBtn = $('[data-menu-open]');
+  function openMenu() {
+    if (!mnav) return;
+    mnav.classList.add('open'); mnav.setAttribute('aria-hidden', 'false');
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    var c = $('.mnav-close', mnav); if (c) setTimeout(function () { c.focus(); }, 60);
+  }
+  function closeMenu() {
+    if (!mnav || !mnav.classList.contains('open')) return;
+    mnav.classList.remove('open'); mnav.setAttribute('aria-hidden', 'true');
+    if (menuBtn) { menuBtn.setAttribute('aria-expanded', 'false'); menuBtn.focus(); }
+    document.body.style.overflow = '';
+  }
+  $$('[data-menu-open]').forEach(function (b) { b.addEventListener('click', openMenu); });
   $$('[data-menu-close]').forEach(function (b) { b.addEventListener('click', closeMenu); });
-  function closeMenu() { if (!mnav) return; mnav.classList.remove('open'); mnav.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
   if (mnav) $$('a', mnav).forEach(function (a) { a.addEventListener('click', closeMenu); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeMenu();
+    // حصر التنقل بلوحة المفاتيح داخل القائمة المفتوحة
+    if (e.key === 'Tab' && mnav && mnav.classList.contains('open')) {
+      var f = $$('a[href],button', $('.mnav-panel', mnav));
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+  // إغلاق القائمة عند التحول لعرض سطح المكتب
+  window.addEventListener('resize', function () { if (window.innerWidth > 1120) closeMenu(); });
+
+  /* ── الترويسة عند التمرير ── */
+  var navEl = $('[data-nav]');
+  if (navEl) {
+    var ticking = false;
+    var onScroll = function () { navEl.classList.toggle('is-scrolled', window.scrollY > 24); ticking = false; };
+    window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+    onScroll();
+  }
 
   /* ── التبويبات ── */
   $$('[data-tabs]').forEach(function (root) {

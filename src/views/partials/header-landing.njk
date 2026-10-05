@@ -1,8 +1,8 @@
-<header class="nav" role="banner">
+<header class="nav nav-lp" role="banner" data-nav>
   <div class="nav-in">
     <a class="nav-logo" href="/" aria-label="{{ S.site_name }}"><img src="{{ S.logo_compact or '/img/logo-compact-white.svg' }}" alt="{{ S.brand_short }}" width="160" height="45"></a>
-    <div class="nav-actions" style="margin-inline-start:auto">
-      <a class="btn btn-white" href="{{ (page.settings.phone or S.phone) | tel }}">{{ icon('phone') }} <span>{{ page.settings.call_label or 'اتصل مجانًا' }}</span></a>
+    <div class="nav-actions">
+      <a class="btn btn-white nav-cta nav-cta-call" href="{{ (page.settings.phone or S.phone) | tel }}">{{ icon('phone') }} <span>{{ page.settings.call_label or S.txt_call_now }}</span></a>
     </div>
   </div>
 </header>

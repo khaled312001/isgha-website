@@ -1,17 +1,41 @@
 {% import "partials/macros.njk" as m %}
 {% set list = d.items if d.source == 'items' else D.testimonials %}
 {% if list.length %}
-<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+<section class="sec sx-tst {{ m.bgclass(d) }}" data-sxc="testimonials" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
   <div class="wrap">
-    {{ m.sechead(d) }}
-    <div class="tgrid">
-      {% for t in list %}
-      <figure class="tcard rv d{{ loop.index0 % 3 }}">
-        <div class="stars" aria-label="تقييم ٥ من ٥">★★★★★</div>
-        <blockquote><p>{{ t.quote }}</p></blockquote>
-        <figcaption class="who"><b>{{ t.name }}</b><span>{{ t.context }}</span></figcaption>
-      </figure>
-      {% endfor %}
+    <div class="tst{% if list.length < 2 %} is-single{% endif %}" data-tst>
+      <div class="tst-side">
+        {{ m.sechead(d, 'tst-head') }}
+        {% if list.length > 1 %}
+        <div class="tst-nav rv">
+          <button type="button" class="tst-btn" data-tst-prev aria-label="{{ d.prev_label }}">{{ icon('arrow-right') }}</button>
+          <span class="tst-count" aria-hidden="true"><b data-tst-cur>{{ 1 | pad2 }}</b><i></i><span>{{ list.length | pad2 }}</span></span>
+          <button type="button" class="tst-btn" data-tst-next aria-label="{{ d.next_label }}">{{ icon('arrow-left') }}</button>
+        </div>
+        {% endif %}
+      </div>
+      <div class="tst-stage rv">
+        <img class="tst-mark" src="/img/mark.svg" alt="" width="120" height="135" aria-hidden="true">
+        <div class="tst-track" data-tst-track tabindex="0" role="region" aria-label="{{ d.title | plain if d.title else d.tag }}">
+          {% for t in list %}
+          {% set stars = (t.rating or 5) | int %}
+          <figure class="tst-slide" role="group" aria-label="{{ loop.index }} / {{ list.length }}">
+            <span class="tst-q" aria-hidden="true">{{ icon('quote') }}</span>
+            <span class="tst-stars" role="img" aria-label="{{ d.rating_label }}: {{ stars }}/5">{% for k in range(0, 5) %}<span class="{{ 'on' if k < stars else '' }}">{{ icon('star') }}</span>{% endfor %}</span>
+            <blockquote><p>{{ t.quote }}</p></blockquote>
+            <figcaption class="tst-who">
+              <span class="tst-av" aria-hidden="true">{{ (t.name or '') | replace('.', '') | trim | first }}</span>
+              <span><b>{{ t.name }}</b>{% if t.context %}<small>{{ t.context }}</small>{% endif %}</span>
+            </figcaption>
+          </figure>
+          {% endfor %}
+        </div>
+        {% if list.length > 1 %}
+        <div class="tst-dots">
+          {% for t in list %}<button type="button" data-tst-dot="{{ loop.index0 }}" aria-label="{{ loop.index }} / {{ list.length }}"{% if loop.first %} aria-current="true"{% endif %}><i></i></button>{% endfor %}
+        </div>
+        {% endif %}
+      </div>
     </div>
   </div>
 </section>

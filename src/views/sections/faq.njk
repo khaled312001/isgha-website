@@ -38,7 +38,7 @@
       {% endfor %}
       {% if list.length > shown %}
       <button type="button" class="cx-faq-more" data-cx-more aria-expanded="false">
-        <span>{{ d.more_label or 'عرض المزيد' }}</span><small>+{{ (list.length - shown) | ar }}</small>{{ icon('chevron-down') }}
+        <span>{{ d.more_label or 'عرض المزيد' }}</span><small dir="ltr">+{{ (list.length - shown) | ar }}</small>{{ icon('chevron-down') }}
       </button>
       {% endif %}
     </div>

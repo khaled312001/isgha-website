@@ -1,6 +1,7 @@
 // اختبارات لوحة التحكم: الدخول، كل الشاشات، المنشئ، المحتوى، الوسائط، الإعدادات، الصلاحيات، النسخ الاحتياطي
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
+import net from 'node:net';
 import { startApp, stopApp, Client, templateLeaks, PNG_1PX, OWNER } from './helpers.js';
 
 let base;
@@ -304,6 +305,113 @@ test('الطلبات: القائمة، التفاصيل، تغيير الحال�
   const bulk = await admin.post('/admin/leads/bulk', { form: { ids, action: 'qualified' } });
   assert.equal(bulk.status, 302);
   assert.equal((await db('leads').whereNot({ status: 'qualified' }).count({ n: '*' }))[0].n, 0);
+});
+
+// خادم SMTP محلي بسيط يستقبل الرسائل لاختبار إشعارات البريد فعليًا
+function smtpSink() {
+  const mails = [];
+  const server = net.createServer((sock) => {
+    let buf = '';
+    let data = null;
+    let mail = { rcpt: [] };
+    let auth = 0;
+    const say = (l) => sock.write(`${l}\r\n`);
+    say('220 sink ESMTP');
+    sock.on('data', (chunk) => {
+      buf += chunk.toString('latin1');
+      let i;
+      while ((i = buf.indexOf('\r\n')) >= 0) {
+        const line = buf.slice(0, i);
+        buf = buf.slice(i + 2);
+        if (data !== null) {
+          if (line === '.') { mails.push({ ...mail, raw: Buffer.from(data, 'latin1').toString('utf8') }); data = null; mail = { rcpt: [] }; say('250 queued'); } else data += `${line.startsWith('..') ? line.slice(1) : line}\r\n`;
+          continue;
+        }
+        if (auth) { auth -= 1; say(auth ? '334 UGFzc3dvcmQ6' : '235 ok'); continue; }
+        const cmd = line.slice(0, 4).toUpperCase();
+        if (cmd === 'EHLO') { say('250-sink'); say('250-AUTH PLAIN LOGIN'); say('250 8BITMIME'); }
+        else if (cmd === 'HELO') say('250 sink');
+        else if (cmd === 'AUTH') {
+          const [, type, arg] = line.split(' ');
+          if (/plain/i.test(type)) { if (arg) say('235 ok'); else { auth = 1; say('334 '); } }
+          else { auth = 2; say('334 VXNlcm5hbWU6'); }
+        }
+        else if (cmd === 'MAIL') { mail.from = line; say('250 ok'); }
+        else if (cmd === 'RCPT') { mail.rcpt.push(line.replace(/^RCPT TO:\s*/i, '').replace(/[<>]/g, '')); say('250 ok'); }
+        else if (cmd === 'DATA') { data = ''; say('354 go'); }
+        else if (cmd === 'QUIT') { say('221 bye'); sock.end(); }
+        else say('250 ok');
+      }
+    });
+    sock.on('error', () => {});
+  });
+  return new Promise((resolve) => server.listen(0, '127.0.0.1', () => resolve({ server, mails, port: server.address().port })));
+}
+
+// نص الرسالة بعد فك ترميز base64 أو quoted-printable
+function mailText(raw) {
+  const cut = raw.indexOf('\r\n\r\n');
+  const head = raw.slice(0, cut);
+  const body = raw.slice(cut + 4);
+  if (/content-transfer-encoding:\s*base64/i.test(head)) return head + Buffer.from(body.replace(/\s+/g, ''), 'base64').toString('utf8');
+  if (/content-transfer-encoding:\s*quoted-printable/i.test(head)) return head + Buffer.from(body.replace(/=\r?\n/g, '').replace(/=([0-9A-F]{2})/gi, (m, h) => String.fromCharCode(parseInt(h, 16))), 'latin1').toString('utf8');
+  return raw;
+}
+
+test('فورم التواصل: الطلب يظهر في اللوحة ويصل إشعاره بالبريد', async () => {
+  const sink = await smtpSink();
+  try {
+    const { SETTINGS_GROUPS } = await import('../src/content/settings-schema.js');
+    const { getSettings } = await import('../src/lib/settings.js');
+    const save = async (key, patch) => {
+      const S = await getSettings();
+      const group = SETTINGS_GROUPS.find((g) => g.key === key);
+      const values = { ...Object.fromEntries(group.fields.filter((f) => f.type !== 'secret').map((f) => [f.name, S[f.name] ?? ''])), ...patch };
+      const r = await admin.post(`/admin/settings/${key}`, { json: { values } });
+      assert.equal(r.status, 200, r.text);
+    };
+    await save('smtp', { smtp_host: '127.0.0.1', smtp_port: String(sink.port), smtp_secure: false, smtp_user: 'notify@test.local', smtp_pass: 'smtp-test-pass', smtp_from: 'إصغاء <notify@test.local>' });
+    await save('leads', { notify_emails: 'office@test.local, partner@test.local', thank_you_mode: 'redirect' });
+
+    // زر «إرسال رسالة تجريبية» في الإعدادات
+    const t = await admin.post('/admin/settings/test-email', { json: { to: 'office@test.local' } });
+    assert.equal(t.status, 200, t.text);
+    assert.equal(sink.mails.length, 1);
+    assert.deepEqual(sink.mails[0].rcpt, ['office@test.local']);
+
+    // زائر يرسل فورم التواصل
+    const contact = await db('pages').where({ system_key: 'contact' }).first();
+    const r = await web.post('/api/leads', { json: {
+      form: 'contact', name: 'عميل تجربة البريد', phone: '0551112233', email: 'client@test.local',
+      case_type: 'تأسيس شركة', message: 'أرغب في استشارة حول تأسيس شركة ذات مسؤولية محدودة.', page_id: contact.id, ts: Date.now() - 8000, attr: { utm_source: 'google', utm_campaign: 'brand' },
+    } });
+    assert.equal(r.status, 200, r.text);
+    assert.ok(r.data.id > 0, 'الطلب حُفظ');
+    assert.equal(r.data.redirect, '/thank-you');
+
+    // يظهر في قائمة الطلبات وتفاصيله في اللوحة
+    const list = await admin.get('/admin/leads');
+    assert.match(list.text, /عميل تجربة البريد/);
+    const detail = await admin.get(`/admin/leads/${r.data.id}`);
+    assert.equal(detail.status, 200);
+    assert.match(detail.text, /أرغب في استشارة حول تأسيس شركة/);
+    const row = await db('leads').where({ id: r.data.id }).first();
+    assert.equal(row.form, 'contact');
+    assert.equal(row.utm_source, 'google');
+
+    // ووصل الإشعار بالبريد للعنوانين
+    for (let i = 0; i < 50 && sink.mails.length < 2; i++) await new Promise((res) => setTimeout(res, 100));
+    assert.equal(sink.mails.length, 2, 'لم يصل إشعار الطلب');
+    const m = sink.mails[1];
+    assert.deepEqual(m.rcpt.sort(), ['office@test.local', 'partner@test.local']);
+    const text = mailText(m.raw);
+    assert.match(text, /عميل تجربة البريد/);
+    assert.match(text, /أرغب في استشارة حول تأسيس شركة/);
+    assert.match(text, new RegExp(`/admin/leads/${r.data.id}`));
+    assert.match(m.raw, /^Reply-To: client@test\.local/im, 'الرد على الرسالة يذهب للعميل');
+  } finally {
+    sink.server.close();
+  }
 });
 
 test('الإعدادات العامة تنعكس على الموقع', async () => {

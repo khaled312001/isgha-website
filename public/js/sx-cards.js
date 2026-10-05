@@ -34,6 +34,22 @@
     upd();
   });
 
+  /* ── المستفيدون (تفصيلي): طي بقية الخدمات خلف زر «عرض كل الخدمات» ── */
+  $$('.bnd-more').forEach(function (btn) {
+    var box = document.getElementById(btn.getAttribute('aria-controls'));
+    if (!box) return;
+    var t = btn.querySelector('.t');
+    function set(open) {
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      box.classList.toggle('is-closed', !open);
+      box.inert = !open;
+      if (t) t.textContent = btn.getAttribute(open ? 'data-less' : 'data-more');
+    }
+    set(false);
+    btn.hidden = false;
+    btn.addEventListener('click', function () { set(btn.getAttribute('aria-expanded') !== 'true'); });
+  });
+
   /* ── مستكشف تفاصيل الباقات: تبويبات بلوحة واحدة ظاهرة ── */
   $$('[data-pkx]').forEach(function (box) {
     var tabs = $$('[role=tab]', box);

@@ -144,4 +144,38 @@
       }
     });
   });
+  /* ── النماذج: اتجاه حركة الخطوات + إزالة الخطأ فور تصحيحه (المنطق الأساسي في site.js) ── */
+  $$('[data-mform]').forEach(function (form) {
+    var last = 1;
+    if (!('MutationObserver' in window)) return;
+    new MutationObserver(function () {
+      var a = form.querySelector('.mstep.active');
+      var n = a ? +a.getAttribute('data-step') : 1;
+      if (n !== last) { form.setAttribute('data-dir', n < last ? 'back' : 'fwd'); last = n; }
+    }).observe(form, { subtree: true, attributes: true, attributeFilter: ['class'] });
+  });
+  function okValue(el) {
+    var v = String(el.value || '').trim();
+    if (el.name === 'name') return v.length >= 2;
+    if (el.name === 'phone') {
+      var dgt = v.replace(/[٠-٩]/g, function (x) { return String(x.charCodeAt(0) - 0x0660); }).replace(/[^\d]/g, '');
+      return /^(05\d{8}|5\d{8}|9665\d{8}|\d{9,15})$/.test(dgt);
+    }
+    if (el.name === 'email') return !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    if (el.name === 'message' && el.closest('[data-cform]')) return v.length >= 5;
+    return true;
+  }
+  $$('[data-mform], [data-cform]').forEach(function (form) {
+    var check = function (e, strict) {
+      var el = e.target;
+      if (!el.name || !/^(name|phone|email|message)$/.test(el.name)) return;
+      var f = el.closest('.field');
+      if (!f) return;
+      var good = okValue(el) && String(el.value || '').trim() !== '';
+      if (good) f.classList.remove('err');
+      f.classList.toggle('is-ok', good && (strict || f.classList.contains('is-ok')));
+    };
+    form.addEventListener('input', function (e) { check(e, false); });
+    form.addEventListener('focusout', function (e) { check(e, true); });
+  });
 })();

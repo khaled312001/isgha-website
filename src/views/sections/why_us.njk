@@ -1,16 +1,30 @@
 {% import "partials/macros.njk" as m %}
-{% set wImg = imgFor(d.image, d.image_slot) %}
-<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
-  <div class="wrap why">
-    <div class="why-head rv">
-      {% if d.tag %}<span class="tag">{{ d.tag }}</span>{% endif %}
-      <h2>{{ d.title | markup }}</h2>
-      {% if d.intro %}<p>{{ d.intro }}</p>{% endif %}
-      {% if wImg %}{{ m.pic(wImg, d.title | plain) }}{% endif %}
+{% set wImg = imgFor(d.image, d.image_slot or 'about_team') if d.show_image !== false else '' %}
+{% set defIcons = ['scan-search', 'lightbulb', 'users', 'trending-up', 'rocket', 'shield', 'star'] %}
+<section class="sec sxw {{ m.bgclass(d) }}" data-sx="why_us" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap sxw-grid {% if not wImg %}no-img{% endif %}">
+    <div class="sxw-head">
+      <div class="rv">
+        {% if d.tag %}<span class="tag">{{ d.tag }}</span>{% endif %}
+        <h2>{{ d.title | markup }}</h2>
+        {% if d.intro %}<p>{{ d.intro }}</p>{% endif %}
+      </div>
+      {% if wImg %}
+      <figure class="sxw-fig rv" style="--i:1">
+        {{ m.pic(wImg, d.title | plain, 'sxw-media') }}
+        <span class="sxw-badge" aria-hidden="true"><img src="/img/mark.svg" alt="" width="22" height="25"></span>
+      </figure>
+      {% endif %}
     </div>
-    <ol class="why-list">
+    <ol class="sxw-list">
       {% for it in d.items %}
-      <li class="rv"><div><h3>{{ it.title }}</h3><p>{{ it.text }}</p></div></li>
+      <li class="sxw-item rv" style="--i:{{ loop.index0 }}">
+        <span class="sxw-ic">{{ icon(it.icon or defIcons[loop.index0 % 7]) }}</span>
+        <div class="sxw-tx">
+          <h3><span class="sxw-n" aria-hidden="true">{{ loop.index | pad2 }}</span>{{ it.title }}</h3>
+          <p>{{ it.text }}</p>
+        </div>
+      </li>
       {% endfor %}
     </ol>
   </div>

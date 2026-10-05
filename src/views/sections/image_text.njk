@@ -1,14 +1,20 @@
 {% import "partials/macros.njk" as m %}
-<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
-  <div class="wrap split {% if d.image_side == 'end' %}img-end{% endif %}">
-    <div class="split-media rv">{{ m.pic(imgFor(d.image, d.image_slot), d.image_alt or d.title | plain) }}</div>
-    <div class="rv d1">
+<section class="sec sxi {{ m.bgclass(d) }}" data-sx="image_text" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+  <div class="wrap sxi-grid {% if d.image_side == 'end' %}img-end{% endif %}">
+    <figure class="sxi-fig rv">
+      {{ m.pic(imgFor(d.image, d.image_slot), d.image_alt or d.title | plain, 'sxi-media') }}
+      <figcaption class="sxi-badge {% if not d.badge %}mark-only{% endif %}">
+        <span class="sxi-mk"><img src="/img/mark.svg" alt="" width="18" height="20"></span>
+        {% if d.badge %}<span>{{ d.badge }}</span>{% endif %}
+      </figcaption>
+    </figure>
+    <div class="sxi-txt rv" style="--i:1">
       {% if d.tag %}<span class="tag">{{ d.tag }}</span>{% endif %}
-      {% if d.title %}<h2 style="font-size:clamp(1.6rem,3.2vw,2.2rem);margin-bottom:14px">{{ d.title | markup }}</h2>{% endif %}
-      {% if d.intro %}<p class="muted">{{ d.intro }}</p>{% endif %}
-      {% if d.body %}<div class="prose" style="margin-top:12px">{{ d.body | safe }}</div>{% endif %}
-      {% if d.bullets | length %}<ul class="bullets">{% for b in d.bullets %}<li>{{ b }}</li>{% endfor %}</ul>{% endif %}
-      {% if d.cta_label %}<a class="btn btn-teal" style="margin-top:22px" href="{{ d.cta_url }}">{{ d.cta_label }} {{ icon('arrow-left') }}</a>{% endif %}
+      {% if d.title %}<h2>{{ d.title | markup }}</h2>{% endif %}
+      {% if d.intro %}<p class="sxi-intro">{{ d.intro }}</p>{% endif %}
+      {% if d.body %}<div class="prose sxi-prose">{{ d.body | safe }}</div>{% endif %}
+      {% if d.bullets | length %}<ul class="sxi-bul">{% for b in d.bullets %}<li>{{ b }}</li>{% endfor %}</ul>{% endif %}
+      {% if d.cta_label %}<a class="btn btn-teal sxi-cta" href="{{ d.cta_url }}">{{ d.cta_label }} {{ icon('arrow-left') }}</a>{% endif %}
     </div>
   </div>
 </section>

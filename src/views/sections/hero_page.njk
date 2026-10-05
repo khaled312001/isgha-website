@@ -1,6 +1,6 @@
 {% import "partials/macros.njk" as m %}
 {% set hImg = imgFor(d.image, d.image_slot) %}
-<section class="phero {% if not hImg %}no-img{% endif %}">
+<section class="phero pg {% if not hImg %}no-img{% endif %}">
   <img class="phero-deco" src="/img/mark-teal.svg" alt="" aria-hidden="true">
   <div class="wrap">
     {% if d.breadcrumbs and crumbs and crumbs.length > 1 %}
@@ -9,13 +9,19 @@
     </ol>
     {% endif %}
     <div class="phero-grid">
-      <div>
+      <div class="pg-copy">
         {% if d.tag %}<span class="tag">{{ d.tag }}</span>{% endif %}
         <h1>{{ d.title | markup }}</h1>
         {% if d.lead %}<p class="lead">{{ d.lead }}</p>{% endif %}
-        {% if d.cta_label %}<a class="btn btn-teal" href="{{ d.cta_url }}">{{ d.cta_label }} {{ icon('arrow-left') }}</a>{% endif %}
+        {% if d.cta_label %}<a class="btn btn-teal pg-btn" href="{{ d.cta_url }}"><span>{{ d.cta_label }}</span><span class="pg-bub">{{ icon('arrow-left') }}</span></a>{% endif %}
       </div>
-      {% if hImg %}{{ m.pic(hImg, d.image_alt, 'arch-soft', true) }}{% endif %}
+      {% if hImg %}
+      <div class="pg-media">
+        <span class="pg-frame" aria-hidden="true"></span>
+        {{ m.pic(hImg, d.image_alt, 'arch-soft', true) }}
+        <span class="pg-key" aria-hidden="true"><img src="/img/mark.svg" alt="" width="19" height="21"></span>
+      </div>
+      {% endif %}
     </div>
     <div class="phero-line"></div>
   </div>

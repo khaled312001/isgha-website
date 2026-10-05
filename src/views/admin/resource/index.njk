@@ -15,7 +15,7 @@
 
 {% if rows.length %}
 <div class="card flush">
-  <div class="table-wrap"><table class="tbl cards" style="--actw:{{ 116 if hasView else 80 }}px" {% if canSort %}data-sortable="/admin/r/{{ def.key }}/reorder"{% endif %}>
+  <div class="table-wrap"><table class="tbl cards" style="--actw:{{ 116 if def.viewUrl else 80 }}px" {% if canSort %}data-sortable="/admin/r/{{ def.key }}/reorder"{% endif %}>
     <thead><tr>{% if canSort %}<th class="w-grip"><span class="sr-only">ترتيب</span></th>{% endif %}
       {% for c in def.columns %}<th>{{ c[1] }}</th>{% endfor %}
       {% if hasActive %}<th>الظهور</th>{% endif %}<th class="w-act"></th></tr></thead>
