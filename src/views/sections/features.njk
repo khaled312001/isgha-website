@@ -1,29 +1,41 @@
 {% import "partials/macros.njk" as m %}
-<section class="sec {{ m.bgclass(d) }}" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
+{% set n = d.items.length %}
+{% set defIcons = ['search', 'lightbulb', 'users', 'rocket', 'shield', 'star'] %}
+<section class="sec sxf {{ m.bgclass(d) }}" data-sx="features" {% if d.anchor %}id="{{ d.anchor }}"{% endif %}>
   <div class="wrap">
-    {{ m.sechead(d, 'split' if d.style == 'numbered' else '') }}
+    {{ m.sechead(d, 'split' if d.style != 'cards' else '') }}
     {% if d.style == 'cards' %}
-    <div class="feat-cards">
+    <div class="sxf-cards n{{ n }}">
       {% for it in d.items %}
-      <article class="fc rv d{{ loop.index0 % 3 }}"><span class="ic">{{ icon(it.icon or 'check-circle') }}</span><h3>{{ it.title }}</h3><p>{{ it.text }}</p></article>
-      {% endfor %}
-    </div>
-    {% elif d.style == 'list' %}
-    <div class="feat-list">
-      {% for it in d.items %}
-      <article class="f rv"><span class="ic">{{ icon(it.icon or 'check') }}</span><div><h3>{{ it.title }}</h3><p>{{ it.text }}</p></div></article>
-      {% endfor %}
-    </div>
-    {% else %}
-    <div class="feat-num">
-      {% for it in d.items %}
-      <article class="f rv d{{ loop.index0 % 4 }}">
-        <div class="n">{{ loop.index | pad2 }} {{ icon(it.icon or 'check-circle') }}</div>
+      <article class="sxf-card rv" style="--i:{{ loop.index0 }}">
+        <span class="sxf-wm" aria-hidden="true">{{ loop.index | pad2 }}</span>
+        <span class="sxf-ic">{{ icon(it.icon or defIcons[loop.index0 % 6]) }}</span>
         <h3>{{ it.title }}</h3>
         <p>{{ it.text }}</p>
       </article>
       {% endfor %}
     </div>
+    {% elif d.style == 'list' %}
+    <div class="sxf-list">
+      {% for it in d.items %}
+      <article class="sxf-li rv" style="--i:{{ loop.index0 }}">
+        <span class="sxf-ic">{{ icon(it.icon or 'check') }}</span>
+        <div><h3>{{ it.title }}</h3><p>{{ it.text }}</p></div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <ol class="sxf-steps" style="--n:{{ n }}">
+      <li class="sxf-line rv" aria-hidden="true"></li>
+      {% for it in d.items %}
+      <li class="sxf-step rv" style="--i:{{ loop.index0 + 1 }}">
+        <span class="sxf-node">{{ icon(it.icon or defIcons[loop.index0 % 6]) }}</span>
+        <span class="sxf-n" aria-hidden="true"><span class="o">{{ loop.index | pad2 }}</span><span class="f">{{ loop.index | pad2 }}</span></span>
+        <h3>{{ it.title }}</h3>
+        <p>{{ it.text }}</p>
+      </li>
+      {% endfor %}
+    </ol>
     {% endif %}
   </div>
 </section>

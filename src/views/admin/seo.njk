@@ -15,15 +15,15 @@
 
 <section class="card flush">
   <header class="card-head pad"><h3>فحص العناوين والأوصاف</h3><span class="muted small">العنوان المثالي ٣٠–٦٠ حرفًا · الوصف ٧٠–١٦٠ حرفًا</span></header>
-  <div class="table-wrap"><table class="tbl">
+  <div class="table-wrap"><table class="tbl cards" style="--actw:84px">
     <thead><tr><th>الصفحة</th><th>النوع</th><th>الحالة في جوجل</th><th>ملاحظات</th><th class="w-act"></th></tr></thead>
     <tbody>
     {% for r in rows %}
     <tr>
-      <td><a class="strong" href="{{ r.edit }}">{{ r.title }}</a><small class="ltr muted">{{ r.url }}</small></td>
-      <td class="muted">{{ r.type }}</td>
-      <td>{% if r.draft %}<span class="pill gray">غير منشورة</span>{% elif r.noindex %}<span class="pill amber">مستبعدة (noindex)</span>{% else %}<span class="pill green">قابلة للأرشفة</span>{% endif %}</td>
-      <td>{% if r.issues.length %}{% for i in r.issues %}<span class="pill sm {{ 'red' if i[0] == 'err' else 'amber' }}">{{ i[1] }}</span> {% endfor %}{% else %}<span class="pill sm green">{{ icon('check') }} ممتاز</span>{% endif %}</td>
+      <td class="c-main"><a class="strong" href="{{ r.edit }}">{{ r.title }}</a><small class="ltr muted">{{ r.url }}</small></td>
+      <td class="muted" data-label="النوع"><span>{{ r.type }}</span></td>
+      <td data-label="الحالة في جوجل">{% if r.draft %}<span class="pill gray">غير منشورة</span>{% elif r.noindex %}<span class="pill amber">مستبعدة (noindex)</span>{% else %}<span class="pill green">قابلة للأرشفة</span>{% endif %}</td>
+      <td data-label="ملاحظات"><span class="pills">{% if r.issues.length %}{% for i in r.issues %}<span class="pill sm {{ 'red' if i[0] == 'err' else 'amber' }}">{{ i[1] }}</span> {% endfor %}{% else %}<span class="pill sm green">{{ icon('check') }} ممتاز</span>{% endif %}</span></td>
       <td class="w-act"><a class="btn btn-line btn-xs" href="{{ r.edit }}">{{ icon('pencil') }} تعديل</a></td>
     </tr>
     {% endfor %}

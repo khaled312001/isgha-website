@@ -46,7 +46,7 @@
 <link rel="stylesheet" href="{{ asset('/css/site.css') }}">
 {# مؤقت أثناء إعادة تصميم الأقسام — تُدمج في site.css قبل النشر #}
 {% for f in ['sx-heroes', 'sx-content', 'sx-cards', 'sx-convert'] %}<link rel="stylesheet" href="{{ asset('/css/' + f + '.css') }}">{% endfor %}
-{% if preloadImage %}<link rel="preload" as="image" href="{{ preloadImage }}" fetchpriority="high">{% endif %}
+{% if preloadImage %}<link rel="preload" as="image" href="{{ preloadImage }}" {% if imgSet(preloadImage) %}imagesrcset="{{ imgSet(preloadImage) }}" imagesizes="100vw" {% endif %}fetchpriority="high">{% endif %}
 {% if jsonld %}<script type="application/ld+json">{{ jsonld | json }}</script>{% endif %}
 <script>window.ISGHA={{ clientCfg | json }};</script>
 {% if not isPreview %}{% include "partials/tracking-head.njk" %}{% endif %}

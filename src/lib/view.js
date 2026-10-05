@@ -1,9 +1,14 @@
 import nunjucks from 'nunjucks';
+import fs from 'node:fs';
 import path from 'node:path';
 import config, { ROOT } from '../config.js';
 import { markup, plain, lines, splitLead, arDigits, arDate, relTime, truncate, escapeHtml } from './text.js';
 import { telHref, waHref, prettyPhone } from './phone.js';
 import { IMAGE_FOCUS } from '../content/image-slots.js';
+
+// نسخ أصغر (800px) من صور الموقع الأساسية لشاشات الجوال — srcset
+let VARIANTS = {};
+try { VARIANTS = JSON.parse(fs.readFileSync(path.join(ROOT, 'src', 'content', 'image-variants.json'), 'utf8')); } catch { VARIANTS = {}; }
 
 export function setupViews(app) {
   const env = nunjucks.configure(path.join(ROOT, 'src', 'views'), {
@@ -52,6 +57,7 @@ export function setupViews(app) {
   env.addGlobal('asset', (p) => `${p}${p.includes('?') ? '&' : '?'}v=${v}`);
   env.addGlobal('now', () => new Date());
   env.addGlobal('imgPos', (src) => IMAGE_FOCUS[src] || '');
+  env.addGlobal('imgSet', (src) => { const x = VARIANTS[src]; return x ? `${x.sm} ${x.smw}w, ${src} ${x.w}w` : ''; });
   env.addGlobal('range', (a, b) => Array.from({ length: b - a }, (_, i) => a + i));
   return env;
 }

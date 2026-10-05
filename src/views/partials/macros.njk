@@ -15,7 +15,7 @@
 {% macro pic(src, alt='', cls='', eager=false, sizes='100vw', ph='') %}
 <div class="media {{ cls }}">
   {% if src %}
-  <img src="{{ src }}" alt="{{ alt }}" {% if imgPos(src) %}style="object-position:{{ imgPos(src) }}" {% endif %}{% if eager %}fetchpriority="high"{% else %}loading="lazy" decoding="async"{% endif %}>
+  <img src="{{ src }}" {% if imgSet(src) %}srcset="{{ imgSet(src) }}" sizes="{{ sizes or '100vw' }}" {% endif %}alt="{{ alt }}" {% if imgPos(src) %}style="object-position:{{ imgPos(src) }}" {% endif %}{% if eager %}fetchpriority="high"{% else %}loading="lazy" decoding="async"{% endif %}>
   {% else %}
   <div class="ph {{ ph }}" role="img" aria-label="{{ alt or 'إصغاء للمحاماة' }}"></div>
   {% endif %}

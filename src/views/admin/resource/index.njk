@@ -15,7 +15,7 @@
 
 {% if rows.length %}
 <div class="card flush">
-  <div class="table-wrap"><table class="tbl" {% if canSort %}data-sortable="/admin/r/{{ def.key }}/reorder"{% endif %}>
+  <div class="table-wrap"><table class="tbl cards" style="--actw:{{ 116 if hasView else 80 }}px" {% if canSort %}data-sortable="/admin/r/{{ def.key }}/reorder"{% endif %}>
     <thead><tr>{% if canSort %}<th class="w-grip"><span class="sr-only">ترتيب</span></th>{% endif %}
       {% for c in def.columns %}<th>{{ c[1] }}</th>{% endfor %}
       {% if hasActive %}<th>الظهور</th>{% endif %}<th class="w-act"></th></tr></thead>
@@ -25,7 +25,7 @@
       {% if canSort %}<td class="w-grip"><span class="grip" title="اسحب لتغيير الترتيب">{{ icon('grip') }}</span></td>{% endif %}
       {% for c in def.columns %}
       {% set v = r[c[0]] %}
-      <td class="{{ 'ltr' if c[2] == 'ltr' }}">
+      <td class="{{ 'ltr' if c[2] == 'ltr' }} {{ 'c-main' if loop.first }}" {% if not loop.first %}data-label="{{ c[1] }}"{% endif %}>
         {% if loop.first %}<a class="strong" href="/admin/r/{{ def.key }}/{{ r.id }}">{{ (v | plain | truncate_ar(90)) or '—' }}</a>
         {% elif c[0] == 'status' %}{% if v == 'published' %}<span class="pill green">منشور</span>{% else %}<span class="pill gray">مسودة</span>{% endif %}
         {% elif c[0] in ['has_page', 'is_featured'] %}{% if v %}<span class="pill teal">نعم</span>{% else %}<span class="muted">—</span>{% endif %}
@@ -34,7 +34,7 @@
         {% else %}<span class="muted">{{ (v | string | truncate_ar(70)) if (v or v === 0) else '—' }}</span>{% endif %}
       </td>
       {% endfor %}
-      {% if hasActive %}<td><label class="switch sm" title="إظهار/إخفاء"><input type="checkbox" data-toggle-url="/admin/r/{{ def.key }}/{{ r.id }}/toggle" {{ 'checked' if r.is_active }}><span></span></label></td>{% endif %}
+      {% if hasActive %}<td data-label="الظهور"><label class="switch sm" title="إظهار/إخفاء"><input type="checkbox" data-toggle-url="/admin/r/{{ def.key }}/{{ r.id }}/toggle" {{ 'checked' if r.is_active }}><span></span></label></td>{% endif %}
       <td class="w-act nowrap">
         <a class="icon-btn" href="/admin/r/{{ def.key }}/{{ r.id }}" title="تعديل" aria-label="تعديل">{{ icon('pencil') }}</a>
         {% if r._view %}<a class="icon-btn" href="{{ r._view }}" target="_blank" rel="noopener" title="عرض في الموقع" aria-label="عرض">{{ icon('external-link') }}</a>{% endif %}

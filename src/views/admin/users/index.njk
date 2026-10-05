@@ -2,15 +2,15 @@
 {% block actions %}<a class="btn btn-teal btn-sm" href="/admin/users/new">{{ icon('plus') }} مستخدم جديد</a>{% endblock %}
 {% block content %}
 <div class="card flush">
-  <div class="table-wrap"><table class="tbl">
+  <div class="table-wrap"><table class="tbl cards" style="--actw:44px">
     <thead><tr><th>المستخدم</th><th>الدور</th><th>الحالة</th><th>آخر دخول</th><th class="w-act"></th></tr></thead>
     <tbody>
     {% for u in users %}
     <tr>
-      <td><div class="user-cell"><span class="avatar">{{ u.name | first }}</span><div><a class="strong" href="/admin/users/{{ u.id }}">{{ u.name }}</a><small class="ltr muted">{{ u.email }}</small></div></div></td>
-      <td><span class="pill {{ 'teal' if u.role == 'owner' }}">{{ roleLabel(u.role) }}</span>{% if u.customN %}<small class="muted">صلاحيات مخصصة ({{ u.customN | ar }})</small>{% endif %}</td>
-      <td>{% if u.is_active %}<span class="pill green">نشط</span>{% else %}<span class="pill gray">موقوف</span>{% endif %}</td>
-      <td class="muted">{{ u.last_login_at | rel | ar if u.last_login_at else 'لم يدخل بعد' }}</td>
+      <td class="c-main"><div class="user-cell"><span class="avatar">{{ u.name | first }}</span><div><a class="strong" href="/admin/users/{{ u.id }}">{{ u.name }}</a><small class="ltr muted">{{ u.email }}</small></div></div></td>
+      <td data-label="الدور"><span class="pill {{ 'teal' if u.role == 'owner' }}">{{ roleLabel(u.role) }}</span>{% if u.customN %}<small class="muted">صلاحيات مخصصة ({{ u.customN | ar }})</small>{% endif %}</td>
+      <td data-label="الحالة">{% if u.is_active %}<span class="pill green">نشط</span>{% else %}<span class="pill gray">موقوف</span>{% endif %}</td>
+      <td class="muted" data-label="آخر دخول">{{ u.last_login_at | rel | ar if u.last_login_at else 'لم يدخل بعد' }}</td>
       <td class="w-act"><a class="icon-btn" href="/admin/users/{{ u.id }}" aria-label="تعديل">{{ icon('pencil') }}</a></td>
     </tr>
     {% endfor %}

@@ -39,16 +39,16 @@
   <section class="card">
     <header class="card-head"><h3>أحدث الطلبات</h3><a class="link" href="/admin/leads">كل الطلبات {{ icon('arrow-left') }}</a></header>
     {% if data.leads.recent.length %}
-    <div class="table-wrap"><table class="tbl">
+    <div class="table-wrap"><table class="tbl cards" style="--actw:0px">
       <thead><tr><th>العميل</th><th>النوع</th><th>المصدر</th><th>الحالة</th><th>الوقت</th></tr></thead>
       <tbody>
       {% for l in data.leads.recent %}
       <tr data-href="/admin/leads/{{ l.id }}">
-        <td><a href="/admin/leads/{{ l.id }}"><b>{{ l.name }}</b></a><small class="ltr muted">{{ l.phone | pretty_phone }}</small></td>
-        <td>{{ l.case_type or '—' }}</td>
-        <td><span class="src">{{ l.source }}</span></td>
-        <td><span class="pill {{ l.st.color }}">{{ l.st.label }}</span></td>
-        <td class="muted nowrap">{{ l.created_at | rel | ar }}</td>
+        <td class="c-main"><a href="/admin/leads/{{ l.id }}"><b>{{ l.name }}</b></a><small class="ltr muted">{{ l.phone | pretty_phone }}</small></td>
+        <td data-label="النوع"><span>{{ l.case_type or '—' }}</span></td>
+        <td data-label="المصدر"><span class="src">{{ l.source }}</span></td>
+        <td data-label="الحالة"><span class="pill {{ l.st.color }}">{{ l.st.label }}</span></td>
+        <td class="muted nowrap" data-label="الوقت"><span>{{ l.created_at | rel | ar }}</span></td>
       </tr>
       {% endfor %}
       </tbody>
