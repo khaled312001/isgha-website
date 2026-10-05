@@ -34,6 +34,50 @@
     upd();
   });
 
+  /* ── آراء العملاء: شريحة بالتمرير الأصلي + أزرار ونقاط ── */
+  var AR = '٠١٢٣٤٥٦٧٨٩';
+  function pad2(n) { return String(n).padStart(2, '0').replace(/\d/g, function (x) { return AR[x]; }); }
+  $$('[data-tst]').forEach(function (box) {
+    var track = box.querySelector('[data-tst-track]');
+    if (!track) return;
+    var slides = $$('.tst-slide', track);
+    var dots = $$('[data-tst-dot]', box);
+    var prev = box.querySelector('[data-tst-prev]');
+    var next = box.querySelector('[data-tst-next]');
+    var cur = box.querySelector('[data-tst-cur]');
+    var rtl = getComputedStyle(track).direction === 'rtl';
+    var idx = -1;
+    function at() { return Math.round(Math.abs(track.scrollLeft) / Math.max(1, track.clientWidth)); }
+    function mark(i) {
+      i = Math.max(0, Math.min(slides.length - 1, i));
+      if (i === idx) return;
+      idx = i;
+      slides.forEach(function (s, j) { s.classList.toggle('is-on', j === i); s.setAttribute('aria-hidden', j === i ? 'false' : 'true'); });
+      dots.forEach(function (d, j) { if (j === i) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
+      if (cur) cur.textContent = pad2(i + 1);
+      if (prev) prev.disabled = i === 0;
+      if (next) next.disabled = i === slides.length - 1;
+    }
+    function go(i) {
+      i = Math.max(0, Math.min(slides.length - 1, i));
+      track.scrollTo({ left: (rtl ? -1 : 1) * i * track.clientWidth, behavior: reduce ? 'auto' : 'smooth' });
+      mark(i);
+    }
+    var raf = 0;
+    track.addEventListener('scroll', function () { cancelAnimationFrame(raf); raf = requestAnimationFrame(function () { mark(at()); }); }, { passive: true });
+    if (prev) prev.addEventListener('click', function () { go(idx - 1); });
+    if (next) next.addEventListener('click', function () { go(idx + 1); });
+    dots.forEach(function (d, j) { d.addEventListener('click', function () { go(j); }); });
+    track.addEventListener('keydown', function (e) {
+      var fwd = rtl ? 'ArrowLeft' : 'ArrowRight';
+      var back = rtl ? 'ArrowRight' : 'ArrowLeft';
+      if (e.key === fwd) { e.preventDefault(); go(idx + 1); }
+      if (e.key === back) { e.preventDefault(); go(idx - 1); }
+    });
+    window.addEventListener('resize', function () { go(idx); });
+    mark(0);
+  });
+
   /* ── المستفيدون (تفصيلي): طي بقية الخدمات خلف زر «عرض كل الخدمات» ── */
   $$('.bnd-more').forEach(function (btn) {
     var box = document.getElementById(btn.getAttribute('aria-controls'));
