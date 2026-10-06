@@ -379,7 +379,7 @@ router.get('/manifest.webmanifest', (req, res) => {
     id: '/', name: S.site_name, short_name: S.brand_short, description: plain(S.seo_default_description) || undefined,
     lang: 'ar', dir: 'rtl', start_url: '/', scope: '/', display: 'standalone',
     // يطابق <meta name="theme-color"> في site.njk
-    background_color: '#faf9f4', theme_color: '#141817',
+    background_color: '#faf9f4', theme_color: '#215d41',
     icons: [
       { src: '/img/icon-192.png', sizes: '192x192', type: 'image/png' },
       { src: '/img/icon-512.png', sizes: '512x512', type: 'image/png' },

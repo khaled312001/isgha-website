@@ -31,12 +31,19 @@ export function createApp() {
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     strictTransportSecurity: config.isProd ? { maxAge: 15552000, includeSubDomains: false } : false,
   }));
+  // سياسة أمان محتوى لا تكسر أكواد التتبع: تمنع تضمين الموقع في مواقع أخرى وحقن <base> والإضافات
+  app.use((req, res, next) => {
+    res.setHeader('Content-Security-Policy', "frame-ancestors 'self'; base-uri 'self'; object-src 'none'");
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+    next();
+  });
   app.use(compression());
 
   // إعادة التوجيه إلى https والدومين الأساسي (يُفعّل من .env بعد ربط الدومين)
   app.use((req, res, next) => {
     if (/^(1|true|yes|on)$/i.test(process.env.FORCE_HTTPS || '') && req.protocol === 'http' && req.method === 'GET') {
-      return res.redirect(301, `https://${req.get('host')}${req.originalUrl}`);
+      const host = (process.env.CANONICAL_HOST || '').replace(/^https?:\/\//, '').replace(/\/+$/, '') || req.get('host');
+      return res.redirect(301, `https://${host}${req.originalUrl}`);
     }
     const canon = (process.env.CANONICAL_HOST || '').replace(/^https?:\/\//, '').replace(/\/+$/, '');
     if (canon && req.method === 'GET' && req.get('host') !== canon && !req.path.startsWith('/api/')) {
@@ -61,8 +68,13 @@ export function createApp() {
   app.use('/uploads', express.static(config.uploadsDir, { maxAge: '30d', fallthrough: false }));
 
   app.use(cookieParser());
-  app.use(express.urlencoded({ extended: true, limit: '4mb' }));
-  app.use(express.json({ limit: '8mb' }));
+  // حجم كبير للوحة التحكم فقط (المنشئ)؛ المسارات العامة بحد صغير لتقليل استهلاك الموارد
+  const bigBody = [express.urlencoded({ extended: true, limit: '4mb' }), express.json({ limit: '8mb' })];
+  const smallBody = [express.urlencoded({ extended: true, limit: '64kb', parameterLimit: 200 }), express.json({ limit: '64kb' })];
+  app.use((req, res, next) => {
+    const [u, j] = req.path.startsWith('/admin') ? bigBody : smallBody;
+    u(req, res, (e) => (e ? next(e) : j(req, res, next)));
+  });
   app.use(express.text({ type: 'text/plain', limit: '64kb' }));
 
   // الجلسات (لا تُنشأ إلا عند تسجيل الدخول)

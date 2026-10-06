@@ -9,7 +9,7 @@ export function csrfToken(req) {
 export function csrfProtect(req, res, next) {
   res.locals.csrf = csrfToken(req);
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
-  const sent = req.get('x-csrf-token') || req.body?._csrf || req.query?._csrf;
+  const sent = String(req.get('x-csrf-token') || req.body?._csrf || req.query?._csrf || '');
   const expected = req.session.csrf;
   if (sent && expected && sent.length === expected.length && crypto.timingSafeEqual(Buffer.from(sent), Buffer.from(expected))) {
     return next();
@@ -18,5 +18,11 @@ export function csrfProtect(req, res, next) {
     return res.status(419).json({ error: 'انتهت صلاحية الصفحة، حدّثها وحاول مجددًا.' });
   }
   req.session.flash = { type: 'error', text: 'انتهت صلاحية الصفحة، أعد المحاولة.' };
-  return res.redirect(req.get('referer') || '/admin');
+  // نرجع للصفحة السابقة فقط إن كانت من نفس الموقع (منع التحويل لمواقع خارجية)
+  let back = '/admin';
+  try {
+    const ref = new URL(req.get('referer') || '');
+    if (ref.host === req.get('host') && ref.pathname.startsWith('/admin')) back = ref.pathname + ref.search;
+  } catch { /* بدون مرجع */ }
+  return res.redirect(back);
 }

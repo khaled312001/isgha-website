@@ -71,7 +71,9 @@ export function canPage(user, page) {
 }
 
 export function csvCell(v) {
-  const s = v == null ? '' : v instanceof Date ? v.toISOString() : String(v);
+  let s = v == null ? '' : v instanceof Date ? v.toISOString() : String(v);
+  // منع حقن الصيغ في Excel (اسم مثل =HYPERLINK(...) يرسله زائر)
+  if (/^[=@\t\r]|^[+-](?![\d\s]*$)/.test(s)) s = `'${s}`;
   return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 

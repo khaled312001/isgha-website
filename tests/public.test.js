@@ -39,7 +39,7 @@ test('الصفحة الرئيسية تعرض المحتوى الأساسي وا�
   assert.match(r.text, /إصغاء/);
   assert.match(r.text, /\/img\/logo\.svg/);
   assert.match(r.text, /\/css\/site\.css/);
-  assert.match((await web.get('/css/site.css')).text, /ThmanyahDisplay/);
+  assert.match((await web.get('/css/site.css')).text, /IBMPlexArabic/);
   assert.match(r.text, /"@type":\s*"(LegalService|Organization)"/);
 });
 
@@ -157,7 +157,7 @@ test('تسجيل أحداث الاتصال والواتساب', async () => {
 });
 
 test('الملفات الثابتة والأيقونات', async () => {
-  for (const p of ['/css/site.css', '/js/site.js', '/img/icons.svg', '/img/logo.svg', '/fonts/ThmanyahText-400.woff2', '/manifest.webmanifest', '/favicon.ico']) {
+  for (const p of ['/css/site.css', '/js/site.js', '/img/icons.svg', '/img/logo.svg', '/fonts/IBMPlexSansArabic-400-arabic.woff2', '/manifest.webmanifest', '/favicon.ico']) {
     const r = await web.get(p);
     assert.equal(r.status, 200, p);
   }

@@ -427,7 +427,7 @@
     var el = document.getElementById(id);
     if (!el || !window.Chart) return;
     var labels = cfg.labels.map(function (d) { var p = d.split('-'); return ARD(+p[2]) + '/' + ARD(+p[1]); });
-    window.Chart.defaults.font.family = 'ThmanyahText, system-ui, sans-serif';
+    window.Chart.defaults.font.family = 'IBMPlexArabic, system-ui, sans-serif';
     window.Chart.defaults.color = '#6d7672';
     new window.Chart(el, {
       data: {

@@ -39,7 +39,7 @@
   var T = { c: {} };
   function cssVar(name, fb) { var v = getComputedStyle(root).getPropertyValue(name).trim(); return v || fb; }
   function theme() {
-    T.font = cssVar('--body', 'ThmanyahText, system-ui, sans-serif');
+    T.font = cssVar('--body', 'IBMPlexArabic, system-ui, sans-serif');
     T.ink = cssVar('--ink', '#141817');
     T.muted = cssVar('--muted', '#6d7672');
     T.grid = cssVar('--ch-grid', '#efede6');
@@ -47,7 +47,7 @@
     T.surface = cssVar('--card', '#ffffff');
     T.band = cssVar('--ch-band', 'rgba(20,24,23,.045)');
     T.c = {
-      teal: cssVar('--teal', '#0e6e62'), gold: cssVar('--ch-2', '#b8891f'), heat: cssVar('--heat-4', '#2b8576'),
+      teal: cssVar('--teal', '#215d41'), gold: cssVar('--ch-2', '#b8891f'), heat: cssVar('--heat-4', '#2b8576'),
       c1: cssVar('--ch-1', '#008573'), c2: cssVar('--ch-2', '#b8891f'), c3: cssVar('--ch-3', '#2c5fa8'), c4: cssVar('--ch-4', '#d9734e'), c5: cssVar('--ch-5', '#8b5a9e'),
       prev: cssVar('--ch-prev', '#a3aaa6'), other: cssVar('--ch-other', '#c3c8c4'), 'teal-soft': cssVar('--ch-teal-soft', '#a9d1c9'),
     };
@@ -473,7 +473,7 @@
   }
   function start() {
     // ننتظر خط «ثمانية» حتى تُرسم الأرقام على اللوحة بالخط الصحيح من أول مرة
-    var fonts = doc.fonts && doc.fonts.load ? Promise.all([doc.fonts.load('400 12px ThmanyahText'), doc.fonts.load('500 12px ThmanyahText')]) : Promise.resolve();
+    var fonts = doc.fonts && doc.fonts.load ? Promise.all([doc.fonts.load('400 12px IBMPlexArabic'), doc.fonts.load('500 12px IBMPlexArabic')]) : Promise.resolve();
     fonts.then(init, init);
     setTimeout(init, 1500);
   }

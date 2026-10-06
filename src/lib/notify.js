@@ -44,7 +44,7 @@ function leadEmail(lead, adminUrl) {
   ].filter((r) => r[1]);
   return `<!doctype html><html dir="rtl" lang="ar"><body style="margin:0;background:#faf9f4;font-family:Tahoma,Arial,sans-serif;color:#141817">
   <div style="max-width:560px;margin:24px auto;background:#fff;border:1px solid #e7e5dc;border-radius:16px;overflow:hidden">
-    <div style="background:#0e6e62;color:#fff;padding:18px 22px;font-size:17px;font-weight:bold">${escapeHtml(STATUS_FORM[lead.form] || 'طلب جديد')} — إصغاء</div>
+    <div style="background:#215d41;color:#fff;padding:18px 22px;font-size:17px;font-weight:bold">${escapeHtml(STATUS_FORM[lead.form] || 'طلب جديد')} — إصغاء</div>
     <table style="width:100%;border-collapse:collapse;font-size:14px">${rows.map(([k, v]) => `<tr><td style="padding:10px 22px;color:#6d7672;width:90px;vertical-align:top;border-bottom:1px solid #f1f0ea">${k}</td><td style="padding:10px 22px;border-bottom:1px solid #f1f0ea;white-space:pre-wrap">${escapeHtml(v)}</td></tr>`).join('')}</table>
     <div style="padding:18px 22px"><a href="${escapeHtml(adminUrl)}" style="display:inline-block;background:#141817;color:#fff;text-decoration:none;padding:11px 20px;border-radius:10px">فتح الطلب في لوحة التحكم</a></div>
   </div></body></html>`;

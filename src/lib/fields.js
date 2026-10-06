@@ -11,7 +11,8 @@ function str(v, max = 5000) {
 function safeUrl(v) {
   const s = str(v, 500);
   if (!s) return '';
-  if (/^(\/(?!\/)|https?:\/\/|#|tel:|mailto:)/i.test(s)) return s;
+  // ‎/\evil.com يعامله المتصفح مثل //evil.com ← مرفوض
+  if (/^(\/(?![/\\])|https?:\/\/|#|tel:|mailto:)/i.test(s) && !/[<>"]/.test(s)) return s;
   return '';
 }
 

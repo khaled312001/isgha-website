@@ -40,5 +40,10 @@
     "chart.js": "^4.5.1",
     "quill": "^2.0.3",
     "sortablejs": "^1.15.7"
+  },
+  "overrides": {
+    "express-mysql-session": {
+      "mysql2": "$mysql2"
+    }
   }
 }

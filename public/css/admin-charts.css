@@ -8,9 +8,9 @@
   --ch-other:#c3c8c4;--ch-prev:#a3aaa6;--ch-teal-soft:#a9d1c9;
   --ch-grid:#efede6;--ch-axis:#dedbd0;--ch-track:#f3f2ec;--ch-band:rgba(20,24,23,.045);
   /* حالات الطلب (مطابقة لنقاط الحالة في القوائم، والأخضر أفتح ليتميز عن التركواز) */
-  --st-new:#2c5fa8;--st-contacted:#e0a23a;--st-qualified:#0e6e62;--st-won:#5aa469;--st-lost:#bcc2be;
+  --st-new:#2c5fa8;--st-contacted:#e0a23a;--st-qualified:#215d41;--st-won:#5aa469;--st-lost:#bcc2be;
   /* تدرّج تتابعي واحد (تركواز) للخريطة الحرارية */
-  --heat-0:#f5f4ef;--heat-1:#d3e8e3;--heat-2:#a3cfc5;--heat-3:#66ac9e;--heat-4:#2b8576;--heat-5:#0a5449;
+  --heat-0:#f5f4ef;--heat-1:#d3e8e3;--heat-2:#a3cfc5;--heat-3:#66ac9e;--heat-4:#2b8576;--heat-5:#1a4b34;
 }
 [data-c="teal"]{--c:var(--teal)}[data-c="teal-soft"]{--c:var(--ch-teal-soft)}[data-c="gold"]{--c:var(--ch-2)}
 [data-c="c1"]{--c:var(--ch-1)}[data-c="c2"]{--c:var(--ch-2)}[data-c="c3"]{--c:var(--ch-3)}[data-c="c4"]{--c:var(--ch-4)}[data-c="c5"]{--c:var(--ch-5)}
@@ -224,9 +224,9 @@ a.ch-hb:hover,.ch-hb:focus-visible{background:var(--soft)}
 /* ═══════════ تقرير PDF (A4 عمودي) ═══════════ */
 @page{size:A4 portrait;margin:12mm 11mm 15mm}
 @page{
-  @bottom-center{content:"صفحة " counter(page, arabic-indic) " من " counter(pages, arabic-indic);font-family:"ThmanyahText",sans-serif;font-size:8.5pt;color:#6d7672}
-  @bottom-right{content:"إصغاء للمحاماة والاستشارات القانونية";font-family:"ThmanyahText",sans-serif;font-size:8pt;color:#9ba39e}
-  @bottom-left{content:"تقرير داخلي — سري";font-family:"ThmanyahText",sans-serif;font-size:8pt;color:#9ba39e}
+  @bottom-center{content:"صفحة " counter(page, arabic-indic) " من " counter(pages, arabic-indic);font-family:"IBMPlexArabic",sans-serif;font-size:8.5pt;color:#6d7672}
+  @bottom-right{content:"إصغاء للمحاماة والاستشارات القانونية";font-family:"IBMPlexArabic",sans-serif;font-size:8pt;color:#9ba39e}
+  @bottom-left{content:"تقرير داخلي — سري";font-family:"IBMPlexArabic",sans-serif;font-size:8pt;color:#9ba39e}
 }
 body.rpt{background:#e9e7df;padding:0 0 40px;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:.9rem}
 .rpt-bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:10px 16px;background:rgba(20,24,23,.92);color:#fff;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}

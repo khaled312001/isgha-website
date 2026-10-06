@@ -38,6 +38,36 @@ export const uploader = multer({
   },
 });
 
+// التحقق من محتوى الملف الفعلي (التوقيع) وليس النوع الذي يرسله المتصفح فقط
+// يمنع رفع HTML/SVG/سكربت متنكّر بامتداد صورة
+const SIGNATURES = {
+  'image/jpeg': (b) => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff,
+  'image/png': (b) => b.readUInt32BE(0) === 0x89504e47,
+  'image/gif': (b) => b.toString('ascii', 0, 4) === 'GIF8',
+  'image/webp': (b) => b.toString('ascii', 0, 4) === 'RIFF' && b.toString('ascii', 8, 12) === 'WEBP',
+  'image/avif': (b) => b.toString('ascii', 4, 8) === 'ftyp' && /^avi[fs]$/.test(b.toString('ascii', 8, 12)),
+  'application/pdf': (b) => b.toString('ascii', 0, 5) === '%PDF-',
+};
+
+// يُرجع رسالة خطأ ويحذف كل الملفات المرفوعة إن كان أحدها غير مطابق لنوعه
+export function verifyUploads(files) {
+  const list = files || [];
+  const bad = list.find((f) => {
+    try {
+      const fd = fs.openSync(f.path, 'r');
+      const b = Buffer.alloc(16);
+      const n = fs.readSync(fd, b, 0, 16, 0);
+      fs.closeSync(fd);
+      return n < 12 || !SIGNATURES[f.mimetype]?.(b);
+    } catch {
+      return true;
+    }
+  });
+  if (!bad) return null;
+  for (const f of list) fs.rm(f.path, { force: true }, () => {});
+  return `الملف «${bad.originalname}» ليس صورة أو PDF صالحًا.`;
+}
+
 // قراءة أبعاد الصورة من ترويسة الملف بدون مكتبات أصلية
 export function imageSize(file) {
   try {
@@ -91,7 +121,7 @@ export async function saveMedia(file, userId, alt = '') {
 }
 
 export function deleteMediaFile(filename) {
-  const full = path.join(config.uploadsDir, filename);
-  if (!full.startsWith(config.uploadsDir)) return;
+  const full = path.resolve(config.uploadsDir, String(filename));
+  if (!full.startsWith(path.resolve(config.uploadsDir) + path.sep)) return;
   fs.rm(full, { force: true }, () => {});
 }

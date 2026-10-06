@@ -3,7 +3,7 @@ import { Router } from 'express';
 import db from '../../db.js';
 import { requirePerm } from '../../lib/auth.js';
 import { logActivity } from '../../lib/activity.js';
-import { uploader, saveMedia, deleteMediaFile } from '../../lib/upload.js';
+import { uploader, saveMedia, deleteMediaFile, verifyUploads } from '../../lib/upload.js';
 import { setSettings } from '../../lib/settings.js';
 import { clearContentCache } from '../../lib/content.js';
 import { IMAGE_SLOTS, IMAGE_NEGATIVE, slotByKey } from '../../content/image-slots.js';
@@ -19,6 +19,12 @@ function handleUpload(req, res, next) {
       if (wantsJson(req)) return fail(res, 422, msg);
       flash(req, 'error', msg);
       return res.redirect(req.get('referer') || '/admin/media');
+    }
+    const bad = verifyUploads(req.files);
+    if (bad) {
+      if (wantsJson(req)) return fail(res, 422, bad);
+      flash(req, 'error', bad);
+      return res.redirect('/admin/media');
     }
     next();
   });

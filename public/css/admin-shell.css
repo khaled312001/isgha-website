@@ -24,7 +24,7 @@ html{scroll-padding-top:calc(var(--bar-h) + 16px)}
 
 /* ═════ الشريط العلوي ═════ */
 .shell .abar{position:fixed;top:0;inset-inline:0;height:var(--bar-h);z-index:60;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-inline:16px 12px;background:var(--sh-bar);color:var(--sh-text);box-shadow:inset 0 -1px 0 var(--sh-line);font-size:.86rem;line-height:1.4}
-.shell .abar::after{content:"";position:absolute;inset-inline:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(85,196,178,.35) 30%,rgba(222,173,52,.3) 70%,transparent);pointer-events:none}
+.shell .abar::after{content:"";position:absolute;inset-inline:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(85,196,178,.35) 30%,rgba(216,175,77,.3) 70%,transparent);pointer-events:none}
 .shell .abar-start,.shell .abar-end{display:flex;align-items:center;gap:2px;min-width:0}
 .shell .abar-btn{position:relative;display:inline-flex;align-items:center;gap:7px;height:34px;padding-inline:10px;border:0;border-radius:9px;background:none;color:var(--sh-text);font-size:.86rem;font-weight:500;line-height:1;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
 .shell .abar-btn .i{width:18px;height:18px;vertical-align:0}
