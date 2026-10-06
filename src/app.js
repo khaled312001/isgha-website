@@ -47,7 +47,8 @@ export function createApp() {
       return res.redirect(301, `https://${host}${req.originalUrl}`);
     }
     const canon = (process.env.CANONICAL_HOST || '').replace(/^https?:\/\//, '').replace(/\/+$/, '');
-    if (canon && req.method === 'GET' && req.get('host') !== canon && !req.path.startsWith('/api/')) {
+    // الرابط المؤقت لهوستنجر مستثنى: البروكسي يعيد كتابة رابط التحويل لنفس الدومين المؤقت ← حلقة
+    if (canon && req.method === 'GET' && req.get('host') !== canon && !/\.hostingersite\.com$/i.test(req.hostname) && !req.path.startsWith('/api/')) {
       const proto = /^(1|true|yes|on)$/i.test(process.env.FORCE_HTTPS || '') ? 'https' : req.protocol;
       return res.redirect(301, `${proto}://${canon}${req.originalUrl}`);
     }
