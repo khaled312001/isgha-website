@@ -399,16 +399,21 @@ test('فورم التواصل: الطلب يظهر في اللوحة ويصل إ
     assert.equal(row.form, 'contact');
     assert.equal(row.utm_source, 'google');
 
-    // ووصل الإشعار بالبريد للعنوانين
-    for (let i = 0; i < 50 && sink.mails.length < 2; i++) await new Promise((res) => setTimeout(res, 100));
-    assert.equal(sink.mails.length, 2, 'لم يصل إشعار الطلب');
-    const m = sink.mails[1];
+    // ووصل الإشعار بالبريد للعنوانين + رسالة تأكيد للعميل
+    for (let i = 0; i < 50 && sink.mails.length < 3; i++) await new Promise((res) => setTimeout(res, 100));
+    assert.equal(sink.mails.length, 3, 'لم يصل إشعار الطلب وتأكيد العميل');
+    const m = sink.mails.slice(1).find((x) => x.rcpt.includes('office@test.local'));
+    assert.ok(m, 'إشعار الفريق');
     assert.deepEqual(m.rcpt.sort(), ['office@test.local', 'partner@test.local']);
     const text = mailText(m.raw);
     assert.match(text, /عميل تجربة البريد/);
     assert.match(text, /أرغب في استشارة حول تأسيس شركة/);
     assert.match(text, new RegExp(`/admin/leads/${r.data.id}`));
+    assert.match(text, /email-logo\.png/, 'الشعار في الرسالة');
     assert.match(m.raw, /^Reply-To: client@test\.local/im, 'الرد على الرسالة يذهب للعميل');
+    const c = sink.mails.slice(1).find((x) => x.rcpt.includes('client@test.local'));
+    assert.ok(c, 'تأكيد العميل');
+    assert.match(mailText(c.raw), /استلمنا طلبك/);
   } finally {
     sink.server.close();
   }

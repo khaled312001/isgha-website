@@ -8,10 +8,11 @@ import { getSettings, setSettings } from '../../lib/settings.js';
 import { clearContentCache } from '../../lib/content.js';
 import { forget } from '../../lib/cache.js';
 import { coerceFields } from '../../lib/fields.js';
-import { sendMail, _webhook as sendWebhook } from '../../lib/notify.js';
+import { sendMail, brandedEmail, _webhook as sendWebhook } from '../../lib/notify.js';
 import { plain } from '../../lib/text.js';
 import { SETTINGS_GROUPS } from '../../content/settings-schema.js';
 import { IMAGE_SLOTS } from '../../content/image-slots.js';
+import { baseUrl } from '../../lib/seo.js';
 import { wrap, fail, pagePublicUrl } from './util.js';
 
 const router = Router();
@@ -79,7 +80,7 @@ router.post('/settings/test-email', requirePerm('settings'), wrap(async (req, re
     const r = await sendMail({
       to,
       subject: 'رسالة تجريبية من موقع إصغاء',
-      html: '<div dir="rtl" style="font-family:Tahoma,Arial">تم إعداد البريد الصادر بنجاح ✓ — ستصلك إشعارات الطلبات الجديدة على هذا البريد.</div>',
+      html: brandedEmail({ base: baseUrl(req, S), s: S, title: 'تم إعداد البريد بنجاح ✓', preheader: 'رسالة تجريبية من موقع إصغاء', body: '<p style="margin:0 0 22px;font-size:15px;line-height:2;color:#6d7672">هذه رسالة تجريبية من لوحة تحكم موقع إصغاء. ستصلك إشعارات الطلبات الجديدة من نماذج الموقع على هذا البريد.</p>' }),
     });
     if (r.skipped) return fail(res, 422, 'أكمل بيانات SMTP أولًا (الخادم، المستخدم، كلمة المرور) ثم احفظ.');
     res.json({ ok: true, message: `تم إرسال رسالة تجريبية إلى ${to}` });
