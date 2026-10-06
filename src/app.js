@@ -41,13 +41,15 @@ export function createApp() {
 
   // إعادة التوجيه إلى https والدومين الأساسي (يُفعّل من .env بعد ربط الدومين)
   app.use((req, res, next) => {
-    if (/^(1|true|yes|on)$/i.test(process.env.FORCE_HTTPS || '') && req.protocol === 'http' && req.method === 'GET') {
+    // نحوّل فقط إن أكّد البروكسي أن الطلب http (بدون الترويسة لا نعرف البروتوكول الأصلي ← تجنّب حلقة تحويل)
+    if (/^(1|true|yes|on)$/i.test(process.env.FORCE_HTTPS || '') && req.get('x-forwarded-proto') && req.protocol === 'http' && req.method === 'GET') {
       const host = (process.env.CANONICAL_HOST || '').replace(/^https?:\/\//, '').replace(/\/+$/, '') || req.get('host');
       return res.redirect(301, `https://${host}${req.originalUrl}`);
     }
     const canon = (process.env.CANONICAL_HOST || '').replace(/^https?:\/\//, '').replace(/\/+$/, '');
     if (canon && req.method === 'GET' && req.get('host') !== canon && !req.path.startsWith('/api/')) {
-      return res.redirect(301, `${req.protocol}://${canon}${req.originalUrl}`);
+      const proto = /^(1|true|yes|on)$/i.test(process.env.FORCE_HTTPS || '') ? 'https' : req.protocol;
+      return res.redirect(301, `${proto}://${canon}${req.originalUrl}`);
     }
     next();
   });
