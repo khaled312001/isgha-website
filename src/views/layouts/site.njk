@@ -7,14 +7,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <script>(function(d){d.className=d.className.replace('no-js','js');setTimeout(function(){if(!window.ISGHA_READY)d.classList.add('no-js')},3500)})(document.documentElement)</script>
 <title>{{ meta.title }}</title>
-<meta name="description" content="{{ meta.description }}">
+<meta name="description" content="{{ meta.description | mail }}">
 <meta name="robots" content="{{ meta.robots }}">
 <link rel="canonical" href="{{ meta.canonical }}">
 <meta property="og:locale" content="ar_SA">
 <meta property="og:type" content="{{ meta.type }}">
 <meta property="og:site_name" content="{{ S.site_name }}">
 <meta property="og:title" content="{{ meta.ogTitle or meta.title }}">
-<meta property="og:description" content="{{ meta.description }}">
+<meta property="og:description" content="{{ meta.description | mail }}">
 <meta property="og:url" content="{{ meta.canonical }}">
 <meta property="og:image" content="{{ meta.image }}">
 {% if meta.imageWidth %}<meta property="og:image:width" content="{{ meta.imageWidth }}">
@@ -28,7 +28,7 @@
 {% endif %}{% endif %}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ meta.ogTitle or meta.title }}">
-<meta name="twitter:description" content="{{ meta.description }}">
+<meta name="twitter:description" content="{{ meta.description | mail }}">
 <meta name="twitter:image" content="{{ meta.image }}">
 {% if meta.imageAlt %}<meta name="twitter:image:alt" content="{{ meta.imageAlt }}">
 {% endif %}

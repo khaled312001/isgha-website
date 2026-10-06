@@ -10,7 +10,7 @@
       <div class="fl fl-contact">
         <b>{{ S.footer_contact_title }}</b>
         <a class="ci" href="{{ (page.settings.phone or S.phone) | tel }}">{{ icon('phone') }}<span dir="ltr">{{ page.settings.phone or S.phone }}</span></a>
-        <a class="ci" href="mailto:{{ S.email }}">{{ icon('mail') }}<span>{{ S.email }}</span></a>
+        <a class="ci" href="mailto:{{ S.email | mail }}">{{ icon('mail') }}<span>{{ S.email | mail }}</span></a>
         <span class="ci">{{ icon('map-pin') }}<span>{{ S.address_short or S.address }}</span></span>
       </div>
     </div>

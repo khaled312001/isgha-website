@@ -40,7 +40,9 @@ export function setupViews(app) {
   env.addFilter('tel', (s) => telHref(s));
   env.addFilter('wa', (n, msg) => waHref(n, msg));
   env.addFilter('pretty_phone', (s) => prettyPhone(s));
-  env.addFilter('json', (o) => safe(JSON.stringify(o ?? null).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')));
+  // البريد مع ترميز النقاط (&#46;): يظهر كما هو في المتصفح، ولا يستبدله بروكسي الرابط المؤقت في هوستنجر بدومينه
+  env.addFilter('mail', (s) => safe(escapeHtml(String(s ?? '')).replace(/\./g, '&#46;')));
+  env.addFilter('json', (o) => safe(JSON.stringify(o ?? null).replace(/(@[\w-]+)\.(?=[a-z])/gi, '$1\\u002e').replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')));
   env.addFilter('pad2', (n) => arDigits(String(n).padStart(2, '0')));
   env.addFilter('some', (arr, attr, val) => (Array.isArray(arr) ? arr.some((x) => x && x[attr] === val) : false));
   env.addFilter('count_by', (arr, attr) => (Array.isArray(arr) ? arr.filter((x) => x && x[attr]).length : 0));
