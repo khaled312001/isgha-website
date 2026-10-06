@@ -52,6 +52,18 @@ try {
     }
   }
 
+  // الوصف (SEO) بدون ذكر الباقات
+  const home = await db('pages').where({ system_key: 'home' }).first('id', 'meta_description');
+  if (home?.meta_description?.includes('وباقات قانونية للشركات')) {
+    await db('pages').where({ id: home.id }).update({ meta_description: home.meta_description.replace('، وباقات قانونية للشركات.', '.') });
+    log.push('home meta_description updated');
+  }
+  const sd = await db('settings').where({ key: 'seo_default_description' }).first();
+  if (sd?.value?.includes('وباقات قانونية للشركات')) {
+    await db('settings').where({ key: 'seo_default_description' }).update({ value: sd.value.replace('وباقات قانونية للشركات', 'وخدمات قانونية متخصصة للشركات') });
+    log.push('seo_default_description updated');
+  }
+
   // تحويل الباقات
   const r = await db('redirects').where({ from_path: '/packages' }).first();
   if (!r) { await db('redirects').insert({ from_path: '/packages', to_url: '/services', code: 301, is_active: true, hits: 0 }); log.push('redirect /packages → /services'); }
