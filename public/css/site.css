@@ -827,3 +827,9 @@ mark{background:linear-gradient(transparent 58%,var(--yellow) 58%,var(--yellow) 
 .mega.mega-logo img{width:min(760px,86%);height:auto;opacity:.12}
 .nav-search input::-webkit-search-cancel-button,.srch-form input::-webkit-search-cancel-button,.mnav-search input::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
 .mega.mega-logo img{width:min(620px,80%)}
+
+/* هيدر صفحات الهبوط: المحتوى في منتصف الشريط على الكمبيوتر */
+@media (min-width:1121px){
+  .nav-lp .nav-in{justify-content:center;gap:22px;padding-inline:24px}
+  .nav-lp .nav-actions{margin-inline-start:0}
+}
