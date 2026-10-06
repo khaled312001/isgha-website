@@ -14,7 +14,7 @@ import { cleanRich } from '../lib/sanitize.js';
 const router = Router();
 
 // المسارات المحجوزة التي لا يمكن أن تكون صفحات هبوط
-export const RESERVED = new Set(['admin', 'api', 'services', 'insights', 'uploads', 'img', 'css', 'js', 'fonts', 'vendor', 'sitemap.xml', 'robots.txt', 'manifest.webmanifest', 'favicon.ico', 'home', 'index', 'index.html', 'pages', 'assets', 'login', 'logout', 'lp']);
+export const RESERVED = new Set(['admin', 'api', 'services', 'insights', 'uploads', 'img', 'css', 'js', 'fonts', 'vendor', 'sitemap.xml', 'robots.txt', 'manifest.webmanifest', 'favicon.ico', 'home', 'index', 'index.html', 'pages', 'assets', 'login', 'logout', 'lp', 'search']);
 
 const SYSTEM_PATHS = { '/': 'home' };
 
@@ -272,6 +272,40 @@ router.get('/insights/:slug', async (req, res, next) => {
         breadcrumbSchema(base, crumbs, meta.canonical),
       ]),
     });
+  } catch (e) { next(e); }
+});
+
+// ─── البحث في الموقع ───
+router.get('/search', async (req, res, next) => {
+  try {
+    const S = res.locals.S;
+    const q = String(req.query.q || '').trim().slice(0, 80);
+    const results = [];
+    if (q.length >= 2) {
+      const norm = (t) => plain(String(t || '')).replace(/[ً-ْـ]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').toLowerCase();
+      const words = norm(q).split(/\s+/).filter((w) => w.length > 1);
+      const score = (title, body) => {
+        const t = norm(title); const b = norm(body);
+        let n = 0;
+        for (const w of words) { if (t.includes(w)) n += 3; else if (b.includes(w)) n += 1; else return 0; }
+        return n;
+      };
+      const clean = (t) => String(t || '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;|&amp;nbsp;/g, ' ').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+      const add = (type, title, url, raw) => { const text = clean(raw); const sc = score(title, text); if (sc) results.push({ type, title: plain(title), url, text: truncate(plain(text), 170), sc }); };
+      for (const c of res.locals.navCats) {
+        add('خدمات', c.title, c.url, `${c.tagline || ''} ${c.summary || ''}`);
+        for (const sv of c.services) if (sv.url) add('خدمات', sv.title, sv.url, `${sv.summary || ''} ${plain(sv.body || '')}`);
+      }
+      const posts = await db('posts').where('status', 'published').andWhere('published_at', '<=', new Date()).select('slug', 'title', 'excerpt', 'body').limit(300);
+      for (const p of posts) add('مقالات', p.title, `/insights/${p.slug}`, `${p.excerpt || ''} ${plain(p.body || '')}`);
+      const faqs = await db('faqs').where('is_active', true).select('question', 'answer').limit(300);
+      for (const f of faqs) add('أسئلة شائعة', f.question, '/contact#faq', f.answer);
+      const pages = await db('pages').where({ status: 'published', noindex: false }).whereNot('kind', 'landing').whereNotIn('system_key', ['thank-you', 'service_tail']).select('slug', 'title', 'system_key', 'meta_description');
+      for (const p of pages) add('صفحات', p.title, p.system_key === 'home' ? '/' : `/${p.slug}`, p.meta_description);
+      results.sort((a, b) => b.sc - a.sc);
+    }
+    const meta = buildMeta(req, S, { title: q ? `نتائج البحث عن «${q}»` : 'البحث في الموقع', noindex: true, path: '/search' });
+    res.render('pages/search.njk', { meta, q, results: results.slice(0, 30) });
   } catch (e) { next(e); }
 });
 

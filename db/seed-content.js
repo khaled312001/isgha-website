@@ -362,9 +362,10 @@ export const REDIRECTS = [
   ['/pages/legal_services.html', '/services/legal'],
   ['/pages/notary_services.html', '/services/notary'],
   ['/pages/specialized_services.html', '/services/specialized'],
-  ['/pages/packages_details.html', '/packages'],
+  ['/pages/packages_details.html', '/services'],
   ['/pages', '/'],
   ['/assets/images/favicon.png', '/img/favicon-32.png'],
   ['/assets/images/logo1.png', '/img/logo.svg'],
   ['/privacy', '/privacy-policy'],
+  ['/packages', '/services'],
 ];

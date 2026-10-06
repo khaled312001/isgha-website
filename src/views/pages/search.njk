@@ -1,0 +1,39 @@
+{% extends "layouts/site.njk" %}
+{% block main %}
+<section class="sec srch-page">
+  <div class="wrap srch-wrap">
+    <span class="tag">البحث في الموقع</span>
+    <h1>{% if q %}نتائج البحث عن «{{ q }}»{% else %}ابحث في خدماتنا ومقالاتنا{% endif %}</h1>
+    <form class="srch-form" action="/search" method="get" role="search">
+      {{ icon('search') }}
+      <input type="search" name="q" value="{{ q }}" placeholder="ابحث عن خدمة، قضية، أو سؤال…" aria-label="كلمات البحث" minlength="2" maxlength="80" required autofocus>
+      <button class="btn btn-teal" type="submit">بحث</button>
+    </form>
+    {% if q %}
+      {% if results.length %}
+      <p class="muted srch-count">{{ results.length | ar }} نتيجة</p>
+      <ul class="srch-list">
+        {% for r in results %}
+        <li class="rv in" style="--i:{{ loop.index0 }}">
+          <a href="{{ r.url }}">
+            <span class="srch-type">{{ r.type }}</span>
+            <b>{{ r.title }}</b>
+            {% if r.text %}<span class="srch-text">{{ r.text }}</span>{% endif %}
+            {{ icon('arrow-left', 'srch-go') }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <div class="srch-empty">
+        <p>لم نجد نتائج مطابقة. جرّب كلمات أخرى، أو تواصل معنا مباشرة وسنساعدك.</p>
+        <div class="cta-actions">
+          <a class="btn btn-teal" href="{{ S.nav_cta_url or '/consultation' }}">{{ S.txt_book }} {{ icon('arrow-left') }}</a>
+          <a class="btn btn-line" href="{{ S.phone | tel }}">{{ icon('phone') }} {{ S.txt_call_now }}</a>
+        </div>
+      </div>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

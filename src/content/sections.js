@@ -41,7 +41,7 @@ export const SECTION_TYPES = {
       { name: 'show_whatsapp', label: 'زر واتساب', type: 'toggle', default: true },
       { name: 'image', label: 'الصورة', type: 'image', slot: 'home_hero', default: '' },
       { name: 'image_alt', label: 'وصف الصورة (Alt)', type: 'text', default: 'محامٍ سعودي من فريق إصغاء للمحاماة' },
-      { name: 'badges', label: 'شارات الثقة', type: 'list', default: ['مرخّصة من وزارة العدل', 'سرّية تامة', 'نرد خلال ساعات العمل'] },
+      { name: 'badges', label: 'شارات الثقة', type: 'list', default: ['مرخّصة من الهيئة السعودية للمحامين', 'سرّية تامة', 'نرد خلال ساعات العمل'] },
       { name: 'card_title', label: 'البطاقة العائمة — العنوان', type: 'text', default: 'خبرة تتجاوز ١٥ عامًا' },
       { name: 'card_text', label: 'البطاقة العائمة — النص', type: 'text', default: 'في التقاضي والاستشارات والتوثيق' },
       { name: 'show_quicklinks', label: 'روابط الخدمات أسفل الترويسة', type: 'toggle', default: true },
@@ -65,7 +65,7 @@ export const SECTION_TYPES = {
     fields: [
       { name: 'title', label: 'العنوان (طابقه مع نص الإعلان)', type: 'textarea', rows: 2, hint: MARK, default: 'احصل على ==تقييم أولي== لقضيتك من محامٍ مختص' },
       { name: 'lead', label: 'الوصف', type: 'textarea', rows: 3, default: 'أخبرنا بقضيتك في أقل من دقيقة وسيتواصل معك محامٍ مختص خلال ساعات العمل ليوضح لك موقفك القانوني وخياراتك.' },
-      { name: 'badges', label: 'شارات الثقة', type: 'list', default: ['ترخيص وزارة العدل', 'نرد خلال ساعات العمل', 'سرّية تامة'] },
+      { name: 'badges', label: 'شارات الثقة', type: 'list', default: ['مرخّصة من الهيئة السعودية للمحامين', 'نرد خلال ساعات العمل', 'سرّية تامة'] },
       { name: 'frame_title', label: 'عنوان إطار النموذج', type: 'text', default: 'طلب تقييم قضية' },
       { name: 'frame_note', label: 'ملاحظة الإطار', type: 'text', default: 'آمن وسرّي' },
       { name: 'form_title', label: 'عنوان النموذج', type: 'text', default: 'ابدأ تقييم قضيتك مجانًا' },

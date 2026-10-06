@@ -17,7 +17,7 @@ const PAGES = [
   '/', '/about', '/services', '/services/judicial', '/services/legal', '/services/notary', '/services/specialized',
   '/services/judicial/litigation', '/services/judicial/case-study-pleadings', '/services/judicial/enforcement', '/services/judicial/arbitration',
   '/services/specialized/company-formation', '/services/specialized/restructuring', '/services/specialized/corporate', '/services/specialized/compliance',
-  '/packages', '/beneficiaries', '/contact', '/consultation', '/case-review', '/insights', '/privacy-policy', '/terms', '/thank-you',
+  '/beneficiaries', '/contact', '/consultation', '/case-review', '/insights', '/privacy-policy', '/terms', '/thank-you',
 ];
 
 test('كل صفحات الموقع تفتح بدون أخطاء قوالب', async () => {
@@ -56,7 +56,7 @@ test('خريطة الموقع تتضمن الخدمات والصفحات بدو�
   assert.equal(r.status, 200);
   assert.match(r.headers.get('content-type'), /xml/);
   assert.match(r.text, /\/services\/judicial\/litigation<\/loc>/);
-  assert.match(r.text, /\/packages<\/loc>/);
+  assert.doesNotMatch(r.text, /\/packages<\/loc>/, 'الباقات ملغاة');
   assert.doesNotMatch(r.text, /thank-you|case-review|_service-tail|\/admin/);
 });
 
@@ -75,7 +75,8 @@ test('روابط الموقع القديم تتحول 301 للروابط الج�
     '/index.html': '/',
     '/pages/beneficiaries.html': '/beneficiaries',
     '/pages/judicial_services.html': '/services/judicial',
-    '/pages/packages_details.html': '/packages',
+    '/pages/packages_details.html': '/services',
+    '/packages': '/services',
   };
   for (const [from, to] of Object.entries(map)) {
     const r = await web.get(from);
@@ -88,7 +89,7 @@ test('التحويل يحتفظ بمعاملات الإعلان (gclid)', async 
   const r = await web.get('/pages/packages_details.html?gclid=abc123&utm_source=google');
   assert.equal(r.status, 301);
   const u = new URL(r.location, base);
-  assert.equal(u.pathname, '/packages');
+  assert.equal(u.pathname, '/services');
   assert.equal(u.searchParams.get('gclid'), 'abc123');
   assert.equal(u.searchParams.get('utm_source'), 'google');
 });

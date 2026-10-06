@@ -32,12 +32,19 @@
       </ul>
     </nav>
     <div class="nav-actions">
+      <a class="nav-search-btn" href="/search" data-search-open aria-controls="nav-search" aria-expanded="false" aria-label="البحث في الموقع">{{ icon('search') }}</a>
       <button class="theme-btn" type="button" data-theme-toggle aria-pressed="false" aria-label="الوضع الليلي" data-tip="الوضع الليلي">{{ icon('moon', 'th-moon') }}{{ icon('sun', 'th-sun') }}</button>
       <a class="nav-call" href="{{ S.phone | tel }}" aria-label="{{ S.txt_call_now }} {{ S.phone }}">{{ icon('phone') }}</a>
       {% if S.nav_cta_label %}<a class="btn btn-white nav-cta" href="{{ S.nav_cta_url }}">{{ S.nav_cta_label }} {{ icon('arrow-left') }}</a>{% endif %}
       <button class="nav-toggle" type="button" data-menu-open aria-controls="mnav" aria-expanded="false" aria-label="فتح القائمة">{{ icon('menu') }}</button>
     </div>
   </div>
+  <form class="nav-search" id="nav-search" action="/search" method="get" role="search" hidden>
+    {{ icon('search') }}
+    <input type="search" name="q" placeholder="ابحث عن خدمة، قضية، أو سؤال…" aria-label="كلمات البحث" minlength="2" maxlength="80" required>
+    <button class="btn btn-teal btn-sm" type="submit">بحث</button>
+    <button class="nav-search-x" type="button" data-search-close aria-label="إغلاق البحث">{{ icon('x') }}</button>
+  </form>
 </header>
 
 <div class="mnav" id="mnav" aria-hidden="true" role="dialog" aria-modal="true" aria-label="القائمة">
@@ -48,6 +55,9 @@
       <button class="theme-btn" type="button" data-theme-toggle aria-pressed="false" aria-label="الوضع الليلي" data-tip="الوضع الليلي">{{ icon('moon', 'th-moon') }}{{ icon('sun', 'th-sun') }}</button>
       <button class="mnav-close" type="button" data-menu-close aria-label="إغلاق القائمة">{{ icon('x') }}</button>
     </div>
+    <form class="mnav-search" action="/search" method="get" role="search">
+      {{ icon('search') }}<input type="search" name="q" placeholder="ابحث في الموقع…" aria-label="البحث في الموقع" minlength="2" maxlength="80" required>
+    </form>
     <ul class="mnav-list">
       {% for item in S.nav_items %}
       <li style="--k:{{ loop.index0 }}"><a href="{{ item.url }}" {% if (item.url == '/' and currentPath == '/') or (item.url != '/' and currentPath.indexOf(item.url) == 0) %}aria-current="page"{% endif %}>{{ item.label }} {{ icon('arrow-left') }}</a>

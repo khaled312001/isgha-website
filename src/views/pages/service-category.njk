@@ -63,7 +63,6 @@
       <nav class="svc-nav" aria-label="أقسام الخدمات">
         <h3>خدماتنا</h3>
         {% for c in navCats %}<a href="{{ c.url }}" {% if c.slug == cat.slug %}class="on" aria-current="page"{% endif %}>{{ c.title }}{{ icon('arrow-left') }}</a>{% endfor %}
-        <a href="/packages">الباقات القانونية{{ icon('arrow-left') }}</a>
       </nav>
       <div class="side-card ink">
         <h3>هل تحتاج رأيًا قانونيًا الآن؟</h3>

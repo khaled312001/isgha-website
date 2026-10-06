@@ -281,3 +281,17 @@
     $('button', ck).addEventListener('click', function () { store('isgha_cookie_ok', 1); ck.classList.remove('show'); });
   }
 })();
+
+/* البحث في الهيدر: يفتح مربع البحث أسفل الشريط */
+(function () {
+  var form = document.getElementById('nav-search');
+  var btn = document.querySelector('[data-search-open]');
+  if (!form || !btn) return;
+  var input = form.querySelector('input');
+  function open() { form.hidden = false; btn.setAttribute('aria-expanded', 'true'); requestAnimationFrame(function () { form.classList.add('open'); input.focus(); }); }
+  function close() { form.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); setTimeout(function () { form.hidden = true; }, 220); }
+  btn.addEventListener('click', function (e) { e.preventDefault(); if (form.hidden) open(); else close(); });
+  form.querySelector('[data-search-close]').addEventListener('click', close);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !form.hidden) { close(); btn.focus(); } });
+  document.addEventListener('click', function (e) { if (!form.hidden && !form.contains(e.target) && !btn.contains(e.target)) close(); });
+})();
