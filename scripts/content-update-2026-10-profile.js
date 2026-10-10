@@ -7,7 +7,12 @@
 // - إضافة 3 خدمات متخصصة: بناء الإدارات القانونية، الصياغة التعاقدية، الحوكمة التأديبية
 // - تحديث إجابة سؤال «أنا خارج الرياض» (منصات التقاضي الإلكترونية وليس ناجز فقط)
 // - حذف رابط «خريطة الموقع» (XML خام) من روابط الفوتر القانونية
+// - مواءمة نصوص التأسيس وإعادة الهيكلة والتحكيم ومقدمة الخدمات المتخصصة مع ملف العميل
 import db from '../src/db.js';
+import { CATEGORIES } from '../db/seed-content.js';
+
+const ALIGNED_SERVICES = ['company-formation', 'restructuring', 'arbitration'];
+const SERVICE_FIELDS = ['summary', 'body', 'bullets_title', 'bullets'];
 
 const OVERVIEW_BODY =
   '<p>شركة وطنية مهنية متخصصة في تقديم الاستشارات القانونية وأعمال التوثيق النظامي، تتخذ من التحول الرقمي نهجًا، ومن الخبرة النظامية ركيزة؛ لتقديم حلول قانونية مبتكرة تحمي المراكز القانونية وتدعم استدامة ونمو الأعمال.</p>' +
@@ -183,7 +188,7 @@ try {
   const specialized = await db('service_categories').where({ slug: 'specialized' }).first();
   if (specialized) {
     const newSummary = 'تأسيس الشركات وحوكمتها، وإعادة الهيكلة، وبناء الإدارات القانونية، والصياغة التعاقدية، والحوكمة التأديبية.';
-    const newIntro = 'خدمات متخصصة للشركات والمؤسسات المالية تغطي دورة حياة المنشأة: من اختيار الشكل النظامي والتأسيس، إلى الحوكمة والصفقات المؤسسية، وإعادة الهيكلة، وبناء الإدارة القانونية، والصياغة التعاقدية، والامتثال للأنظمة.';
+    const newIntro = CATEGORIES.find((c) => c.slug === 'specialized').intro;
     const newBulletNames = ['تأسيس وبناء الإدارات القانونية', 'الصياغة التعاقدية والمراجعة القانونية', 'الحوكمة التأديبية والتحقيق العمالي'];
     const bullets = (specialized.bullets || '').split('\n').filter(Boolean);
     const addBullets = newBulletNames.filter((b) => !bullets.includes(b));
@@ -204,6 +209,20 @@ try {
         bullets_title: svc.bullets_title, bullets: join(svc.bullets), has_page: true, sort, is_active: true,
       });
       log.push(`service added: ${svc.slug}`);
+    }
+  }
+
+  // مواءمة نصوص خدمات قائمة مع ملف العميل (المصدر: db/seed-content.js)
+  for (const slug of ALIGNED_SERVICES) {
+    const src = CATEGORIES.flatMap((c) => c.services).find((s) => s.slug === slug);
+    const rows = await db('services').where({ slug });
+    for (const row of rows) {
+      const patch = {};
+      for (const f of SERVICE_FIELDS) {
+        const want = f === 'bullets' ? join(src[f]) : src[f];
+        if (row[f] !== want) patch[f] = want;
+      }
+      if (Object.keys(patch).length) { await db('services').where({ id: row.id }).update(patch); log.push(`service aligned: ${slug} (${Object.keys(patch).join(', ')})`); }
     }
   }
 

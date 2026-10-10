@@ -24,6 +24,10 @@
       <p class="small">{{ s.scene }}</p>
       {% if s.notes %}<p class="hint">{{ icon('info') }} {{ s.notes }}</p>{% endif %}
       <div class="prompt-box"><p class="ltr" dir="ltr">{{ s.prompt }}</p><button class="btn btn-ghost btn-xs" type="button" data-copy="{{ s.prompt }}">{{ icon('copy') }} نسخ البرومبت</button> <button class="btn btn-ghost btn-xs" type="button" data-copy="{{ s.prompt }} {{ s.mj }} --no {{ negative }}">{{ icon('copy') }} نسخ لـ Midjourney</button></div>
+      {% if s.logo %}
+      <p class="hint">{{ icon('wand') }} الشعار: {{ s.logo.ar }} — ارفع في ChatGPT الصورة الحالية ثم <code class="ltr">{{ logoFiles[s.logo.use].file }}</code></p>
+      <div class="prompt-box"><p class="ltr" dir="ltr">{{ s.edit }}</p><button class="btn btn-ghost btn-xs" type="button" data-copy="{{ s.edit }}">{{ icon('copy') }} ChatGPT: إضافة الشعار للصورة الحالية</button> <button class="btn btn-ghost btn-xs" type="button" data-copy="{{ s.chatgpt }}">{{ icon('copy') }} ChatGPT: صورة جديدة بالشعار</button></div>
+      {% endif %}
       <div class="slot-acts">
         <label class="btn btn-teal btn-sm">{{ icon('upload') }} {{ 'استبدال' if s.url else 'رفع الصورة' }}<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" hidden data-slot-upload="{{ s.key }}"></label>
         <button class="btn btn-line btn-sm" type="button" data-slot-pick="{{ s.key }}">{{ icon('folder') }} من المكتبة</button>

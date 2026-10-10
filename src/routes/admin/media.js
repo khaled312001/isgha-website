@@ -6,7 +6,7 @@ import { logActivity } from '../../lib/activity.js';
 import { uploader, saveMedia, deleteMediaFile, verifyUploads } from '../../lib/upload.js';
 import { setSettings } from '../../lib/settings.js';
 import { clearContentCache } from '../../lib/content.js';
-import { IMAGE_SLOTS, IMAGE_NEGATIVE, slotByKey } from '../../content/image-slots.js';
+import { IMAGE_SLOTS, IMAGE_NEGATIVE, LOGO_FILES, slotByKey } from '../../content/image-slots.js';
 import { wrap, fail, paginate, wantsJson, flash } from './util.js';
 
 const router = Router();
@@ -81,7 +81,7 @@ router.get('/slots', wrap(async (req, res) => {
     return { ...s, url, custom: Boolean(url && url !== s.default) };
   });
   res.render('admin/media/slots.njk', {
-    title: 'صور الموقع', active: 'slots', slots, negative: IMAGE_NEGATIVE,
+    title: 'صور الموقع', active: 'slots', slots, negative: IMAGE_NEGATIVE, logoFiles: LOGO_FILES,
     done: slots.filter((s) => s.url).length,
   });
 }));
