@@ -1,36 +1,36 @@
 {
  "/img/site/isgha-about-office.webp": {
-  "w": 1024,
+  "w": 1536,
   "sm": "/img/site/isgha-about-office-sm.webp",
   "smw": 800
  },
  "/img/site/isgha-about-team.webp": {
-  "w": 1024,
+  "w": 1536,
   "sm": "/img/site/isgha-about-team-sm.webp",
   "smw": 800
  },
  "/img/site/isgha-ben-companies.webp": {
-  "w": 1024,
+  "w": 1254,
   "sm": "/img/site/isgha-ben-companies-sm.webp",
   "smw": 800
  },
  "/img/site/isgha-ben-government.webp": {
-  "w": 1024,
+  "w": 1254,
   "sm": "/img/site/isgha-ben-government-sm.webp",
   "smw": 800
  },
  "/img/site/isgha-ben-individuals.webp": {
-  "w": 1536,
+  "w": 1254,
   "sm": "/img/site/isgha-ben-individuals-sm.webp",
   "smw": 800
  },
  "/img/site/isgha-ben-nonprofit.webp": {
-  "w": 1536,
+  "w": 1254,
   "sm": "/img/site/isgha-ben-nonprofit-sm.webp",
   "smw": 800
  },
  "/img/site/isgha-consultation-call.webp": {
-  "w": 1536,
+  "w": 1254,
   "sm": "/img/site/isgha-consultation-call-sm.webp",
   "smw": 800
  },
@@ -40,7 +40,7 @@
   "smw": 800
  },
  "/img/site/isgha-home-about.webp": {
-  "w": 1024,
+  "w": 1536,
   "sm": "/img/site/isgha-home-about-sm.webp",
   "smw": 800
  },
@@ -55,32 +55,32 @@
   "smw": 800
  },
  "/img/site/isgha-packages-hero.webp": {
-  "w": 1024,
+  "w": 1536,
   "sm": "/img/site/isgha-packages-hero-sm.webp",
   "smw": 800
  },
  "/img/site/isgha-service-judicial.webp": {
-  "w": 1024,
+  "w": 1536,
   "sm": "/img/site/isgha-service-judicial-sm.webp",
   "smw": 800
  },
  "/img/site/isgha-service-legal.webp": {
-  "w": 1024,
+  "w": 1536,
   "sm": "/img/site/isgha-service-legal-sm.webp",
   "smw": 800
  },
  "/img/site/isgha-service-notary.webp": {
-  "w": 1024,
+  "w": 1536,
   "sm": "/img/site/isgha-service-notary-sm.webp",
   "smw": 800
  },
  "/img/site/isgha-service-specialized.webp": {
-  "w": 1024,
+  "w": 1536,
   "sm": "/img/site/isgha-service-specialized-sm.webp",
   "smw": 800
  },
  "/img/site/isgha-vision-skyline.webp": {
-  "w": 1800,
+  "w": 1536,
   "sm": "/img/site/isgha-vision-skyline-sm.webp",
   "smw": 800
  },

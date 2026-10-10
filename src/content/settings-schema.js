@@ -21,6 +21,8 @@ export const SETTINGS_GROUPS = [
       { name: 'email', label: 'البريد الإلكتروني', type: 'text', default: 'info@isgha.sa', dir: 'ltr' },
       { name: 'address', label: 'العنوان الكامل', type: 'textarea', default: 'المملكة العربية السعودية – الرياض – حي الياسمين – طريق أبي بكر الصديق – مقابل مقر شركة ثمانية' },
       { name: 'address_short', label: 'العنوان المختصر', type: 'text', default: 'الرياض — حي الياسمين' },
+      { name: 'address_branch', label: 'عنوان الفرع', type: 'text', default: 'جدة – الواجهة البحرية – برج هيدكوارترز', hint: 'يظهر في الفوتر وصفحة التواصل تحت العنوان الرئيسي. اتركه فارغًا لإخفائه.' },
+      { name: 'address_branch_title', label: 'اسم الفرع', type: 'text', default: 'فرع جدة' },
       { name: 'city', label: 'المدينة', type: 'text', default: 'الرياض' },
       { name: 'working_hours', label: 'ساعات العمل', type: 'text', default: 'الأحد – الخميس · ٩ صباحًا – ٥ مساءً' },
       { name: 'map_query', label: 'موقع الخريطة (عنوان أو إحداثيات)', type: 'text', default: 'طريق أبي بكر الصديق، حي الياسمين، الرياض', hint: 'يُستخدم لعرض خريطة جوجل في صفحة التواصل. يمكن كتابة إحداثيات مثل 24.8241,46.6402' },

@@ -22,6 +22,7 @@
           <a class="ci" href="{{ S.phone | tel }}">{{ icon('phone') }}<span dir="ltr">{{ S.phone }}</span></a>
           <a class="ci" href="mailto:{{ S.email | mail }}">{{ icon('mail') }}<span>{{ S.email | mail }}</span></a>
           <span class="ci">{{ icon('map-pin') }}<span>{{ S.address }}</span></span>
+          {% if S.address_branch %}<span class="ci">{{ icon('map-pin') }}<span>{{ S.address_branch }}</span></span>{% endif %}
           {% if S.working_hours %}<span class="ci">{{ icon('clock') }}<span>{{ S.working_hours }}</span></span>{% endif %}
           {% set socials = [['social_x','x-brand','X'],['social_linkedin','linkedin','LinkedIn'],['social_instagram','instagram','Instagram'],['social_snapchat','snapchat','Snapchat'],['social_tiktok','tiktok','TikTok'],['social_youtube','youtube','YouTube']] %}
           <div class="social">

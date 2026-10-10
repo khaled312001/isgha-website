@@ -41,6 +41,7 @@
           {% if S.whatsapp %}<a class="cx-cc is-wa rv" style="--i:1" href="{{ waHref }}" target="_blank" rel="noopener"><span class="cx-cc-ic">{{ icon('whatsapp') }}</span><span class="cx-cc-tx"><small>{{ d.wa_title or 'واتساب' }}</small><b dir="ltr">{{ S.whatsapp | pretty_phone }}</b></span>{{ icon('arrow-up-left', 'cx-cc-go') }}</a>{% endif %}
           {% if S.email %}<a class="cx-cc is-mail rv" style="--i:2" href="mailto:{{ S.email | mail }}"><span class="cx-cc-ic">{{ icon('mail') }}</span><span class="cx-cc-tx"><small>{{ d.email_title or 'راسلنا' }}</small><b>{{ S.email | mail }}</b></span>{{ icon('arrow-up-left', 'cx-cc-go') }}</a>{% endif %}
           {% if S.address %}<div class="cx-cc is-addr rv" style="--i:3"><span class="cx-cc-ic">{{ icon('map-pin') }}</span><span class="cx-cc-tx"><small>{{ d.address_title or 'المكتب الرئيسي' }}</small><b>{{ S.address }}</b>{% if S.working_hours %}<em>{{ icon('clock') }}{{ S.working_hours }}</em>{% endif %}</span></div>{% endif %}
+          {% if S.address_branch %}<div class="cx-cc is-addr rv" style="--i:4"><span class="cx-cc-ic">{{ icon('map-pin') }}</span><span class="cx-cc-tx"><small>{{ S.address_branch_title or 'الفرع' }}</small><b>{{ S.address_branch }}</b></span></div>{% endif %}
         </div>
         {% if d.show_map and S.map_query %}
         <div class="cx-map rv d2">
