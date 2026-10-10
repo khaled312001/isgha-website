@@ -5,8 +5,8 @@
 
 :root{
   /* شرفات نجدية: صف مثلثات صغيرة */
-  --sx-tri:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='9' viewBox='0 0 16 9'%3E%3Cpath d='M0 9 8 0l8 9z' fill='%23dead34'/%3E%3C/svg%3E");
-  --sx-tri-teal:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='9' viewBox='0 0 16 9'%3E%3Cpath d='M0 9 8 0l8 9z' fill='%230e6e62'/%3E%3C/svg%3E");
+  --sx-tri:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='9' viewBox='0 0 16 9'%3E%3Cpath d='M0 9 8 0l8 9z' fill='%23d8af4d'/%3E%3C/svg%3E");
+  --sx-tri-teal:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='9' viewBox='0 0 16 9'%3E%3Cpath d='M0 9 8 0l8 9z' fill='%23215d41'/%3E%3C/svg%3E");
   --sx-deep:linear-gradient(150deg,#0c5a50 0%,var(--teal-deep) 55%,#062e28 100%);
 }
 

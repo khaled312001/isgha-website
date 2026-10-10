@@ -69,7 +69,7 @@ export const SETTINGS_GROUPS = [
       { name: 'footer_links_title', label: 'الفوتر — عنوان عمود الروابط', type: 'text', default: 'روابط سريعة' },
       { name: 'footer_links', label: 'الفوتر — الروابط السريعة', type: 'list', default: ['من نحن | /about', 'المستفيدون | /beneficiaries', 'المعرفة القانونية | /insights', 'طلب استشارة | /consultation', 'اتصل بنا | /contact'], hint: 'سطر لكل رابط بالشكل: النص | الرابط' },
       { name: 'footer_contact_title', label: 'الفوتر — عنوان عمود التواصل', type: 'text', default: 'تواصل معنا' },
-      { name: 'footer_legal_links', label: 'الفوتر — الروابط القانونية أسفل الصفحة', type: 'list', default: ['سياسة الخصوصية | /privacy-policy', 'شروط الاستخدام | /terms', 'خريطة الموقع | /sitemap.xml'], hint: 'سطر لكل رابط بالشكل: النص | الرابط' },
+      { name: 'footer_legal_links', label: 'الفوتر — الروابط القانونية أسفل الصفحة', type: 'list', default: ['سياسة الخصوصية | /privacy-policy', 'شروط الاستخدام | /terms'], hint: 'سطر لكل رابط بالشكل: النص | الرابط' },
       { name: 'mega_word', label: 'الكلمة الضخمة أسفل الصفحة', type: 'text', default: 'إصْغَـــاء' },
       { name: 'copyright', label: 'نص الحقوق', type: 'text', default: '© {year} شركة إصغاء للمحاماة والاستشارات القانونية. جميع الحقوق محفوظة.', hint: '{year} تُستبدل بالسنة الحالية تلقائيًا.' },
       { name: 'show_whatsapp_float', label: 'زر واتساب العائم', type: 'toggle', default: true },
