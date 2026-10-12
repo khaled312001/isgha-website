@@ -47,7 +47,7 @@ export const ICONS = {
 // شعارات المنصات بوزن fill (مصمتة) لأنها أوضح وأقرب للشعار الرسمي
 const BRAND = {
   whatsapp: 'whatsapp-logo', 'x-brand': 'x-logo', tiktok: 'tiktok-logo', linkedin: 'linkedin-logo',
-  instagram: 'instagram-logo', youtube: 'youtube-logo', snapchat: 'snapchat-logo',
+  instagram: 'instagram-logo', youtube: 'youtube-logo', snapchat: 'snapchat-logo', facebook: 'facebook-logo',
 };
 
 // رموز الواجهة الصغيرة (أسهم، إغلاق، علامة صح…) بوزن regular لأن طبقة duotone تشوّهها

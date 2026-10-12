@@ -24,10 +24,8 @@
           <span class="ci">{{ icon('map-pin') }}<span>{{ S.address }}</span></span>
           {% if S.address_branch %}<span class="ci">{{ icon('map-pin') }}<span>{{ S.address_branch }}</span></span>{% endif %}
           {% if S.working_hours %}<span class="ci">{{ icon('clock') }}<span>{{ S.working_hours }}</span></span>{% endif %}
-          {% set socials = [['social_x','x-brand','X'],['social_linkedin','linkedin','LinkedIn'],['social_instagram','instagram','Instagram'],['social_snapchat','snapchat','Snapchat'],['social_tiktok','tiktok','TikTok'],['social_youtube','youtube','YouTube']] %}
-          <div class="social">
-            {% for s in socials %}{% if S[s[0]] %}<a href="{{ S[s[0]] }}" target="_blank" rel="noopener" aria-label="{{ s[2] }}">{{ icon(s[1]) }}</a>{% endif %}{% endfor %}
-          </div>
+          {% from "partials/social.njk" import socialIcons with context %}
+          {{ socialIcons(S) }}
         </div>
       </div>
     </div>

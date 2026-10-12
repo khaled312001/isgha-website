@@ -1,0 +1,20 @@
+{% macro socialIcons(S) %}
+{% set nets = socialList(S) %}
+{% if nets.length %}
+<div class="social rv">
+  {% for n in nets %}<a href="{{ n.url }}" target="_blank" rel="noopener" data-net="{{ n.net }}" style="--i:{{ loop.index0 }}" aria-label="{{ S.brand_short or 'إصغاء' }} على {{ n.label }}" title="{{ n.label }}">{{ icon(n.icon) }}</a>{% endfor %}
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro socialCards(S, title) %}
+{% set nets = socialList(S) %}
+{% if nets.length %}
+<div class="cx-social rv">
+  <small>{{ title or 'تابعنا على منصات التواصل' }}</small>
+  <div class="cx-sn-list">
+    {% for n in nets %}<a class="cx-sn" href="{{ n.url }}" target="_blank" rel="noopener" data-net="{{ n.net }}" style="--i:{{ loop.index0 }}"><span class="cx-sn-ic">{{ icon(n.icon) }}</span><span class="cx-sn-tx"><b>{{ n.label }}</b><em dir="ltr">{{ n.handle }}</em></span></a>{% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endmacro %}

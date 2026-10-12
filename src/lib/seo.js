@@ -146,7 +146,7 @@ function geoFrom(s) {
   return undefined;
 }
 
-const SOCIAL_KEYS = ['social_x', 'social_linkedin', 'social_instagram', 'social_snapchat', 'social_tiktok', 'social_youtube'];
+const SOCIAL_KEYS = ['social_x', 'social_instagram', 'social_tiktok', 'social_snapchat', 'social_facebook', 'social_linkedin', 'social_youtube'];
 const SA_COUNTRY = { '@type': 'Country', name: 'المملكة العربية السعودية', identifier: 'SA' };
 
 export function orgSchema(base, s, categories = []) {

@@ -651,10 +651,26 @@ mark{background:linear-gradient(transparent 58%,var(--yellow) 58%,var(--yellow) 
 .fl>a:not(.ci):hover::after,.fl>a:not(.ci):focus-visible::after{transform:scaleX(1)}
 .fl .ci{display:flex;gap:10px;align-items:flex-start;line-height:1.7}
 .fl .ci .i{margin-top:4px;width:16px;height:16px;opacity:.85}
-.social{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.social a{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);display:grid;place-items:center;color:#fff;transition:background-color .25s var(--ease),color .25s var(--ease),transform .25s var(--ease)}
-.social a:hover,.social a:focus-visible{background:#fff;color:var(--teal);transform:translateY(-2px)}
-.social .i{width:18px;height:18px;display:block}
+/* حسابات التواصل: ألوان المنصات الرسمية */
+[data-net]{--sn:var(--teal);--sn-fg:#fff}
+[data-net=x]{--sn:#000}
+[data-net=instagram]{--sn:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285aeb 90%)}
+[data-net=tiktok]{--sn:#010101}
+[data-net=snapchat]{--sn:#fffc00;--sn-fg:#111}
+[data-net=facebook]{--sn:#1877f2}
+[data-net=linkedin]{--sn:#0a66c2}
+[data-net=youtube]{--sn:#ff0000}
+@keyframes snIn{0%{opacity:0;transform:translateY(14px) scale(.6)}65%{opacity:1;transform:translateY(-3px) scale(1.06)}100%{opacity:1;transform:none}}
+.social{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.social a{position:relative;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);display:grid;place-items:center;color:#fff;overflow:hidden;isolation:isolate;transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .3s,color .3s}
+.social a::before{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--sn);transform:scale(0);transition:transform .4s var(--ease);z-index:-1}
+.social a:hover,.social a:focus-visible{color:var(--sn-fg);border-color:transparent;transform:translateY(-4px);box-shadow:0 12px 22px -10px rgba(0,0,0,.55)}
+.social a:hover::before,.social a:focus-visible::before{transform:scale(1)}
+.social .i{width:19px;height:19px;display:block;transition:transform .45s var(--ease)}
+.social a:hover .i,.social a:focus-visible .i{transform:rotate(-10deg) scale(1.1)}
+.social a[data-net=tiktok]:hover .i,.social a[data-net=tiktok]:focus-visible .i{filter:drop-shadow(1.5px 1.5px 0 #fe2c55) drop-shadow(-1.5px -1.5px 0 #25f4ee)}
+html:not(.no-js) .social.rv:not(.in) a{opacity:0}
+.social.rv.in a{animation:snIn .6s var(--ease) backwards;animation-delay:calc(var(--i,0) * 90ms + .15s)}
 .footer :focus-visible{outline-color:var(--yellow)}
 .mega{font-family:var(--disp);font-weight:900;font-size:clamp(4rem,15vw,12rem);text-align:center;line-height:1.2;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.22);user-select:none;margin-bottom:-2.6vw;white-space:nowrap;overflow:hidden}
 .foot-bottom{display:flex;justify-content:space-between;align-items:center;gap:8px 14px;flex-wrap:wrap;font-size:.8rem;color:rgba(255,255,255,.84);padding:14px var(--gut) 22px;max-width:var(--maxw);margin:0 auto;border-top:1px solid rgba(255,255,255,.16);position:relative;background:var(--teal)}
@@ -773,6 +789,7 @@ mark{background:linear-gradient(transparent 58%,var(--yellow) 58%,var(--yellow) 
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
   .rv{opacity:1;transform:none}
+  html:not(.no-js) .social.rv:not(.in) a,html:not(.no-js) .cx-social.rv:not(.in) .cx-sn{opacity:1}
 }
 @media print{
   .nav,.callbar,.wa-float,.footer .mega,.cookie{display:none!important}

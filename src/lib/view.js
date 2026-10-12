@@ -10,6 +10,29 @@ import { IMAGE_FOCUS } from '../content/image-slots.js';
 let VARIANTS = {};
 try { VARIANTS = JSON.parse(fs.readFileSync(path.join(ROOT, 'src', 'content', 'image-variants.json'), 'utf8')); } catch { VARIANTS = {}; }
 
+// حسابات التواصل: [مفتاح الإعداد، الأيقونة، الاسم، المعرّف]
+const SOCIAL_NETS = [
+  ['social_x', 'x-brand', 'إكس', 'x'],
+  ['social_instagram', 'instagram', 'إنستغرام', 'instagram'],
+  ['social_tiktok', 'tiktok', 'تيك توك', 'tiktok'],
+  ['social_snapchat', 'snapchat', 'سناب شات', 'snapchat'],
+  ['social_facebook', 'facebook', 'فيسبوك', 'facebook'],
+  ['social_linkedin', 'linkedin', 'لينكد إن', 'linkedin'],
+  ['social_youtube', 'youtube', 'يوتيوب', 'youtube'],
+];
+
+function socialHandle(url) {
+  const seg = String(url || '').replace(/[?#].*$/, '').replace(/\/+$/, '').split('/').pop() || '';
+  if (!seg) return '';
+  return seg.startsWith('@') ? seg : `@${seg}`;
+}
+
+export function socialList(S) {
+  return SOCIAL_NETS.map(([key, icon, label, net]) => ({ key, icon, label, net, url: String((S && S[key]) || '').trim() }))
+    .filter((n) => /^https?:\/\//i.test(n.url))
+    .map((n) => ({ ...n, handle: socialHandle(n.url) }));
+}
+
 export function setupViews(app) {
   const env = nunjucks.configure(path.join(ROOT, 'src', 'views'), {
     autoescape: true,
@@ -59,6 +82,7 @@ export function setupViews(app) {
   env.addGlobal('asset', (p) => `${p}${p.includes('?') ? '&' : '?'}v=${v}`);
   env.addGlobal('now', () => new Date());
   env.addGlobal('imgPos', (src) => IMAGE_FOCUS[src] || '');
+  env.addGlobal('socialList', socialList);
   env.addGlobal('imgSet', (src) => { const x = VARIANTS[src]; return x ? `${x.sm} ${x.smw}w, ${src} ${x.w}w` : ''; });
   env.addGlobal('range', (a, b) => Array.from({ length: b - a }, (_, i) => a + i));
   return env;
